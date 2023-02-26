@@ -23,7 +23,6 @@ const baseEnv = import.meta.env;
 export const stripePromise = loadStripe(
   baseEnv.VITE_REACT_APP_STRIPE_PUBLISHABLE_KEY as string,
 );
-console.log(baseEnv.VITE_STRIPE_SECRET_KEY);
 
 export const stripePaymentIntent = (amount: number): Promise<PaymentIntentResult> => {
   return new Promise((resolve) => {
