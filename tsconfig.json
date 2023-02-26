@@ -17,10 +17,12 @@
     "jsx": "react-jsx"
   },
   "include": [
+    "./netlify/functions/create-payment-intent.js",
     "vite.config.ts",
     "postcss.config.cjs",
     "tailwind.config.cjs",
     ".eslintrc.cjs",
+    "src/custom.d.ts",
     "src"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
