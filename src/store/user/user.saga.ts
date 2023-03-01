@@ -1,7 +1,7 @@
 import {
   takeLatest, put, all, call, 
 } from 'typed-redux-saga';
-import { User } from 'firebase/auth';
+import { User, AuthErrorMap } from 'firebase/auth';
 
 import { USER_ACTION_TYPES } from './user.types';
 
@@ -57,7 +57,6 @@ export function* signInWithEmail({ payload: { email, password } }: EmailSignInSt
       yield* call(getSnapshotFromUserAuth, user);
     }
   } catch (error) {
-    console.log('ERRORRRRRRRRRRRRRRRRRR', error);
     yield* put(signInFailed(error as Error));
   }
 }
@@ -72,15 +71,23 @@ export function* isUserAuthenticated() {
   }
 }
 
-export function* signUp({ payload: { email, password, displayName } }: SignUpStart) {
+export function* signUp({
+  payload: {
+    email, password, displayName, dateOfBirth, firstName, lastName, sendNotification,
+  }, 
+}: SignUpStart) {
   try {
     const userCredential = yield* call(createAuthUserWithEmailAndPassword, email, password);
 
     if (userCredential) {
       const { user } = userCredential;
-      yield* put(signUpSuccess(user, { displayName }));
-    }
+      yield* put(signUpSuccess(user, {
+        firstName, lastName, displayName, dateOfBirth, sendNotification, 
+      }));
+    } 
   } catch (error) {
+    console.log('ERRORRRRRRRRRRRRRRRRRR', error);
+
     yield* put(signUpFailed(error as Error));
   }
 }

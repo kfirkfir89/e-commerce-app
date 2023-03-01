@@ -1,25 +1,14 @@
 import { InputHTMLAttributes, FC } from 'react';
 
-import { FormInputLabel, Input, Group } from './form-input.styles';
-
 type FormInputProps = { label: string } & InputHTMLAttributes<HTMLInputElement>;
 
 const FormInput: FC<FormInputProps> = ({ label, ...otherProps }) => {
   return (
-    <Group>
-      <Input {...otherProps} />
+    <div className="relative">
       {label && (
-        <FormInputLabel 
-          shrink={Boolean(
-            otherProps.value 
-            && typeof otherProps.value === 'string' 
-            && otherProps.value.length,
-          )} 
-        >
-          {label}
-        </FormInputLabel>
+        <input type="text" placeholder={label} className="input w-full max-w-xs my-3" {...otherProps} />
       )}
-    </Group>
+    </div>
   );
 };
 

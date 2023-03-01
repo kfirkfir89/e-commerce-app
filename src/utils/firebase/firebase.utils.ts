@@ -113,8 +113,25 @@ export type UserData = {
   email: string;
 };
 
+export type Address = {
+  firstName: string;
+  lastName: string;
+  mobile: number;
+  country: string;
+  address: string;
+  city: string;
+  state?: string;
+  postcode: number;
+};
+
 export type AddittionalInformation = {
+  firstName: string;
+  lastName: string;
   displayName?: string;
+  dateOfBirth: Date | null;
+  sendNotification: boolean;
+  userAddresses?: Address[];
+  userOrders?: number[];
 };
 
 export const createUserDocumentFromAuth = async (

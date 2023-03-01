@@ -1,3 +1,6 @@
+import { DateRangeType, DateValueType, DateType } from 'react-tailwindcss-datepicker/dist/types/index';
+
+
 export enum USER_ACTION_TYPES {
   SET_CURRENT_USER = 'user/SET_CURRENT_USER',
   CHECK_USER_SESSION = 'user/CHECK_USER_SESSION',
@@ -11,4 +14,15 @@ export enum USER_ACTION_TYPES {
   SIGN_OUT_START = 'user/SIGN_OUT_START',
   SIGN_OUT_SUCCESS = 'user/SIGN_OUT_SUCCESS',
   SIGN_OUT_FAILED = 'user/SIGN_OUT_FAILED',
+}
+
+export type FormFields = {
+  firstName: string,
+  lastName: string,
+  dateOfBirth: DateType | DateRangeType,
+  displayName?: string,
+  email: string,
+  password: string,
+  confirmPassword: string,
+  sendNotification: boolean,
 };
