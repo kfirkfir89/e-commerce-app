@@ -1,4 +1,4 @@
-import { DateRangeType, DateValueType, DateType } from 'react-tailwindcss-datepicker/dist/types/index';
+import { DateRangeType, DateType } from 'react-tailwindcss-datepicker/dist/types/index';
 
 
 export enum USER_ACTION_TYPES {

@@ -89,9 +89,14 @@ module.exports = {
     fontFamily: {
       custom: ['Pacifico'],
       custom2: ['Titan One'],
+      dosis: ['Dosis', 'sans-serif'],
     },
   },
   plugins: [
+    function ({ addVariant }) {
+      addVariant('child-span', '& > span');
+      addVariant('child-hover', '& > *:hover');
+    },
     // eslint-disable-next-line global-require
     require('daisyui'),
   ],

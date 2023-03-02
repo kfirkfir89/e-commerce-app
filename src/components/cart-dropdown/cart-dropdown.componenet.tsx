@@ -26,19 +26,23 @@ const CartDropdown = () => {
   }, []);
 
   return (
-    <CartDropdownContainer>
-      <CartItems>
+
+    <div className="card w-full">
+      <div className="card-body"></div>
+      <span className="h-64 flex flex-col overflow-y-auto">
         {
-          cartItems.length ? cartItems.map((item) => (
-            <CartItem key={item.id} cartItem={item} />
-          ))
-            : (<EmptyMessage>Your cart is empty</EmptyMessage>)
-        }
-      </CartItems>
-      <Button buttonType={BUTTON_TYPE_CLASSES.default} onClick={goToCheckOutHandler}>
+            cartItems.length ? cartItems.map((item) => (
+              <CartItem key={item.id} cartItem={item} />
+            ))
+              : (<EmptyMessage>Your cart is empty</EmptyMessage>)
+          }
+
+      </span>
+      <button className="btn btn-secondary" onClick={goToCheckOutHandler}>
         CHECK OUT
-      </Button>
-    </CartDropdownContainer>
+      </button>
+    </div>
+
   );
 };
 

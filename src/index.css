@@ -1,3 +1,52 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Dosis&family=Nunito+Sans:wght@200&family=Open+Sans:wght@300;400;500&family=Pacifico&family=Sono:wght@800&family=Titan+One&family=Titillium+Web:wght@200&family=Ubuntu:wght@300&display=swap');
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base{
+  @font-face {
+    font-family: 'Pacifico', cursive;
+    font-family: 'Titan One', cursive;
+    font-family: 'Dosis', sans-serif;
+
+  }
+}
+
+@layer components{
+  
+  .card-body{
+    @apply flex justify-center flex-1;
+  }
+}
+
+@layer utilities {
+  .link-underline {
+    background-image: linear-gradient(transparent, transparent), linear-gradient(#000000, #000000);
+    background-size: 0 2px;
+    background-position: 50% 100%;
+    background-repeat: no-repeat;
+    transition: background-size .5s ease-in;
+  }
+
+  .link-underline-black {
+      background-image: linear-gradient(transparent, transparent), linear-gradient(#334155FF, #334155FF)
+  }
+
+  .link-underline:hover {
+      background-size: 100% 2px;
+      background-position: 0 100%
+  }
+  .link-underline:focus {
+      background-size: 100% 2px;
+      background-position: 0 100%
+  }
+
+  @media (min-width: 1780px) {
+    .container2 {
+      max-width: 1780px;
+    }
+  }
+}

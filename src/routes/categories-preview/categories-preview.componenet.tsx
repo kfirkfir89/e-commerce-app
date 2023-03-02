@@ -13,7 +13,9 @@ const CategoriesPreview = () => {
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <> 
-      {
+      <div className="flex flex-col items-center">
+        <div className="container2">
+          {
         isLoading ? <Spinner />
           : (Object.keys(categoriesMap).map((title) => {
             const products = categoriesMap[title];
@@ -22,6 +24,8 @@ const CategoriesPreview = () => {
             );
           }))
       }
+        </div>
+      </div>
     </>
   );
 };

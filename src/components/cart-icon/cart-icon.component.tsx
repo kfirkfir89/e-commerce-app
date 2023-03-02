@@ -1,26 +1,21 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import { selectCartCount, selectIsCartOpen } from '../../store/cart/cart.selector';
-import { setIsCartOpen } from '../../store/cart/cart.action';
+import { selectCartCount } from '../../store/cart/cart.selector';
 
-import { ReactComponent as ShoppingIcon } from '../../assets/shopping-bag.svg';
-
-import { CartIconContainer, ItemCount } from './cart-icon.styles';
+import { ReactComponent as ShoppingIcon } from '../../assets/local_mall.svg';
 
 const CartIcon = () => {
   // const { isCartOpen, setIsCartOpen, cartCount } = useContext(CartContext);
-  const dispatch = useDispatch();
 
   const cartCount = useSelector(selectCartCount);
-  const isCartOpen = useSelector(selectIsCartOpen);
-
-  const toggleIsCartOpen = () => dispatch(setIsCartOpen(!isCartOpen));
 
   return (
-    <CartIconContainer onClick={toggleIsCartOpen}>
-      <ShoppingIcon className="shopping-icon" />
-      <ItemCount>{cartCount}</ItemCount>
-    </CartIconContainer>
+    <div tabIndex={0} className="relative flex pb-1 items-center justify-center cursor-pointer hover:text-secondary hover:animate-bounce">
+      <ShoppingIcon className="w-9 sm:w-10" />
+      <span className="absolute text-[10px] opacity-70 sm:text-xs font-bold pt-3">{cartCount}</span>
+    </div>
+
+
   );
 };
 

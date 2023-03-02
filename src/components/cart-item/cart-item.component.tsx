@@ -1,16 +1,14 @@
 import { memo } from 'react';
 import { CartItemQuantity } from '../../store/cart/cart.types';
-import { CartItemContainer, ItemDetails } from './cart-item.styles';
-
 
 const CartItem = memo(({ cartItem }: { cartItem:CartItemQuantity }) => {
   const {
     name, imageUrl, price, quantity, 
   } = cartItem;
   return (
-    <CartItemContainer>
-      <img src={imageUrl} alt={`${name}`} />
-      <ItemDetails>
+    <div className="w-full flex mb-4 image-full">
+      <img className="w-1/3" src={imageUrl} alt={`${name}`} />
+      <div className="w-9/12 flex flex-col items-start justify-center child-span:text-xl">
         <span>{name}</span>
         <span>
           {quantity}
@@ -18,8 +16,10 @@ const CartItem = memo(({ cartItem }: { cartItem:CartItemQuantity }) => {
           x $
           {price}
         </span>
-      </ItemDetails>
-    </CartItemContainer>
+      </div>
+    </div>
+    
+    
   );
 });
 
