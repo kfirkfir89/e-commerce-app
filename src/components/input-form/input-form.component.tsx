@@ -1,16 +1,18 @@
 import {
-  useState, FC, InputHTMLAttributes, ChangeEvent, 
+  useState, FC, ChangeEvent, InputHTMLAttributes, 
 } from 'react';
-import { Inputs } from '../sign-up-form/sign-up-form.component';
 
-type InputProps = {
-  label:string,
-} & Inputs & InputHTMLAttributes<HTMLInputElement>;
+export type Inputs = {
+  errorMessage?: string;
+  label: string;
+};
 
-const FormInput: FC<InputProps> = (props: InputProps) => {
+export type InputProps = InputHTMLAttributes<HTMLInputElement> & Inputs;
+
+const FormInput: FC<InputProps & { focused?: string }> = (props: InputProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const {
-    label, errorMessage, onChange, id, focused, className, ...inputProps
+    label, errorMessage, onChange, id, className, focused, ...inputProps
   } = props;
 
   const handleFocus = (e: ChangeEvent<HTMLInputElement>) => {

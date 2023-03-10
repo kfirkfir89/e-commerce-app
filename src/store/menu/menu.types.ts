@@ -1,0 +1,4 @@
+export enum MENU_ACTION_TYPES {
+  SET_IS_MENU_OPEN = 'menu/SET_IS_MENU_OPEN',
+  SET_SELECTED = 'menu/SET_SELECTED',
+}

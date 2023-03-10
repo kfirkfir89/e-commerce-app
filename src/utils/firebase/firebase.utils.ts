@@ -23,7 +23,7 @@ import {
   QueryDocumentSnapshot,
 } from 'firebase/firestore';
 
-import { Category } from '../../store/categories/category.types';    
+import { Category, CategoryItem } from '../../store/categories/category.types';    
 import { NewOrderDetails } from '../../store/orders/order.types';
 
 // Your web app's Firebase configuration
@@ -51,11 +51,16 @@ export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googlePro
 
 export const db = getFirestore();
 
-
 // COLLECTION AND DOC CREATION FUNCUNALITY
+// need to specify the key in db as title
 export type ObjectToAdd = {
   title: string;
 };
+
+export type AddCollectionAndDocuments = [{
+  title:string,
+  items:CategoryItem[]
+}];
 
 export const addCollectionAndDocuments = async<T extends ObjectToAdd> (
   collectionKey: string,
@@ -63,6 +68,8 @@ export const addCollectionAndDocuments = async<T extends ObjectToAdd> (
 ): Promise<void> => {
   const collectionRef = collection(db, collectionKey);
   const batch = writeBatch(db);
+  console.log('fdddddddddddddd', objectToAdd);
+
 
   objectToAdd.forEach((object) => {
     const docRef = doc(collectionRef, object.title.toLowerCase());
@@ -73,16 +80,37 @@ export const addCollectionAndDocuments = async<T extends ObjectToAdd> (
   console.log('done');
 };
 
-export const getCategoriesAndDocuments = async (): Promise<Category[]> => {
-  const collectionRef = collection(db, 'categories');
+export async function getCategoriesAndDocuments(): Promise<Category[]>; 
+export async function getCategoriesAndDocuments<CK extends string>(collectionKey: CK): Promise<Category[]>; 
+export async function getCategoriesAndDocuments(collectionKey?: string) {
+  let key = '';
+  console.log('FIREBASE:', collectionKey);
+  if (collectionKey === undefined) {
+    key = 'categories';
+  } else {
+    key = collectionKey;
+  }
+  const collectionRef = collection(db, key);
   const q = query(collectionRef);
   
   const querySnapshot = await getDocs(q);
+  console.log('FIREBASESNAP:', querySnapshot);
 
   return querySnapshot.docs.map(
     (docSnapshot) => docSnapshot.data() as Category,
   );
-};
+}
+
+// export const getCategoriesAndDocuments = async (): Promise<Category[]> => {
+//   const collectionRef = collection(db, 'categories');
+//   const q = query(collectionRef);
+  
+//   const querySnapshot = await getDocs(q);
+
+//   return querySnapshot.docs.map(
+//     (docSnapshot) => docSnapshot.data() as Category,
+//   );
+// };
 
 
 /* 

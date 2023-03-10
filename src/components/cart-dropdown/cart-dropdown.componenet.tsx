@@ -28,8 +28,7 @@ const CartDropdown = () => {
   return (
 
     <div className="card w-full">
-      <div className="card-body"></div>
-      <span className="h-64 flex flex-col overflow-y-auto">
+      <span className="h-96 p-2 flex flex-col overflow-y-auto">
         {
             cartItems.length ? cartItems.map((item) => (
               <CartItem key={item.id} cartItem={item} />
@@ -38,7 +37,7 @@ const CartDropdown = () => {
           }
 
       </span>
-      <button className="btn btn-secondary" onClick={goToCheckOutHandler}>
+      <button className="btn btn-secondary m-2" onClick={goToCheckOutHandler}>
         CHECK OUT
       </button>
     </div>

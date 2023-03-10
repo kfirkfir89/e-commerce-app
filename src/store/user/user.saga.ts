@@ -1,7 +1,7 @@
 import {
   takeLatest, put, all, call, 
 } from 'typed-redux-saga';
-import { User, AuthErrorMap } from 'firebase/auth';
+import { User } from 'firebase/auth';
 
 import { USER_ACTION_TYPES } from './user.types';
 

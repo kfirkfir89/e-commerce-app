@@ -26,6 +26,7 @@ const Category = () => {
   return (
     <>
       <Title>{category.toUpperCase()}</Title>
+      
       {isLoading ? (
         <Spinner />
       ) : (

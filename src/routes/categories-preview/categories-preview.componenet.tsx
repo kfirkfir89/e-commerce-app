@@ -13,7 +13,7 @@ const CategoriesPreview = () => {
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <> 
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center top-0 z-30">
         <div className="container2">
           {
         isLoading ? <Spinner />

@@ -1,5 +1,5 @@
 import {
-  ChangeEvent, FormEvent, InputHTMLAttributes, useState, 
+  ChangeEvent, FormEvent, useState, 
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthError, AuthErrorCodes } from 'firebase/auth';
@@ -10,11 +10,6 @@ import { selectUserError } from '../../store/user/user.selector';
 import FormInput from '../input-form/input-form.component';
 import { signUpStart } from '../../store/user/user.action';
 import { FormFields } from '../../store/user/user.types';
-
-export type Inputs = {
-  errorMessage?: string;
-  label: string;
-} & InputHTMLAttributes<HTMLInputElement>;
 
 const defaultFormFields: FormFields = {
   firstName: '',
@@ -36,68 +31,6 @@ const SignUpForm = () => {
   };
 
   console.log('render', values, userError);
-
-  const inputs: Inputs[] = [
-    {
-      id: '1',
-      name: 'firstName',
-      type: 'text',
-      placeholder: 'First Name',
-      errorMessage:
-        "Username should be 3-16 characters and shouldn't include any special character!",
-      label: 'First Name',
-      pattern: '^[A-Za-z0-9]{3,16}$',
-      required: true,
-    },
-    {
-      id: '2',
-      name: 'lastName',
-      type: 'text',
-      placeholder: 'Last Name',
-      errorMessage:
-        "Username should be 3-16 characters and shouldn't include any special character!",
-      label: 'Last Name',
-      pattern: '^[A-Za-z0-9]{3,16}$',
-      required: true,
-    },
-    {
-      id: '3',
-      name: 'email',
-      type: 'email',
-      placeholder: 'Email',
-      errorMessage: 'It should be a valid email address!',
-      label: 'Email',
-      required: true,
-    },
-    {
-      id: '4',
-      name: 'dateOfBirth',
-      type: 'date',
-      placeholder: 'Date Of Birth',
-      label: 'Date Of Birth',
-    },
-    {
-      id: '5',
-      name: 'password',
-      type: 'password',
-      placeholder: 'Password',
-      errorMessage:
-        'Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!',
-      label: 'Password',
-      pattern: '^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$',
-      required: true,
-    },
-    {
-      id: '6',
-      name: 'confirmPassword',
-      type: 'password',
-      placeholder: 'Confirm Password',
-      errorMessage: "Passwords don't match!",
-      label: 'Confirm Password',
-      pattern: values.password,
-      required: true,
-    },
-  ];
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

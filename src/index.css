@@ -43,6 +43,10 @@
       background-size: 100% 2px;
       background-position: 0 100%
   }
+  .link-underline:active {
+    background-size: 100% 2px;
+    background-position: 0 100%
+}
 
   @media (min-width: 1780px) {
     .container2 {

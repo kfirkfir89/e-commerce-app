@@ -4,14 +4,14 @@ import {
   createAction, Action, ActionWithPayload, withMatcher, 
 } from '../../utils/reducer/reducer.utils';
 
-export type FeatchCategoriesStart = Action<CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_START>;
+export type FeatchCategoriesStart = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_START, { collectionKey?: string }>;
 
 export type FeatchCategoriesSuccess = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_SUCCESS, Category[]>;
 
 export type FeatchCategoriesFailed = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_FAILED, Error>;
 
 export const featchCategoriesStart = withMatcher(
-  (): FeatchCategoriesStart => createAction(CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_START),
+  (collectionKey?: string): FeatchCategoriesStart => createAction(CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_START, { collectionKey }),
 );
 
 export const featchCategoriesSuccess = withMatcher(

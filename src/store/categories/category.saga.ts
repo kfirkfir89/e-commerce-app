@@ -5,13 +5,13 @@ import {
 
 import { getCategoriesAndDocuments } from '../../utils/firebase/firebase.utils';
 
-import { featchCategoriesSuccess, featchCategoriesFailed } from './category.action';
+import { featchCategoriesSuccess, featchCategoriesFailed, FeatchCategoriesStart } from './category.action';
 
 import { CATEGORIES_ACTION_TYPES } from './category.types';
 
-export function* featchCategoriesAsync() {
+export function* featchCategoriesAsync({ payload: { collectionKey } } :FeatchCategoriesStart) {
   try {
-    const categoriesArray = yield* call(getCategoriesAndDocuments);
+    const categoriesArray = yield* call(getCategoriesAndDocuments, collectionKey);
     // console.log({categoriesArray});
     yield* put(featchCategoriesSuccess(categoriesArray));
   } catch (error) {

@@ -5,3 +5,9 @@ declare module '*.svg'{
   const src: string;
   export default src;
 }
+
+declare namespace React {
+  interface HTMLAttributes<T> extends HTMLAttributes<T> {
+    focused?: string
+  }
+}
