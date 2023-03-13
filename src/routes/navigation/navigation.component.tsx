@@ -14,7 +14,6 @@ import { signOutStart } from '../../store/user/user.action';
 
 import MenuIcon from '../menu/menu.component';
 import NavigationLinks from '../navigation-links/navigation-links.component';
-import AddFirebase from '../../components/add-firebase/add-firebase.component';
 
 
 const Navigation = () => {
@@ -25,7 +24,7 @@ const Navigation = () => {
 
   return (
     <>
-      <div className="sticky top-0 z-50 flex justify-center sm:px-6 pb-24">
+      <div className="sticky top-0 z-50 flex justify-center sm:px-6">
         <div className="grid grid-cols-1 w-screen container relative">
           
           <div className="flex flex-col w-full items-center justify-center py-2 z-40 sm:hidden">
@@ -40,7 +39,7 @@ const Navigation = () => {
                   </Link>
                 </div>
                 <div className="flex-none z-50">
-                  <AddFirebase />
+                  <Link to="/dashboard">DB</Link>
                   {
                       currentUser === null
                         ? (
@@ -59,7 +58,7 @@ const Navigation = () => {
                             </label>
                             <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
                               <li>
-                                <Link to="/" className="justify-between">
+                                <Link to="/profile" className="justify-between">
                                   Profile
                                   <span className="badge">New</span>
                                 </Link>

@@ -22,6 +22,7 @@ import {
   getDocs,
   QueryDocumentSnapshot,
 } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
 import { Category, CategoryItem } from '../../store/categories/category.types';    
 import { NewOrderDetails } from '../../store/orders/order.types';
@@ -38,6 +39,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
+export const storage = getStorage(firebaseApp);
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -84,12 +86,12 @@ export async function getCategoriesAndDocuments(): Promise<Category[]>;
 export async function getCategoriesAndDocuments<CK extends string>(collectionKey: CK): Promise<Category[]>; 
 export async function getCategoriesAndDocuments(collectionKey?: string) {
   let key = '';
-  console.log('FIREBASE:', collectionKey);
-  if (collectionKey === undefined) {
+  if (!collectionKey) {
     key = 'categories';
   } else {
     key = collectionKey;
   }
+
   const collectionRef = collection(db, key);
   const q = query(collectionRef);
   
