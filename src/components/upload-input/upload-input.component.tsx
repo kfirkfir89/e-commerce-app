@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { InputHTMLAttributes, useEffect, useRef, useState } from 'react';
 import {
   ref, uploadBytes, listAll, getDownloadURL, 
 } from 'firebase/storage';
@@ -10,7 +10,7 @@ const UploadInput = () => {
   const [imageUrlList, setImageUrlList] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const imagesListRef = ref(storage, 'images/');
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<InputHTMLAttributes<HTMLInputElement>>('');
 
   useEffect(() => {
     listAll(imagesListRef).then((response) => {
@@ -36,14 +36,16 @@ const UploadInput = () => {
             setImageUrlList((prev) => [...prev, url]);
           });
         });
-        // inputRef.current?.value = null;
+        
         setIsLoading(false);
       } catch (error) {
         setIsLoading(false);
         console.log(error);
       }
     };
+    inputRef.current.value = '';
     UploadAsync();
+    
     // const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
     
     // uploadBytes(imageRef, imageUpload).then((snapshot) => {
