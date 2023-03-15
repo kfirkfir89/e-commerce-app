@@ -1,3 +1,4 @@
+import { DocumentData } from 'firebase/firestore';
 import {
   ChangeEvent, FormEvent, useEffect, useState, useMemo, 
 } from 'react';
@@ -7,7 +8,9 @@ import { NewCollectionDocItemsForm, NewItem, StockItem } from '../../store/add-f
 import { featchCategoriesStart } from '../../store/categories/category.action';
 import { selectCategories } from '../../store/categories/category.selector';
 import { RootState } from '../../store/store';
-import { AddCollectionAndDocuments, addCollectionAndDocuments } from '../../utils/firebase/firebase.utils';
+import {
+  AddCollectionAndDocuments, addCollectionAndDocuments, getUserCollectionKeys, Keys, 
+} from '../../utils/firebase/firebase.utils';
 import Select, { SelectOption } from '../select/select.component';
 import UploadInput from '../upload-input/upload-input.component';
 
@@ -63,10 +66,21 @@ export const AddFirebase = () => {
   // const [selectedColors, setSelectedColors] = useState<SelectOption | undefined>(options[0]);
   const [selectedColors, setSelectedColors] = useState<SelectOption[]>([optionsColors[0]]);
   const [selectedSizes, setSelectedSizes] = useState<SelectOption[]>([optionsSizes[0]]);
+  const [collectionKeys, setCollectionKeys] = useState<string[]>([]);
   const [numInputs, setNumInputs] = useState(0);
   const categories = useSelector(selectCategories);
   const dispatch = useDispatch();
   const urlList = useSelector((state: RootState) => state.uploadImg.urlList);
+  useEffect(() => {
+    (async () => {
+      try {
+        const keys: Keys[] = await getUserCollectionKeys();
+        setCollectionKeys(keys[0].keys);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     dispatch(featchCategoriesStart(values.collectionKey)); 
@@ -79,7 +93,7 @@ export const AddFirebase = () => {
       items: values.items,  
     }];
 
-    addCollectionAndDocuments(values.collectionKey, items);
+    // addCollectionAndDocuments(values.collectionKey, items);
   };
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -109,9 +123,12 @@ export const AddFirebase = () => {
           <div className="flex flex-col items-center gap-2">
             <select defaultValue="Pick a collection" name="collectionKey" onChange={selectChange} className="select w-full max-w-xs">
               <option key={0} disabled>Pick a collection</option>
-              <option key={1}>boys</option>
-              <option key={2}>girls</option>
-              <option key={3}>categories</option>
+              {
+                collectionKeys.map((c, i) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <option key={i}>{c}</option>
+                ))
+              }
             </select>
             <select defaultValue="Pick a title(doc name)" name="title" onChange={selectChange} className="select w-full max-w-xs">
               <option key={0} disabled>Pick a title(doc name)</option>

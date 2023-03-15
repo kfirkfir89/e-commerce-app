@@ -103,7 +103,6 @@ const UploadInput = () => {
   //   });
   // // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, []);
-  console.log('urlListRENDER:', memoizedUrlList.length);
 
   const UploadAsync = useCallback(async (fileArray: File[]) => {
     dispatch(featchUploadImageStart());

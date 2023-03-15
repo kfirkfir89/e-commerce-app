@@ -84,6 +84,21 @@ export const addCollectionAndDocuments = async<T extends ObjectToAdd> (
   console.log('done');
 };
 
+export type Keys = {
+  keys: string[];
+};
+export async function getUserCollectionKeys() {
+  const collectionRef = collection(db, 'system-data');
+  const q = query(collectionRef);
+  const querySnapshot = await getDocs(q);
+
+  const res = querySnapshot.docs.map((docSnapshot) => {
+    return docSnapshot.data() as Keys;
+  });
+  return res;
+} 
+
+
 export async function getCategoriesAndDocuments(): Promise<Category[]>; 
 export async function getCategoriesAndDocuments<CK extends string>(collectionKey: CK): Promise<Category[]>; 
 export async function getCategoriesAndDocuments(collectionKey?: string) {
