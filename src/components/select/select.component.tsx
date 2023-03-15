@@ -32,7 +32,7 @@ export const Select: FC<SelectProps> = ({ multiple, value, onChange, options }: 
   const containerRef = useRef<HTMLDivElement>(null);
   
   function clearOptions() {
-    multiple ? onChange([{ label: 'Select an option', value: 'select' }]) : onChange({ label: 'Select an option', value: 'select' });
+    multiple ? onChange([]) : onChange(undefined);
   }
   
   function selectOption(option: SelectOption) {
@@ -117,7 +117,7 @@ export const Select: FC<SelectProps> = ({ multiple, value, onChange, options }: 
       <div className="border-4 w-2 border-transparent border-t-gray-400 translate-y-1 cursor-pointer"></div>
       {/* ul items */}  
       <div className={`absolute  list-none ${isOpen ? 'block' : 'hidden'} p-1 mt-1 rounded w-full left-0 top-full bg-white border border-gray-400 focus:border-white z-[100]`}>
-        <ul>
+        <ul defaultValue="option1">
           {options.map((option, index) => (
             <li role="presentation" onClick={(e) => { e.stopPropagation(); selectOption(option); setIsOpen(true); }} onMouseEnter={() => setHighlightedIndex(index)} key={option.value} className={`${isOptionSelected(option) && 'bg-gray-300'} ${index === highlightedIndex && !isOptionSelected(option) && 'bg-gray-200'} p-1 px-2 cursor-pointer`}>{option.label}</li>
           ))}

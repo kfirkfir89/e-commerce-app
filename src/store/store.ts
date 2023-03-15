@@ -6,7 +6,7 @@ import {
 import { persistStore, persistReducer, PersistConfig } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import logger from 'redux-logger';
+import { createLogger } from 'redux-logger';
 // import { loggerMiddleware } from '../middleware/logger'; //my custom logger
 
 // import thunk from "redux-thunk";
@@ -36,6 +36,11 @@ const persistConfig: ExtendedPersistConfig = {
 const sagaMiddleware = createSagaMiddleware();
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+
+const logger = createLogger({
+  collapsed: true,
+});
 
 const middleWares = [
   process.env.NODE_ENV !== 'production' 
