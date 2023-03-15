@@ -48,6 +48,7 @@ module.exports = {
     'react/jsx-props-no-spreading': 0,
     'react/display-name': 0,
     '@typescript-eslint/no-unused-expressions': 0,
+    'no-plusplus': 0,
   },
   ignorePatterns: ['/netlify/functions/create-payment-intent.js'],
 };

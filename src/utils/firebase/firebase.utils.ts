@@ -23,9 +23,12 @@ import {
   QueryDocumentSnapshot,
 } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
-
-import { Category, CategoryItem } from '../../store/categories/category.types';    
+import { getFunctions } from 'firebase/functions';
+import { NewItem } from '../../store/add-firebase/add-firebase.reducer';
+import { Category } from '../../store/categories/category.types';    
 import { NewOrderDetails } from '../../store/orders/order.types';
+
+
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -39,7 +42,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
-export const storage = getStorage(firebaseApp);
+export const functions = getFunctions();
+export const storageFB = getStorage(firebaseApp);
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -61,7 +65,7 @@ export type ObjectToAdd = {
 
 export type AddCollectionAndDocuments = [{
   title:string,
-  items:CategoryItem[]
+  items:NewItem[]
 }];
 
 export const addCollectionAndDocuments = async<T extends ObjectToAdd> (
@@ -70,8 +74,6 @@ export const addCollectionAndDocuments = async<T extends ObjectToAdd> (
 ): Promise<void> => {
   const collectionRef = collection(db, collectionKey);
   const batch = writeBatch(db);
-  console.log('fdddddddddddddd', objectToAdd);
-
 
   objectToAdd.forEach((object) => {
     const docRef = doc(collectionRef, object.title.toLowerCase());
@@ -96,7 +98,6 @@ export async function getCategoriesAndDocuments(collectionKey?: string) {
   const q = query(collectionRef);
   
   const querySnapshot = await getDocs(q);
-  console.log('FIREBASESNAP:', querySnapshot);
 
   return querySnapshot.docs.map(
     (docSnapshot) => docSnapshot.data() as Category,

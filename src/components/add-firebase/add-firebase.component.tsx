@@ -2,59 +2,36 @@ import {
   ChangeEvent, FormEvent, useEffect, useState, 
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { NewCollectionDocItemsForm, NewItem, StockItem } from '../../store/add-firebase/add-firebase.reducer';
 import { featchCategoriesStart } from '../../store/categories/category.action';
 import { selectCategories } from '../../store/categories/category.selector';
-import { CategoryItem } from '../../store/categories/category.types';
 import { AddCollectionAndDocuments, addCollectionAndDocuments } from '../../utils/firebase/firebase.utils';
 import Select, { SelectOption } from '../select/select.component';
 import UploadInput from '../upload-input/upload-input.component';
 
-type NewCollectionAndDocForm = {
-  collectionKey: string;
-  title: string;
-  items: CategoryItem[];
-};
-
-type StockItem = {
-  size: string | number;
-  color?: string;
-  supply: number;
-};
-
-type NewItem = {
-  id: string;
-  imageUrl: string[];
-  productName: string;
-  price: 0;
-  sizes: string[] | number[];
-  colors?: string[];
-  stock: StockItem[];
-};
-
-
-const defualtNewCollectionAndDocForm: NewCollectionAndDocForm = {
+const defualtNewCollectionAndDocForm: NewCollectionDocItemsForm = {
   collectionKey: '',
   title: '',
   items: [],
 };
 
-const defualtNewItem: NewItem = {
-  id: '',
-  imageUrl: [],
-  productName: '',
-  price: 0,
-  sizes: [],
-  colors: undefined,
-  stock: [],
-};
+// const defualtNewItem: NewItem = {
+//   id: '',
+//   imageUrl: [],
+//   productName: '',
+//   price: 0,
+//   sizes: [],
+//   colors: undefined,
+//   stock: [],
+// };
 
-const defualtStockItem: StockItem = {
-  size: '',
-  color: '',
-  supply: 0,
-};
+// const defualtStockItem: StockItem = {
+//   size: '',
+//   color: '',
+//   supply: 0,
+// };
 
-const optionsSizes = [
+const optionsSizes: SelectOption[] = [
   { label: 'red', value: 'Red' },
   { label: 'blue', value: 'Blue' },
   { label: 'green', value: 'Green' },
@@ -65,7 +42,7 @@ const optionsSizes = [
   { label: 'black2', value: 'Black2' },
 ];
 
-const optionsColors = [
+const optionsColors: SelectOption[] = [
   { label: '41', value: '44' },
   { label: '42', value: 'Blue' },
   { label: '43', value: 'Green' },
@@ -77,9 +54,9 @@ const optionsColors = [
 ];
 
 export const AddFirebase = () => {
-  const [values, setValues] = useState<NewCollectionAndDocForm>(defualtNewCollectionAndDocForm);
-  const [itemValues, setItemValues] = useState<NewItem>(defualtNewItem);
-  const [stockValues, setStockValues] = useState<StockItem>(defualtStockItem);
+  const [values, setValues] = useState<NewCollectionDocItemsForm>(defualtNewCollectionAndDocForm);
+  // const [itemValues, setItemValues] = useState<NewItem>(defualtNewItem);
+  // const [stockValues, setStockValues] = useState<StockItem>(defualtStockItem);
   // one option usestate
   // const [selectedColors, setSelectedColors] = useState<SelectOption | undefined>(options[0]);
   const [selectedColors, setSelectedColors] = useState<SelectOption[]>([optionsColors[0]]);
@@ -89,7 +66,6 @@ export const AddFirebase = () => {
 
   useEffect(() => {
     dispatch(featchCategoriesStart(values.collectionKey)); 
-    console.log('FORM:', categories);   
   }, []);
     
   const submitHandler = (event: FormEvent<HTMLFormElement>) => {
