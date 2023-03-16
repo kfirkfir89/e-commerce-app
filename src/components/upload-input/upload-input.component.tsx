@@ -1,5 +1,5 @@
 import {
-  ChangeEvent, useCallback, useEffect, useMemo, useReducer, useRef, useState, 
+  ChangeEvent, FC, InputHTMLAttributes, useCallback, useEffect, useMemo, useReducer, useRef, useState, 
 } from 'react';
 import {
   ref, uploadBytes, listAll, getDownloadURL, 
@@ -48,8 +48,15 @@ type ImageUploadState = {
   readonly urlList: string[];
   readonly isLoading: boolean;
   readonly error: Error | null;
-
 };
+
+
+type ImageProps = {
+  onChange: (value: string[]) => void
+};
+
+// type ImageUploadProps = {
+// } & InputHTMLAttributes<HTMLInputElement>;
 
 export const UPLOAD_INITIAL_STATE: ImageUploadState = {
   urlList: [],
@@ -82,7 +89,7 @@ export const uploadImgReducer = (
 };
 
 // COMPONENT
-const UploadInput = () => {
+const UploadInput: FC<ImageProps> = ({ onChange }: ImageProps) => {
   const [imgUpload, setImgUpload] = useState<FileList | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [state, dispatch] = useReducer(uploadImgReducer, UPLOAD_INITIAL_STATE);
@@ -119,8 +126,8 @@ const UploadInput = () => {
       urlArray.forEach((url) => {
         urlList.push(url);
       });
-      console.log('urlListNEW:', urlList.length, memoizedUrlList.length);
       // Update the state here after all uploads are complete
+      onChange(urlList);
       dispatch(featchUploadImageSuccess(urlList));
     } catch (error: any) {
       dispatch(featchUploadImageFailed(error));
