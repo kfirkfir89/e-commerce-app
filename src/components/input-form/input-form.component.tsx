@@ -5,11 +5,12 @@ import {
 export type Inputs = {
   errorMessage?: string;
   label: string;
+  focused?: string;
 };
 
 export type InputProps = InputHTMLAttributes<HTMLInputElement> & Inputs;
 
-const FormInput: FC<InputProps & { focused?: string }> = (props: InputProps) => {
+const FormInput: FC<InputProps> = (props: InputProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const {
     label, errorMessage, onChange, id, className, focused, ...inputProps

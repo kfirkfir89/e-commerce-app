@@ -149,7 +149,7 @@ const UploadInput: FC<ImageProps> = ({ onChange }: ImageProps) => {
   };
   
   return (
-    <div className="pt-40 flex justify-center">
+    <div className="flex justify-center">
       <div className="flex flex-col justify-center gap-2 max-w-xs">
         <input multiple ref={inputRef} type="file" onChange={onChangeHandler} className="file-input file-input-bordered w-full max-w-xs" accept=".jpg, .jpeg, .jpe, .png, .gif, .bmp, .webp, .svg, .svgz" />
         <button type="button" onClick={uploadImage} className={`btn max-w-xs ${isLoading && 'animate-pulse'}`}>{isLoading ? 'Loading' : 'Upload Images'}</button>

@@ -30,8 +30,6 @@ const SignUpForm = () => {
     setValues(defaultFormFields);
   };
 
-  console.log('render', values, userError);
-
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {

@@ -10,29 +10,31 @@ export type SelectOption = {
 };
 
 type MultipleSelectProps = {
+  firstOption?: SelectOption
   multiple: true
   value: SelectOption[]
   onChange: (value: SelectOption[]) => void
 };
 
 type SingleSelectProps = {
+  firstOption: SelectOption
   multiple?: false
   value?: SelectOption
   onChange: (value: SelectOption | undefined) => void
 };
 
 type SelectProps = {
-  options: SelectOption[]
+  options: SelectOption[] 
 } & (SingleSelectProps | MultipleSelectProps);
 
 // eslint-disable-next-line object-curly-newline
-export const Select: FC<SelectProps> = ({ multiple, value, onChange, options }: SelectProps) => {
+export const Select: FC<SelectProps> = ({ firstOption, multiple, value, onChange, options }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   function clearOptions() {
-    multiple ? onChange([]) : onChange(undefined);
+    multiple ? onChange([]) : onChange(firstOption);
   }
   
   function selectOption(option: SelectOption) {
@@ -119,7 +121,7 @@ export const Select: FC<SelectProps> = ({ multiple, value, onChange, options }: 
       <div className={`absolute  list-none ${isOpen ? 'block' : 'hidden'} p-1 mt-1 rounded w-full left-0 top-full bg-white border border-gray-400 focus:border-white z-[100]`}>
         <ul defaultValue="option1">
           {options.map((option, index) => (
-            <li role="presentation" onClick={(e) => { e.stopPropagation(); selectOption(option); setIsOpen(true); }} onMouseEnter={() => setHighlightedIndex(index)} key={option.value} className={`${isOptionSelected(option) && 'bg-gray-300'} ${index === highlightedIndex && !isOptionSelected(option) && 'bg-gray-200'} p-1 px-2 cursor-pointer`}>{option.label}</li>
+            <li role="presentation" onClick={(e) => { e.stopPropagation(); selectOption(option); multiple ? setIsOpen(true) : setIsOpen(false); }} onMouseEnter={() => setHighlightedIndex(index)} key={option.value} className={`${isOptionSelected(option) && 'bg-gray-300'} ${index === highlightedIndex && !isOptionSelected(option) && 'bg-gray-200'} p-1 px-2 cursor-pointer`}>{option.label}</li>
           ))}
         </ul>
       </div>
