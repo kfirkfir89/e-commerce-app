@@ -4,6 +4,9 @@ import {
   FC, useEffect, useRef, useState, 
 } from 'react';
 
+import { ReactComponent as NoColorIcon } from '../../assets/block_FILL0.svg';
+import { SelectOption } from '../select/select.component';
+
 export type SelectColorOption = {
   label: string
   value: string
@@ -11,6 +14,7 @@ export type SelectColorOption = {
 
 type SelectProps = {
   value: SelectColorOption[]
+  firstOption: SelectOption
   onChange: (value: SelectColorOption[]) => void
 };
 
@@ -19,7 +23,7 @@ type SelectColorProps = {
 } & SelectProps;
 
 // eslint-disable-next-line object-curly-newline
-export const SelectColor: FC<SelectColorProps> = ({ value, onChange, options }: SelectColorProps) => {
+export const SelectColor: FC<SelectColorProps> = ({ firstOption, value, onChange, options }: SelectColorProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -91,12 +95,23 @@ export const SelectColor: FC<SelectColorProps> = ({ value, onChange, options }: 
   return (
     <div ref={containerRef} tabIndex={0} onBlur={() => setIsOpen(false)} onClick={() => { setIsOpen(!isOpen); }} className="relative container flex flex-shrink items-center rounded-lg bg-white max-w-[20rem] min-h-[2.8em] border focus:outline focus:outline-offset-2 focus:outline-2 focus:outline-gray-400 p-2">
       {/* value */}
+      {Array.isArray(value) && value.length === 0 && <span className="font-semibold text-gray-700">{firstOption?.label}</span>}
       <span className="flex-grow flex gap-2 flex-wrap">
         
         {value.map((v) => (
-          <button key={v.value} onClick={(e) => { e.stopPropagation(); selectOption(v); }} className={`flex justify-center items-center ${v.value} shadow-lg h-9 w-9 rounded-lg cursor-pointer hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1`}>
-            <span className="text-lg bg-none border-none outline-none text-gray-400 hover:text-gray-700">&times;</span>
-          </button>
+          v.label === 'nocolor' 
+            ? (
+              <button key={v.value} onClick={(e) => { e.stopPropagation(); selectOption(v); }} className={`flex justify-center items-center ${v.value} shadow-lg h-9 w-9 rounded-lg cursor-pointer hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1`}>
+                <span className="text-lg bg-none border-none outline-none text-gray-400 hover:text-gray-700">
+                  <NoColorIcon />
+                </span>
+              </button>
+            ) 
+            : (
+              <button key={v.value} onClick={(e) => { e.stopPropagation(); selectOption(v); }} className={`flex justify-center items-center ${v.value} shadow-lg h-9 w-9 rounded-lg cursor-pointer hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1`}>
+                <span className="text-lg bg-none border-none outline-none text-gray-400 hover:text-gray-700">&times;</span>
+              </button>
+            )
         ))}
       </span>
       {/* close btn */}
@@ -104,19 +119,35 @@ export const SelectColor: FC<SelectColorProps> = ({ value, onChange, options }: 
       {/* diviver */}
       <div className="bg-gray-400 self-stretch w-[.05em] mx-2 opacity-70"></div>
       {/* down arrow */}
-      <div className="border-4 w-2 border-transparent border-t-gray-400 translate-y-1 cursor-pointer"></div>
+      <div className="border-4 w-2 border-transparent border-t-gray-400 translate-y-1 cursor-pointer hover:border-t-gray-700"></div>
       {/* ul items */}  
       <div className={`absolute list-none ${isOpen ? 'block' : 'hidden'} p-1 mt-1 rounded w-full left-0 top-full bg-white border border-gray-400 focus:border-white z-[100]`}>
         <div className="flex flex-wrap gap-x-4 gap-y-3">
           {options.map((option, index) => (
-            <div
-              role="presentation"
-              onClick={(e) => { e.stopPropagation(); selectOption(option); setIsOpen(true); }} 
-              onMouseEnter={() => setHighlightedIndex(index)} 
-              key={option.value} 
-              className={`${isOptionSelected(option) && ''} ${index === highlightedIndex && !isOptionSelected(option) && ''} px-2 flex justify-center items-center ${option.value} bg-[${option.value}] p-1 px-2 cursor-pointer shadow-lg h-9 w-9 rounded-lg hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1`} 
-            >
-            </div>
+            option.label === 'nocolor' 
+              ? (
+                <div
+                  role="presentation"
+                  onClick={(e) => { e.stopPropagation(); selectOption(option); setIsOpen(true); }} 
+                  onMouseEnter={() => setHighlightedIndex(index)} 
+                  key={option.value} 
+                  className={`${isOptionSelected(option) && ''} ${index === highlightedIndex && !isOptionSelected(option) && ''} px-2 flex justify-center items-center ${option.value} bg-[${option.value}] p-1 px-2 cursor-pointer shadow-lg h-9 w-9 rounded-lg hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1`}
+                >
+                  <div className="opacity-40">
+                    <NoColorIcon />
+                  </div>
+                </div>
+              ) 
+              : (
+                <div
+                  role="presentation"
+                  onClick={(e) => { e.stopPropagation(); selectOption(option); setIsOpen(true); }} 
+                  onMouseEnter={() => setHighlightedIndex(index)} 
+                  key={option.value} 
+                  className={`${isOptionSelected(option) && ''} ${index === highlightedIndex && !isOptionSelected(option) && ''} px-2 flex justify-center items-center ${option.value} bg-[${option.value}] p-1 px-2 cursor-pointer shadow-lg h-9 w-9 rounded-lg hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1`}
+                >
+                </div>
+              )
           ))}
         </div>
       </div>

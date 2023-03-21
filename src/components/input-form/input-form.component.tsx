@@ -19,20 +19,20 @@ const FormInput: FC<InputProps> = (props: InputProps) => {
   const handleFocus = (e: ChangeEvent<HTMLInputElement>) => {
     setIsFocused(true);
   };
-
   return (
-    <div className="flex flex-col w-full">
+    <div className="container max-w-xs flex flex-col justify-center items-center ">
       <input
         {...inputProps}
-        className="input my-2 outline focus:outline-secondary outline-slate-300 outline-offset-2 outline-2 border-[0px] border-r-8 border-slate-200 peer"
+        className="flex flex-shrink items-center rounded-lg bg-white w-full min-h-[2.8em] border focus:outline focus:outline-offset-2 focus:outline-2 focus:outline-gray-400 p-2 peer"
         onChange={onChange}
         onBlur={handleFocus}
         onFocus={() => inputProps.name === 'confirmPassword' && setIsFocused(true)}
         focused={isFocused.toString()}
         placeholder={label}
       />
-      <span className="text-xs text-red-600 hidden peer-invalid:peer-[[focused=true]]:block">{errorMessage}</span>
+      <span className="text-xs self-start p-1 text-red-600 hidden peer-invalid:peer-[[focused=true]]:block">{errorMessage}</span>
     </div>
+    
   );
 };
 

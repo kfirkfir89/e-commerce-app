@@ -6,7 +6,7 @@ import {
 
 export type SelectOption = {
   label: string
-  value: string | number
+  value: string
 };
 
 type MultipleSelectProps = {
@@ -102,8 +102,8 @@ export const Select: FC<SelectProps> = ({ firstOption, multiple, value, onChange
   return (
     <div ref={containerRef} tabIndex={0} onBlur={() => setIsOpen(false)} onClick={() => { setIsOpen(!isOpen); }} className="relative container flex flex-shrink items-center rounded-lg bg-white max-w-[20rem] min-h-[2.8em] border focus:outline focus:outline-offset-2 focus:outline-2 focus:outline-gray-400 p-2">
       {/* value */}
-      <span className="flex-grow flex gap-2 flex-wrap">
-        {}
+      {Array.isArray(value) && value.length === 0 && <span className="font-semibold text-gray-700">{firstOption?.label}</span>}
+      <span className="flex-grow flex gap-2 flex-wrap font-semibold text-gray-700">
         {multiple ? value.map((v) => (
           <button key={v.value} onClick={(e) => { e.stopPropagation(); selectOption(v); }} className="flex items-center px-2 border-2 rounded cursor-pointer bg-none hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1">
             {v.label}
@@ -116,7 +116,7 @@ export const Select: FC<SelectProps> = ({ firstOption, multiple, value, onChange
       {/* diviver */}
       <div className="bg-gray-400 self-stretch w-[.05em] mx-2 opacity-70"></div>
       {/* down arrow */}
-      <div className="border-4 w-2 border-transparent border-t-gray-400 translate-y-1 cursor-pointer"></div>
+      <div className="border-4 w-2 border-transparent border-t-gray-400 translate-y-1 cursor-pointer hover:border-t-gray-700"></div>
       {/* ul items */}  
       <div className={`absolute  list-none ${isOpen ? 'block' : 'hidden'} p-1 mt-1 rounded w-full left-0 top-full bg-white border border-gray-400 focus:border-white z-[100]`}>
         <ul defaultValue="option1">
