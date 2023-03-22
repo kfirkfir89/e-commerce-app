@@ -32,7 +32,7 @@ export const Select: FC<SelectProps> = ({ firstOption, multiple, value, onChange
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-
+  console.log('firstOption:', firstOption);
   function clearOptions() {
     multiple ? onChange([]) : onChange(firstOption);
   }
@@ -103,6 +103,7 @@ export const Select: FC<SelectProps> = ({ firstOption, multiple, value, onChange
     <div ref={containerRef} tabIndex={0} onBlur={() => setIsOpen(false)} onClick={() => { setIsOpen(!isOpen); }} className="relative container flex flex-shrink items-center rounded-lg bg-white max-w-[20rem] min-h-[2.8em] border focus:outline focus:outline-offset-2 focus:outline-2 focus:outline-gray-400 p-2">
       {/* value */}
       {Array.isArray(value) && value.length === 0 && <span className="font-semibold text-gray-700">{firstOption?.label}</span>}
+      {value && !Array.isArray(value) && value !== undefined && value.value === '' && <span className="font-semibold text-gray-700">{firstOption?.label}</span>}
       <span className="flex-grow flex gap-2 flex-wrap font-semibold text-gray-700">
         {multiple ? value.map((v) => (
           <button key={v.value} onClick={(e) => { e.stopPropagation(); selectOption(v); }} className="flex items-center px-2 border-2 rounded cursor-pointer bg-none hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1">

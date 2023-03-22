@@ -20,7 +20,7 @@ const FormInput: FC<InputProps> = (props: InputProps) => {
     setIsFocused(true);
   };
   return (
-    <div className="container max-w-xs flex flex-col justify-center items-center ">
+    <div className="flex flex-col justify-center items-center ">
       <input
         {...inputProps}
         className="flex flex-shrink items-center rounded-lg bg-white w-full min-h-[2.8em] border focus:outline focus:outline-offset-2 focus:outline-2 focus:outline-gray-400 p-2 peer"

@@ -180,17 +180,17 @@ const UploadInput: FC<ImageProps> = ({
   };
   
   return (
-    <div key={`${colorLabel}`} className="flex justify-center">
-      <div className="flex flex-col justify-center gap-2 max-w-xs">
+    <div key={`${colorLabel}`} className="flex justify-center max-w-xs pt-2">
+      <div className="flex flex-col justify-center gap-2">
         <input multiple ref={inputRef} type="file" onChange={onChangeHandler} className="file-input file-input-bordered w-full max-w-xs" accept=".jpg, .jpeg, .jpe, .png, .gif, .bmp, .webp, .svg, .svgz" />
         {/* button when rendering indise the component */}
         {/* <button type="button" onClick={uploadImage} className={`btn max-w-xs ${isLoading && 'animate-pulse'}`}>{isLoading ? 'Loading' : 'Upload Images'}</button> */}
         {error && <span className="flex justify-center font-semibold text-red-600">somthing&apos;s goes wrong, try again</span>}
-        <div className="flex">
+        <div className="flex flex-wrap">
           {memoizedimgUploadArr.map((img) => {
             // preview before upload
           // eslint-disable-next-line jsx-a11y/img-redundant-alt
-            return <img className="p-1" key={`${img}`} src={img} alt="img" />; 
+            return <img className="p-1 max-w-[100px]" key={`${img}`} src={img} alt="img" />; 
           })}
         </div>
         {/* render from useMemo after uploaded */}

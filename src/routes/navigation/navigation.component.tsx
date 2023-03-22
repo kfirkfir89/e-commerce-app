@@ -24,67 +24,79 @@ const Navigation = () => {
 
   return (
     <>
-      <div className="sticky top-0 z-50 flex justify-center sm:px-6">
-        <div className="grid grid-cols-1 w-screen container relative">
-          
-          <div className="flex flex-col w-full items-center justify-center py-2 z-40 sm:hidden">
-            <MenuIcon /> 
+      <div className="navbar flex-col m-0 bg-base-100">
+        {/* main navbar */}
+        <div className="navbar min-h-fit p-0 m-0 flex items-start">
+          <div className="flex-1 ">
+            <div className="flex-none sm:flex-none">
+              <div className="flex flex-col w-full items-center justify-center pl-2 pt-2 z-40 sm:hidden">
+                <MenuIcon /> 
+              </div>
+            </div>
+            <div className="flex-none z-50 pl-2">
+              <Link to="/">
+                <div className="font-custom whitespace-nowrap text-xl sm:text-3xl text-slate-700 hover:text-secondary hover:animate-waving-hand">nana-style</div>
+              </Link>
+            </div>
           </div>
-          <div className="top-0 w-full absolute z-30 flex justify-center pb-4">
-            <div className="container">
-              <div className="navbar justify-center min-h-[20px] p-0">        
-                <div className="flex-1 z-50 pl-10 sm:p-0">
-                  <Link to="/">
-                    <div className="font-custom text-xl sm:text-3xl text-slate-700 hover:text-secondary hover:animate-waving-hand">nana-style</div>
-                  </Link>
-                </div>
-                <div className="flex-none z-50">
-                  <Link to="/dashboard">DB</Link>
-                  {
-                      currentUser === null
-                        ? (
-                          <div className="flex-1 px-2">
-                            <ul className="menu menu-horizontal px-1">
-                              <li><Link to="/auth">Sign In</Link></li>
-                            </ul>
+          <div className="flex-none">
+            <div className="flex w-full justify-end z-40">
+              <div className="pt-2">
+                <Link to="/dashboard">DB</Link>
+              </div>
+              {
+                  currentUser === null
+                    ? (
+                      <div className="flex-1 px-2">
+                        <ul className="menu menu-horizontal px-1">
+                          <li><Link to="/auth">Sign In</Link></li>
+                        </ul>
+                      </div>
+                    )
+                    : (
+                      <div className="dropdown dropdown-end px-2 ">
+                        <label tabIndex={0}>
+                          <div className="sm:w-8 w-7 relative flex items-center justify-center cursor-pointer">
+                            <FaceMan className="hover:text-secondary hover:animate-spin" />
                           </div>
-                        )
-                        : (
-                          <div className="dropdown dropdown-end px-2">
-                            <label tabIndex={0}>
-                              <div className="sm:w-8 w-7 relative flex items-center justify-center cursor-pointer">
-                                <FaceMan className="hover:text-secondary hover:animate-spin" />
-                              </div>
-                            </label>
-                            <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
-                              <li>
-                                <Link to="/profile" className="justify-between">
-                                  Profile
-                                  <span className="badge">New</span>
-                                </Link>
-                              </li>
-                              <li><Link to="/">Settings</Link></li>
-                              <li><Link to="/" onClick={signOutUser}>Logout</Link></li>
-                            </ul>
-                          </div>
-                        )
-                    }
-                  <div className="dropdown dropdown-end w-full">
-                    <CartIcon />
-                    <div tabIndex={0} className="dropdown-content p-2 drop-shadow-2xl bg-base-100 rounded-box w-80 sm:w-96">
-                      <CartDropdown />
-                    </div>
+                        </label>
+                        <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
+                          <li>
+                            <Link to="/profile" className="justify-between">
+                              Profile
+                              <span className="badge">New</span>
+                            </Link>
+                          </li>
+                          <li><Link to="/">Settings</Link></li>
+                          <li><Link to="/" onClick={signOutUser}>Logout</Link></li>
+                        </ul>
+                      </div>
+                    )
+                  }
+              <div className="flex-none z-50 pr-4">
+                <div className="dropdown dropdown-end w-full">
+                  <CartIcon />
+                  <div tabIndex={0} className="dropdown-content p-2 drop-shadow-2xl bg-base-100 rounded-box w-80 sm:w-96">
+                    <CartDropdown />
                   </div>
-                </div>  
+                </div>
               </div>
             </div>
           </div>
-
-          <NavigationLinks />
-
         </div>
-      </div>
 
+        {/* categories navbar */}
+        <div className="navbar p-0 m-0 flex items-start">
+          <div className="flex-1">
+            <div className="flex flex-col w-full items-center justify-center p-2 z-40 sm:visible">
+              <NavigationLinks />
+            </div>
+          </div>
+          <div className="flex-none z-50 p-2 pr-4">
+          </div>
+        </div>
+
+      </div>
       <Outlet />
     </>
   );

@@ -4,6 +4,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 } from 'uuid';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import slug from 'slug';
 import { NewCollectionDocItemsForm, NewItem, StockItem } from '../../store/add-firebase/add-firebase.reducer';
 import { featchCategoriesStart } from '../../store/categories/category.action';
 import { selectCategories } from '../../store/categories/category.selector';
@@ -21,12 +22,12 @@ import { ReactComponent as AddIcon } from '../../assets/add_FILL0.svg';
 import { ReactComponent as RemoveIcon } from '../../assets/remove_FILL0.svg';
 import FormInput from '../input-form/input-form.component';
 
+
 const defualtNewCollectionAndDocForm: NewCollectionDocItemsForm = {
   collectionKey: '',
   title: '',
   items: [],
 };
-
 // const defualtNewItem: NewItem = {
 //   id: '',
 //   imageUrl: [],
@@ -79,6 +80,7 @@ export type ColorImages = {
 export type ItemValues = {
   id: string
   productName: string
+  slug: string
   price: number
   colors: SelectColorOption[]
   sizes: SelectOption[]
@@ -90,6 +92,7 @@ export type ItemValues = {
 const defualtItemValues: ItemValues = {
   id: '',
   productName: '',
+  slug: '',
   price: 0,
   colors: [],
   sizes: [],
@@ -105,6 +108,7 @@ type AddItemStockProps = {
   sizes: SelectOption[]
   onChange: (ItemStock: SizeStock[]) => void
 };
+
 const AddItemStock = ({ onChange, colors, sizes }: AddItemStockProps) => {
   const [stock, setStock] = useState<SizeStock[]>([]);
 
@@ -152,7 +156,7 @@ const AddItemStock = ({ onChange, colors, sizes }: AddItemStockProps) => {
   }, [colors, sizes]);
 
   return (
-    <div className="flex flex-col max-w-xs bg-white p-1 mt-20 shadow-lg rounded-lg">
+    <div className="flex flex-col max-w-xs bg-white p-1 shadow-lg rounded-lg">
       {stock.map((item) => {
         return (
           <div key={`${item.size}`} className="flex p-2 my-2 shadow-lg rounded-lg bg-gray-200">
@@ -227,17 +231,26 @@ const AddItemStock = ({ onChange, colors, sizes }: AddItemStockProps) => {
   );
 };
 
+
 // ADDITEM COMPONENT
+
+type AddItemError = {
+  key: string
+  message: string
+};
+
+
 const AddItem = () => {
   const [addItemValues, setAddItemValues] = useState<ItemValues>(defualtItemValues);
-  const [isError, setIsError] = useState<Error | null>(null);
+  const [isError, setIsError] = useState<AddItemError[]>([]);
+  const [mounted, setMounted] = useState(false);
   // const [imgFileList, setImgFileList] = useState<ImageColorsFiles[]>([]);
   const {
     colors, sizes,
   } = addItemValues;
   const dispatch = useDispatch();
 
-  console.log('addItemValues:', isError);
+  console.log('addItemValues:', addItemValues);
   const UploadAsync = useCallback(async (listImgColors: ImageColorsFiles) => {
     // dispatch(featchUploadImageStart());
     // check if the color exsist when adding more colors after the first time
@@ -272,31 +285,39 @@ const AddItem = () => {
       dispatch(featchUploadImageFailed(error));
     }
   }, [addItemValues, dispatch]);
+  
 
-  const submitItemHandler = () => {
+  const errorChecker = () => {
     // upload the image here
     // addItemValues.imgFileList.map((listImgColors) => (
     //   UploadAsync(listImgColors)
     // ));
-    if (Array.isArray(addItemValues.stock) && addItemValues.stock.length === 0) {
-      setIsError(new Error('Upload image for the choosen color'));
-    }
-    if (Array.isArray(addItemValues.imgFileList) && addItemValues.imgFileList.length === 0) {
-      setIsError(new Error('Upload image for the choosen color'));
+    setMounted(true);
+    const newErrors: AddItemError[] = []; 
+    // if (Array.isArray(addItemValues.stock) && addItemValues.stock.length === 0) {
+    //   newErrors.push({ key: 'stock', message: 'Upload image for the choosen color' });
+    // }
+    if (Array.isArray(addItemValues.imgFileList) && addItemValues.imgFileList.length !== addItemValues.colors.length) {
+      newErrors.push({ key: 'imgFileList', message: 'Upload image for the choosen color' });
     }
     if (Array.isArray(addItemValues.sizes) && addItemValues.sizes.length === 0) {
-      setIsError(new Error('Size must be choose'));
-    }
-    if (Array.isArray(addItemValues.sizes) && addItemValues.sizes.length === 0) {
-      setIsError(new Error('Size must be choose'));
+      newErrors.push({ key: 'sizes', message: 'Size must be choose' });
     }
     if (Array.isArray(addItemValues.colors) && addItemValues.colors.length === 0) {
-      setIsError(new Error('Color must be choose or no-color option'));
+      newErrors.push({ key: 'colors', message: 'Color must be choose or no-color option' });
     }
-    if (addItemValues.productName === '' || addItemValues.price === 0) {
-      setIsError(new Error('You must enter product name and price'));
+    if (addItemValues.price === 0) {
+      newErrors.push({ key: 'price', message: 'You must enter product price' });
     }
+    if (addItemValues.productName === '') {
+      newErrors.push({ key: 'productName', message: 'You must enter product name' });
+    }
+    
+    setIsError(newErrors);
   };
+  // mounted is used to prevent this useEffect run on initial load
+  useEffect(() => { mounted && errorChecker(); }, [addItemValues]);
+
   // listen to colors for changes for removing the uploaded images
   useEffect(() => {
     setAddItemValues((prevState) => ({
@@ -304,70 +325,133 @@ const AddItem = () => {
       imgFileList: prevState.imgFileList.filter((item) => colors.some((color) => color.label === item.color)),
     }));
   }, [colors]);
-
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setAddItemValues({ ...addItemValues, [e.target.name]: e.target.value });
   };
   // prevent input number to except the following chars
   const exceptThisSymbols = ['e', 'E', '+', '-', '.'];
   return (
-    <div className="flex flex-col items-center gap-2">
-      {isError && <span className="text-2xl font-semibold text-red-700">{isError.message}</span>}
-      {/* <FormInput type="text" name="id" placeholder="Id" label="Id" onChange={onChange} required errorMessage="Price can't be 0" /> */}
-      <FormInput type="text" name="productName" placeholder="Product Name" label="ProductName" pattern="^[A-Za-z0-9]{3,50}$" onChange={onChange} required errorMessage="Enter product name" />
-      <FormInput onKeyDown={(e) => exceptThisSymbols.includes(e.key) && e.preventDefault()} type="number" name="price" placeholder="Price" label="Price" min="0" onChange={onChange} required errorMessage="Price can't be 0" />
-      <Select multiple firstOption={{ label: 'Select Size', value: '' }} options={optionsSizes} onChange={(objSizes) => { setAddItemValues({ ...addItemValues, sizes: objSizes }); }} value={addItemValues.sizes} />
-      <SelectColor firstOption={{ label: 'Select Color', value: '' }} options={optionsColors} onChange={(objColors) => { setAddItemValues({ ...addItemValues, colors: objColors }); }} value={addItemValues.colors} />
-      {
-        colors.map((color) => {
-          return (
-            color.label === 'nocolor' ? (
-              <div key={color.label} className="p-2 shadow-lg rounded-lg">
-                <div>
-                  <UploadInput
-                    colorLabel={color.label}
-                    onChange={(colorImages) => { 
-                      setAddItemValues((addItemValues) => ({ ...addItemValues, colorImagesUrls: [...addItemValues.colorImagesUrls, colorImages] })); 
-                    }}
-                    onChangeFiles={(imgColors) => { 
-                      const updatedStock = [...addItemValues.imgFileList];
-                      updatedStock.push(imgColors);
-                      setAddItemValues((prevState) => ({ ...prevState, imgFileList: updatedStock })); 
-                    }}
-                  />
-                </div>
-              </div>
-            ) : (      
-              <div key={color.label} className={`${color.value} p-2 shadow-lg rounded-lg`}>
-                <div>
-                  <UploadInput
-                    colorLabel={color.label}
-                    onChange={(colorImages) => { 
-                      setAddItemValues((addItemValues) => ({ ...addItemValues, colorImagesUrls: [...addItemValues.colorImagesUrls, colorImages] })); 
-                    }}
-                    onChangeFiles={(imgColors) => { 
-                      const updatedStock = [...addItemValues.imgFileList];
-                      updatedStock.push(imgColors);
-                      setAddItemValues((prevState) => ({ ...prevState, imgFileList: updatedStock }));  
-                    }}
-                  />
-                </div>
-              </div>
-            )
-          );
-        })
-      }
+    <div className="flex flex-col p-2">
+      {/* title */}
+      <div className="flex justify-center text-xl pb-2 text-gray-800 font-semibold">New Item</div>
+      {/* error handling */}
+      {isError.length > 0 && (
+        <div className="flex flex-col">
+          <div className="alert alert-warning shadow-lg flex flex-col my-2">
+            <div>
+              <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+              <span>Warning: Invalid the following inputs</span>
+            </div>
+            <div className="flex flex-wrap">
 
-      {/* STOCK COMPONENT */}
+              {isError.map((error) => {
+                return (
+                  <span className="text-red-600  flex" key={`${error.key}error`}>
+                    <div className="flex justify-center items-center pt-2 p-1">
+                      <div className="rounded-full w-1 h-1 bg-black opacity-50"></div>
+                    </div>
+                    {`${error.key}: ${error.message}`}
+                  </span>
+                ); 
+              })}
+            </div>
+          </div>     
+        </div>
+      )}
+
+      {/* FORM */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-2">
+
+        <div className="flex flex-col justify-center items-center ">
+          <div className="w-full max-w-xs">
+            <label className="pb-1">
+              <span className="label-text">Product Name</span>
+            </label>
+            <FormInput type="text" name="productName" placeholder="Product Name" label="Product Name" pattern="^[A-Za-z0-9]{3,50}$" onChange={onChange} required errorMessage="Enter product name" />
+          </div>
+          <div className="w-full max-w-xs">
+            <label className="label pb-1">
+              <span className="label-text">Price</span>
+            </label>
+            <FormInput onKeyDown={(e) => exceptThisSymbols.includes(e.key) && e.preventDefault()} type="number" name="price" placeholder="Price" label="Price" min="0" onChange={onChange} required errorMessage="Price can't be 0" />
+          </div>
+          <div className="w-full max-w-xs">
+            <label className="label pb-1">
+              <span className="label-text">Size</span>
+            </label>
+            <Select multiple firstOption={{ label: 'Select Size', value: '' }} options={optionsSizes} onChange={(objSizes) => { setAddItemValues({ ...addItemValues, sizes: objSizes }); }} value={addItemValues.sizes} />
+          </div>
+          <div className="w-full max-w-xs">
+            <label className="label pb-1">
+              <span className="label-text">Color</span>
+            </label>
+            <SelectColor firstOption={{ label: 'Select Color', value: '' }} options={optionsColors} onChange={(objColors) => { setAddItemValues({ ...addItemValues, colors: objColors }); }} value={addItemValues.colors} />
+          </div>
+          {/* STOCK COMPONENT */}
+          {Array.isArray(addItemValues.sizes) && addItemValues.sizes.length !== 0
+            && (
+              <div className="w-full max-w-xs">
+                <label className="label pb-1">
+                  <span className="label-text">Stock</span>
+                </label>
+                <AddItemStock
+                  onChange={(ItemStock) => { 
+                    setAddItemValues(() => ({ ...addItemValues, stock: ItemStock })); 
+                  }}
+                  colors={colors}
+                  sizes={sizes}
+                />
+              </div>
+            )}
+        </div>
+          
+        <div className="">          
+          {
+              colors.map((color) => {
+                return (
+                  color.label === 'nocolor' ? (
+                    <div key={color.label} className="p-2 mt-2 shadow-lg rounded-lg">
+                      <UploadInput
+                        colorLabel={color.label}
+                        onChange={(colorImages) => { 
+                          setAddItemValues((addItemValues) => ({ ...addItemValues, colorImagesUrls: [...addItemValues.colorImagesUrls, colorImages] })); 
+                        }}
+                        onChangeFiles={(imgColors) => { 
+                          const updatedStock = [...addItemValues.imgFileList];
+                          updatedStock.push(imgColors);
+                          setAddItemValues((prevState) => ({ ...prevState, imgFileList: updatedStock })); 
+                        }}
+                      />
+                    </div>
+                  ) : (      
+                    <div key={color.label} className={`${color.value} p-2 mt-2 shadow-lg rounded-lg`}>
+                      <UploadInput
+                        colorLabel={color.label}
+                        onChange={(colorImages) => { 
+                          setAddItemValues((addItemValues) => ({ ...addItemValues, colorImagesUrls: [...addItemValues.colorImagesUrls, colorImages] })); 
+                        }}
+                        onChangeFiles={(imgColors) => { 
+                          const updatedStock = [...addItemValues.imgFileList];
+                          updatedStock.push(imgColors);
+                          setAddItemValues((prevState) => ({ ...prevState, imgFileList: updatedStock }));  
+                        }}
+                      />
+                    </div>
+                  )
+                );
+              })
+            }
+        </div>
+
+        <div className="md:col-span-2 flex flex-col">
+          <div className="border-t border-gray-700 w-full my-2 opacity-30"></div>
+          <div className="flex justify-end">
+            <button className="btn btn-accent btn-sm text-gray-700" onClick={errorChecker}>Create Item</button>
+          </div>
+        </div>
+          
+      </div>
       
-      <AddItemStock
-        onChange={(ItemStock) => { 
-          setAddItemValues(() => ({ ...addItemValues, stock: ItemStock })); 
-        }}
-        colors={colors}
-        sizes={sizes}
-      />
-      <button className="btn btn-ghost" onClick={submitItemHandler}>Create Product</button>
     </div>
   );
 };
@@ -384,7 +468,9 @@ const SelectDbRef = ({
   collectionKey, docTitle, onChangeKey, onChangeTitle, 
 }: SelectRefProps) => {
   const [isNewCollection, setIsNewCollection] = useState(false);
+  const [isExsitingCollection, setIsExsitingCollection] = useState(false);
   const [isNewDoc, setIsNewDoc] = useState(false);
+  const [isExsitingDoc, setIsExsitingDoc] = useState(false);
 
   const [keysOptions, setKeysOptions] = useState<SelectOption[]>([]);
   const [docOptions, setDocOptions] = useState<SelectOption[]>([]);
@@ -442,33 +528,37 @@ const SelectDbRef = ({
   };
 
   return (
-    <div className="grid grid-cols-1 place-items-center gap-2">
-      <div className="flex">
-        <button className="btn btn-ghost btn-xs" onClick={() => { setIsNewCollection(true); }}>new collection</button>
-        <button className="btn btn-ghost btn-xs" onClick={() => { setIsNewCollection(false); }}>exsiting collection</button>
-      </div>
-      {isNewCollection
-        ? (
-          <>
-            <input required onChange={onChange} type="text" name="collectionKey" placeholder="new collection key" className="input input-bordered w-full max-w-xs" />
-            <input required onChange={onChange} type="text" name="title" placeholder="new doc key(title)" className="input input-bordered w-full max-w-xs" />
-          </>
-        )
-        : (
-
-          <>
-            <Select firstOption={{ label: 'Pick a collection', value: '' }} options={memoizedKeysOptions} onChange={(o: SelectOption | undefined) => { onChangeKey(o); }} value={collectionKey} />
-            <div className="flex">
-              <button className="btn btn-ghost btn-xs" onClick={() => { setIsNewDoc(true); }}>new doc</button>
-              <button className="btn btn-ghost btn-xs" onClick={() => { setIsNewDoc(false); }}>exsiting doc</button>
+    <div className="grid grid-cols-1">
+      <div className="p-2">
+        <div className="flex justify-center text-xl text-gray-800 font-semibold pb-2">Data Referance</div>
+        <div className="flex justify-center mb-2 btn-group lg:btn-group-horizontal">
+          <button className="btn btn-accent btn-xs" onClick={() => { setIsNewCollection(true); setIsExsitingCollection(false); }}>new collection</button>
+          <button className="btn btn-accent btn-xs" onClick={() => { setIsExsitingCollection(true); setIsNewCollection(false); }}>exsiting collection</button>
+        </div>
+        {isNewCollection
+            && (
+            <div className="flex justify-center items-center flex-col gap-2 w-full">
+              <input required onChange={onChange} type="text" name="collectionKey" placeholder="new collection key" className="input input-bordered w-full max-w-xs" />
+              <input required onChange={onChange} type="text" name="title" placeholder="new doc key(title)" className="input input-bordered w-full max-w-xs" />
             </div>
-            {
-            isNewDoc 
-              ? <input required onChange={onChange} type="text" name="title" placeholder="new doc key(title)" className="input input-bordered w-full max-w-xs" />
-              : <Select firstOption={{ label: 'Pick a title(doc name)', value: '' }} options={docOptions} onChange={(o: SelectOption | undefined) => { onChangeTitle(o); }} value={docTitle} />
-          }
-          </>
-        )}            
+            )}
+        {isExsitingCollection
+            && (
+            <div className="flex flex-col justify-center items-center gap-2 w-full">
+              <Select firstOption={{ label: 'Pick a collection', value: '' }} options={memoizedKeysOptions} onChange={(o: SelectOption | undefined) => { onChangeKey(o); }} value={collectionKey} />
+              <div className="flex btn-group lg:btn-group-horizontal pt-2">
+                <button className="btn btn-accent btn-xs" onClick={() => { setIsNewDoc(true); setIsExsitingDoc(false); }}>new document</button>
+                <button className="btn btn-accent btn-xs" onClick={() => { setIsExsitingDoc(true); setIsNewDoc(false); }}>exsiting document</button>
+              </div>
+              {
+                isNewDoc && <input required onChange={onChange} type="text" name="title" placeholder="new doc key(title)" className="input input-bordered w-full max-w-xs" />
+              }
+              {
+                isExsitingDoc && <Select firstOption={{ label: 'Pick a title(doc name)', value: '' }} options={docOptions} onChange={(o: SelectOption | undefined) => { onChangeTitle(o); }} value={docTitle} />
+              }
+            </div>
+            )}       
+      </div>
     </div>
   );
 };
@@ -487,25 +577,35 @@ export const AddFirebase = () => {
 
   return (
     <div className="flex flex-col justify-center items-center">
-      <div className="container p-5 h-[calc(100vh-24px)] pt-32 overflow-auto">
-        <form className="bg-purple-300 p-2" onSubmit={submitHandler}>
-          <div className="grid grid-cols-1">
+      <div className="xl:container flex justify-center w-full bg-red-700 h-[calc(100vh-24px)]">
+        <form className="bg-purple-300 w-full mx-2 p-2" onSubmit={submitHandler}>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-3">
             
             {/* SELECT REF */}
-            <SelectDbRef docTitle={{ label: values.title, value: values.title }} collectionKey={{ label: values.collectionKey, value: values.collectionKey }} onChangeKey={(collectionKey) => { collectionKey !== undefined && setValues({ ...values, collectionKey: collectionKey.value }); }} onChangeTitle={(title) => { title !== undefined && setValues({ ...values, title: title.value }); }} />
+            <div className="bg-gray-300">
+              <SelectDbRef
+                docTitle={{ label: values.title, value: values.title }}
+                collectionKey={{ label: values.collectionKey, value: values.collectionKey }} 
+                onChangeKey={(collectionKey) => { collectionKey !== undefined && setValues({ ...values, collectionKey: collectionKey.value }); }}
+                onChangeTitle={(title) => { title !== undefined && setValues({ ...values, title: title.value }); }}
+              />
+            </div>
 
             {/* ADDITEM */}
-            <AddItem />
-            
+            <div className="bg-yellow-300 sm:col-span-2">
+              {/* {values.collectionKey && values.title ? <AddItem /> : ''} */}
+              <AddItem />
+            </div>   
             {/* ITEMS */}
-            <br />
-            <div className=" flex justify-center border border-black h-5">
+            <div className="border border-black h-5 sm:col-span-3">
               <h1>Items</h1>
               {/* render Items[] HERE */}
               {/* create a card review */}
             </div>
           </div>
-          <div className="flex flex-col items-center col-span-2 pt-2">
+
+          <div className="flex flex-col items-center pt-2">
             <button type="submit" className="btn w-72">save changes</button>
           </div>
         </form>
