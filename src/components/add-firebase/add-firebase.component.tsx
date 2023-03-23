@@ -43,7 +43,7 @@ const defualtNewCollectionAndDocForm: NewCollectionDocItemsForm = {
 //   color: '',
 //   supply: 0,
 // };
-const optionsSizes: SelectOption[] = [
+const optionsShoes: SelectOption[] = [
   { label: '36', value: '36' },
   { label: '37', value: '37' },
   { label: '38', value: '38' },
@@ -52,6 +52,23 @@ const optionsSizes: SelectOption[] = [
   { label: '41', value: '41' },
   { label: '42', value: '42' },
   { label: '43', value: '43' },
+];
+const optionsClothes: SelectOption[] = [
+  { label: 'y-6', value: 'y-6' },
+  { label: 'y-7', value: 'y-7' },
+  { label: 'y-8', value: 'y-8' },
+  { label: 'y-9', value: 'y-9' },
+  { label: 'y-10', value: 'y-10' },
+  { label: 'y-11', value: 'y-11' },
+  { label: 'y-12', value: 'y-12' },
+];
+const optionsGlobal: SelectOption[] = [
+  { label: 'xs', value: 'XS' },
+  { label: 's', value: 'S' },
+  { label: 'm', value: 'M' },
+  { label: 'l', value: 'L' },
+  { label: 'xl', value: 'XL' },
+  { label: 'XXL', value: 'XXL' },
 ];
 
 const optionsColors: SelectColorOption[] = [
@@ -87,6 +104,7 @@ export type ItemValues = {
   colorImagesUrls: ColorImages[]
   imgFileList: ImageColorsFiles[]
   stock: SizeStock[]
+  details: string
 };
 
 const defualtItemValues: ItemValues = {
@@ -99,6 +117,7 @@ const defualtItemValues: ItemValues = {
   colorImagesUrls: [],
   imgFileList: [],
   stock: [],
+  details: '',
 };
 
 
@@ -111,6 +130,8 @@ type AddItemStockProps = {
 
 const AddItemStock = ({ onChange, colors, sizes }: AddItemStockProps) => {
   const [stock, setStock] = useState<SizeStock[]>([]);
+  // prevent input number to except the following chars
+  const exceptThisSymbols = ['e', 'E', '+', '-', '.'];
 
   useEffect(() => {
     onChange(stock);
@@ -155,27 +176,49 @@ const AddItemStock = ({ onChange, colors, sizes }: AddItemStockProps) => {
     });
   }, [colors, sizes]);
 
+  const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    // Find the index of the selected size in the stock state
+    const sizeIndex = stock.findIndex((s) => s.size === e.target.value);
+    if (stock[sizeIndex].colors === undefined) return;
+    // Find the index of the selected color in the colors array of the selected size
+    const colorIndex = stock[sizeIndex].colors?.findIndex((color) => color.label === c.label);
+    
+    // Update the count of the selected color
+    const updatedStock = [...stock];
+    updatedStock[sizeIndex].colors[colorIndex].count += 1;
+    
+    // Update the state with the updated stock
+    setStock(updatedStock);
+  };
+
   return (
-    <div className="flex flex-col max-w-xs bg-white p-1 shadow-lg rounded-lg">
+    <div className="flex flex-wrap justify-center mb-1 gap-x-2">
+      {/* render each size */}
       {stock.map((item) => {
         return (
-          <div key={`${item.size}`} className="flex p-2 my-2 shadow-lg rounded-lg bg-gray-200">
+          <div key={`${item.size}`} className="flex flex-col shadow-lg w-fit my-1">
 
-            <div className="flex justify-center items-center bg-white p-1 shadow-lg h-7 w-7 rounded-lg font-semibold">
+            <div className="flex justify-center items-center bg-white text-gray-700 p-1 shadow-lg w-full rounded-t-lg font-semibold">
+              Size
+              {' '}
               {item.size}
+              {' '}
+              stock
             </div>
 
-            <div className="flex flex-wrap">
+            <div className="flex flex-col w-72 sm:w-fit">
               { item.colors
-                && item.colors.map((c) => {
+                && item.colors.map((c, i) => {
                   return (
-                    <div key={`${c.label}button`} className="flex px-1 pb-1">
-                      <div className="flex justify-center items-center bg-white p-1 px-2 shadow-lg h-7 w-7 rounded-lg">
-                        <button
-                          className=""
+                    <div key={`${c.label}inputstock`} className="flex">
+                      <div className={`w-full max-w-xs ${c.value} p-2 ${(i + 1 === colors.length) ? 'rounded-b-lg' : ''}`}>
+                        <FormInput
+                          onKeyDown={(e) => exceptThisSymbols.includes(e.key) && e.preventDefault()}
+                          type="number"
                           name={c.label}
-                          onClick={() => {
-                            // Find the index of the selected size in the stock state
+                          label={`stock of size ${item.size} color ${c.label}`}
+                          min="0"
+                          onChange={(e) => { // Find the index of the selected size in the stock state
                             const sizeIndex = stock.findIndex((s) => s.size === item.size);
                             if (stock[sizeIndex].colors === undefined) return;
                             // Find the index of the selected color in the colors array of the selected size
@@ -183,42 +226,16 @@ const AddItemStock = ({ onChange, colors, sizes }: AddItemStockProps) => {
 
                             // Update the count of the selected color
                             const updatedStock = [...stock];
-                            updatedStock[sizeIndex].colors[colorIndex].count += 1;
+                            
+                            updatedStock[sizeIndex].colors[colorIndex].count = e.target.valueAsNumber;
 
                             // Update the state with the updated stock
                             setStock(updatedStock);
                           }}
-                        >
-                          <AddIcon className="opacity-30" />
-                        </button>
+                          required
+                          errorMessage="stock is empty"
+                        />
                       </div>
-                      <div className={`${c.value} p-1 px-2 shadow-lg h-7 w-7 rounded-lg`}>
-                        {c.count}
-                      </div>
-                      <div className="flex justify-center items-center bg-white p-1 px-2 shadow-lg h-7 w-7 rounded-lg">
-                        <button
-                          className=""
-                          name={c.label}
-                          onClick={() => {
-                          // Find the index of the selected size in the stock state
-                            const sizeIndex = stock.findIndex((s) => s.size === item.size);
-                            if (stock[sizeIndex].colors === undefined) return;
-                            // Find the index of the selected color in the colors array of the selected size
-                            const colorIndex = stock[sizeIndex].colors?.findIndex((color) => color.label === c.label);
-                            // Check if the count is already zero
-                            if (stock[sizeIndex].colors[colorIndex].count === 0) return;
-                            // Update the count of the selected color
-                            const updatedStock = [...stock];
-                            updatedStock[sizeIndex].colors[colorIndex].count -= 1;
-
-                            // Update the state with the updated stock
-                            setStock(updatedStock);
-                          }}
-                        >
-                          <RemoveIcon className="opacity-30" />
-                        </button>
-                      </div>
-    
                     </div>
                   );
                 })}
@@ -230,7 +247,6 @@ const AddItemStock = ({ onChange, colors, sizes }: AddItemStockProps) => {
     </div>
   );
 };
-
 
 // ADDITEM COMPONENT
 
@@ -244,13 +260,14 @@ const AddItem = () => {
   const [addItemValues, setAddItemValues] = useState<ItemValues>(defualtItemValues);
   const [isError, setIsError] = useState<AddItemError[]>([]);
   const [mounted, setMounted] = useState(false);
-  // const [imgFileList, setImgFileList] = useState<ImageColorsFiles[]>([]);
+  const [isSelectTypeOption, setIsSelectTypeOption] = useState('');
+  const [selectedTypeOption, setSelectedTypeOption] = useState<SelectOption[]>([]);
+
   const {
     colors, sizes,
   } = addItemValues;
   const dispatch = useDispatch();
 
-  console.log('addItemValues:', addItemValues);
   const UploadAsync = useCallback(async (listImgColors: ImageColorsFiles) => {
     // dispatch(featchUploadImageStart());
     // check if the color exsist when adding more colors after the first time
@@ -315,6 +332,18 @@ const AddItem = () => {
     
     setIsError(newErrors);
   };
+  // listen to selectTypeOption and sent the new option to select
+  useEffect(() => {
+    if (isSelectTypeOption === 'global') {
+      setSelectedTypeOption([...optionsGlobal]);
+    }
+    if (isSelectTypeOption === 'clothes') {
+      setSelectedTypeOption([...optionsClothes]);
+    } 
+    if (isSelectTypeOption === 'shoes') {
+      setSelectedTypeOption([...optionsShoes]);
+    }
+  }, [isSelectTypeOption]);
   // mounted is used to prevent this useEffect run on initial load
   useEffect(() => { mounted && errorChecker(); }, [addItemValues]);
 
@@ -325,19 +354,21 @@ const AddItem = () => {
       imgFileList: prevState.imgFileList.filter((item) => colors.some((color) => color.label === item.color)),
     }));
   }, [colors]);
+  
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setAddItemValues({ ...addItemValues, [e.target.name]: e.target.value });
   };
+  console.log('addItemValues:', addItemValues);
   // prevent input number to except the following chars
   const exceptThisSymbols = ['e', 'E', '+', '-', '.'];
   return (
     <div className="flex flex-col p-2">
       {/* title */}
-      <div className="flex justify-center text-xl pb-2 text-gray-800 font-semibold">New Item</div>
+      <div className="flex justify-center text-xl pb-2 text-gray-800 bg-gray-100 rounded-lg shadow-md mb-2 font-semibold">New Item</div>
       {/* error handling */}
       {isError.length > 0 && (
         <div className="flex flex-col">
-          <div className="alert alert-warning shadow-lg flex flex-col my-2">
+          <div className="alert alert-warning bg-yellow-200 shadow-lg flex flex-col my-2">
             <div>
               <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
               <span>Warning: Invalid the following inputs</span>
@@ -360,93 +391,133 @@ const AddItem = () => {
       )}
 
       {/* FORM */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 ">
+        {/* FORM INPUTS */}
+        <div className="flex justify-center sm:ml-0 ml-2 bg-gray-100 rounded-lg shadow-md">
+          <div className="flex flex-col w-80">
+            <div className="w-full max-w-xs">
+              <label className="pb-1">
+                <span className="label-text">Product Name</span>
+              </label>
+              <FormInput type="text" name="productName" placeholder="Product Name" label="Product Name" pattern="^[A-Za-z0-9]{3,50}$" onChange={onChange} required errorMessage="Enter product name" />
+            </div>
+            <div className="w-full max-w-xs">
+              <label className="label pb-1">
+                <span className="label-text">Price</span>
+              </label>
+              <FormInput onKeyDown={(e) => exceptThisSymbols.includes(e.key) && e.preventDefault()} type="number" name="price" placeholder="Price" label="Price" min="0" onChange={onChange} required errorMessage="Price can't be 0" />
+            </div>
 
-        <div className="flex flex-col justify-center items-center ">
-          <div className="w-full max-w-xs">
-            <label className="pb-1">
-              <span className="label-text">Product Name</span>
-            </label>
-            <FormInput type="text" name="productName" placeholder="Product Name" label="Product Name" pattern="^[A-Za-z0-9]{3,50}$" onChange={onChange} required errorMessage="Enter product name" />
-          </div>
-          <div className="w-full max-w-xs">
-            <label className="label pb-1">
-              <span className="label-text">Price</span>
-            </label>
-            <FormInput onKeyDown={(e) => exceptThisSymbols.includes(e.key) && e.preventDefault()} type="number" name="price" placeholder="Price" label="Price" min="0" onChange={onChange} required errorMessage="Price can't be 0" />
-          </div>
-          <div className="w-full max-w-xs">
-            <label className="label pb-1">
-              <span className="label-text">Size</span>
-            </label>
-            <Select multiple firstOption={{ label: 'Select Size', value: '' }} options={optionsSizes} onChange={(objSizes) => { setAddItemValues({ ...addItemValues, sizes: objSizes }); }} value={addItemValues.sizes} />
-          </div>
-          <div className="w-full max-w-xs">
-            <label className="label pb-1">
-              <span className="label-text">Color</span>
-            </label>
-            <SelectColor firstOption={{ label: 'Select Color', value: '' }} options={optionsColors} onChange={(objColors) => { setAddItemValues({ ...addItemValues, colors: objColors }); }} value={addItemValues.colors} />
-          </div>
-          {/* STOCK COMPONENT */}
-          {Array.isArray(addItemValues.sizes) && addItemValues.sizes.length !== 0
-            && (
-              <div className="w-full max-w-xs">
-                <label className="label pb-1">
-                  <span className="label-text">Stock</span>
-                </label>
-                <AddItemStock
-                  onChange={(ItemStock) => { 
-                    setAddItemValues(() => ({ ...addItemValues, stock: ItemStock })); 
-                  }}
-                  colors={colors}
-                  sizes={sizes}
-                />
+            <div className="w-full max-w-xs">
+              <label className="label pb-1">
+                <span className="label-text">Size types options</span>
+              </label>
+              <div className="btn-group flex justify-center">
+                <button onClick={(e) => { e.preventDefault(); setIsSelectTypeOption('global'); }} type="button" name="global" className={`btn btn-sm btn-accent border-0 text-gray-600 shadow-md ${isSelectTypeOption === 'global' ? 'bg-accent' : 'bg-gray-300'}`}>global</button>
+                <button onClick={(e) => { e.preventDefault(); setIsSelectTypeOption('clothes'); }} type="button" name="clothes" className={`btn btn-sm btn-accent border-0 text-gray-600 shadow-md ${isSelectTypeOption === 'clothes' ? 'bg-accent' : 'bg-gray-300'}`}>clothes</button>
+                <button onClick={(e) => { e.preventDefault(); setIsSelectTypeOption('shoes'); }} type="button" name="shoes" className={`btn btn-sm btn-accent border-0 text-gray-600 shadow-md ${isSelectTypeOption === 'shoes' ? 'bg-accent' : 'bg-gray-300'}`}>shoes</button>
               </div>
-            )}
-        </div>
-          
-        <div className="">          
-          {
-              colors.map((color) => {
-                return (
-                  color.label === 'nocolor' ? (
-                    <div key={color.label} className="p-2 mt-2 shadow-lg rounded-lg">
-                      <UploadInput
-                        colorLabel={color.label}
-                        onChange={(colorImages) => { 
-                          setAddItemValues((addItemValues) => ({ ...addItemValues, colorImagesUrls: [...addItemValues.colorImagesUrls, colorImages] })); 
-                        }}
-                        onChangeFiles={(imgColors) => { 
-                          const updatedStock = [...addItemValues.imgFileList];
-                          updatedStock.push(imgColors);
-                          setAddItemValues((prevState) => ({ ...prevState, imgFileList: updatedStock })); 
-                        }}
-                      />
-                    </div>
-                  ) : (      
-                    <div key={color.label} className={`${color.value} p-2 mt-2 shadow-lg rounded-lg`}>
-                      <UploadInput
-                        colorLabel={color.label}
-                        onChange={(colorImages) => { 
-                          setAddItemValues((addItemValues) => ({ ...addItemValues, colorImagesUrls: [...addItemValues.colorImagesUrls, colorImages] })); 
-                        }}
-                        onChangeFiles={(imgColors) => { 
-                          const updatedStock = [...addItemValues.imgFileList];
-                          updatedStock.push(imgColors);
-                          setAddItemValues((prevState) => ({ ...prevState, imgFileList: updatedStock }));  
-                        }}
-                      />
-                    </div>
-                  )
-                );
-              })
-            }
+            </div>
+            <div className="w-full max-w-xs">
+              <label className="label pb-1">
+                <span className="label-text">Size</span>
+              </label>
+              <div className="relative">
+                <Select multiple firstOption={{ label: 'Select Size', value: '' }} options={selectedTypeOption} onChange={(objSizes) => { setAddItemValues({ ...addItemValues, sizes: objSizes }); }} value={addItemValues.sizes} />
+                {isSelectTypeOption === '' && <div className="absolute top-0 bg-black w-full h-full cursor-not-allowed opacity-20 rounded-lg"></div>}
+              </div>
+            </div>
+
+
+
+            <div className="w-full max-w-xs">
+              <label className="label pb-1">
+                <span className="label-text">Color</span>
+              </label>
+              <SelectColor firstOption={{ label: 'Select Color', value: '' }} options={optionsColors} onChange={(objColors) => { setAddItemValues({ ...addItemValues, colors: objColors }); }} value={addItemValues.colors} />
+            </div>
+            <div className="w-full max-w-xs">
+              <label className="label pb-1">
+                <span className="label-text">Details</span>
+              </label>
+              <textarea placeholder="Item details" className="textarea textarea-bordered textarea-sm w-full max-w-xs leading-5 text-base h-32" onChange={(e) => { setAddItemValues({ ...addItemValues, details: e.target.value }); }}></textarea>
+            </div>
+          </div>
         </div>
 
-        <div className="md:col-span-2 flex flex-col">
+        {/* IMAGES */}
+        {(Array.isArray(addItemValues.colors) && addItemValues.colors.length !== 0) 
+          && (
+            <div className="flex justify-center col-span-3 lg:col-span-2 bg-gray-100 rounded-lg shadow-md">
+              <div className="flex flex-col">
+                <label className="flex p-0 m-0 justify-center">
+                  <span className="label-text">Images</span>
+                </label>          
+                <div className="flex flex-wrap justify-center gap-2 gap-y-1">
+                  {
+                  colors.map((color) => {
+                    return (
+                      color.label === 'nocolor' ? (
+                        <div key={color.label} className="p-2 mt-2 shadow-lg rounded-lg max-w-xs">
+                          <UploadInput
+                            colorLabel={color.label}
+                            onChange={(colorImages) => { 
+                              setAddItemValues((addItemValues) => ({ ...addItemValues, colorImagesUrls: [...addItemValues.colorImagesUrls, colorImages] })); 
+                            }}
+                            onChangeFiles={(imgColors) => { 
+                              const updatedStock = [...addItemValues.imgFileList];
+                              updatedStock.push(imgColors);
+                              setAddItemValues((prevState) => ({ ...prevState, imgFileList: updatedStock })); 
+                            }}
+                          />
+                        </div>
+                      ) : (      
+                        <div key={color.label} className={`${color.value} p-1 mt-1 shadow-lg rounded-lg max-w-xs`}>
+                          <UploadInput
+                            colorLabel={color.label}
+                            onChange={(colorImages) => { 
+                              setAddItemValues((addItemValues) => ({ ...addItemValues, colorImagesUrls: [...addItemValues.colorImagesUrls, colorImages] })); 
+                            }}
+                            onChangeFiles={(imgColors) => { 
+                              const updatedStock = [...addItemValues.imgFileList];
+                              updatedStock.push(imgColors);
+                              setAddItemValues((prevState) => ({ ...prevState, imgFileList: updatedStock }));  
+                            }}
+                          />
+                        </div>
+                      )
+                    );
+                  })
+                }
+                </div>
+              </div>
+            </div>
+          )}
+
+        {/* STOCK COMPONENT */}
+        <div className="flex justify-center col-span-3 bg-gray-100 rounded-lg shadow-md">
+          {(Array.isArray(addItemValues.sizes) && addItemValues.sizes.length !== 0) 
+              && (Array.isArray(addItemValues.colors) && addItemValues.colors.length !== 0)
+              && (
+                <div className="flex flex-col">
+                  <label className="label justify-center p-0 m-0">
+                    <span className="label-text">Stock</span>
+                  </label>
+                  <AddItemStock
+                    onChange={(ItemStock) => { 
+                      setAddItemValues(() => ({ ...addItemValues, stock: ItemStock })); 
+                    }}
+                    colors={colors}
+                    sizes={sizes}
+                  />
+                </div>
+              )}
+        </div>
+
+        <div className="md:col-span-3 flex flex-col">
           <div className="border-t border-gray-700 w-full my-2 opacity-30"></div>
           <div className="flex justify-end">
-            <button className="btn btn-accent btn-sm text-gray-700" onClick={errorChecker}>Create Item</button>
+            <button type="button" className="btn btn-accent btn-sm text-gray-700" onClick={errorChecker}>Create Item</button>
           </div>
         </div>
           
@@ -468,9 +539,7 @@ const SelectDbRef = ({
   collectionKey, docTitle, onChangeKey, onChangeTitle, 
 }: SelectRefProps) => {
   const [isNewCollection, setIsNewCollection] = useState(false);
-  const [isExsitingCollection, setIsExsitingCollection] = useState(false);
   const [isNewDoc, setIsNewDoc] = useState(false);
-  const [isExsitingDoc, setIsExsitingDoc] = useState(false);
 
   const [keysOptions, setKeysOptions] = useState<SelectOption[]>([]);
   const [docOptions, setDocOptions] = useState<SelectOption[]>([]);
@@ -509,6 +578,16 @@ const SelectDbRef = ({
     })();
   }, [collectionKey]);
 
+  useEffect(() => {
+    if (isNewCollection) {
+      onChangeKey({ label: '', value: '' });
+    }
+    if (isNewDoc) {
+      onChangeTitle({ label: '', value: '' });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isNewCollection, isNewDoc]);
+
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.name === 'collectionKey') {
       const newKey: SelectOption = {
@@ -526,38 +605,45 @@ const SelectDbRef = ({
       onChangeTitle(newTitle);
     }
   };
-
   return (
-    <div className="grid grid-cols-1">
-      <div className="p-2">
-        <div className="flex justify-center text-xl text-gray-800 font-semibold pb-2">Data Referance</div>
-        <div className="flex justify-center mb-2 btn-group lg:btn-group-horizontal">
-          <button className="btn btn-accent btn-xs" onClick={() => { setIsNewCollection(true); setIsExsitingCollection(false); }}>new collection</button>
-          <button className="btn btn-accent btn-xs" onClick={() => { setIsExsitingCollection(true); setIsNewCollection(false); }}>exsiting collection</button>
-        </div>
-        {isNewCollection
-            && (
-            <div className="flex justify-center items-center flex-col gap-2 w-full">
-              <input required onChange={onChange} type="text" name="collectionKey" placeholder="new collection key" className="input input-bordered w-full max-w-xs" />
-              <input required onChange={onChange} type="text" name="title" placeholder="new doc key(title)" className="input input-bordered w-full max-w-xs" />
-            </div>
-            )}
-        {isExsitingCollection
-            && (
-            <div className="flex flex-col justify-center items-center gap-2 w-full">
-              <Select firstOption={{ label: 'Pick a collection', value: '' }} options={memoizedKeysOptions} onChange={(o: SelectOption | undefined) => { onChangeKey(o); }} value={collectionKey} />
-              <div className="flex btn-group lg:btn-group-horizontal pt-2">
-                <button className="btn btn-accent btn-xs" onClick={() => { setIsNewDoc(true); setIsExsitingDoc(false); }}>new document</button>
-                <button className="btn btn-accent btn-xs" onClick={() => { setIsExsitingDoc(true); setIsNewDoc(false); }}>exsiting document</button>
+    <div className="flex flex-col">
+      <div className="flex justify-center text-xl text-gray-800 font-semibold pb-2 bg-gray-100 rounded-lg shadow-md my-2">Data Referance</div>
+      <div className="flex flex-col items-center justify-center bg-gray-100 rounded-lg shadow-md">
+        <div className="grid grid-cols-1 sm:grid-cols-2 ">
+
+          <div className="flex flex-col w-72 sm:w-80 p-2">
+            {/* TOGGLE BUTTON */}
+            <label className="pb-1 flex justify-center ">
+              <span className="label-text whitespace-nowrap pr-2 font-semibold">New collection</span>
+              <input type="checkbox" onClick={() => { setIsNewCollection(!isNewCollection); }} className="toggle toggle-success" />
+            </label>
+            {/* INPUT VALUES */}
+            <div className="flex justify-center">
+              <div className={`w-full max-w-xs shadow-md rounded-lg ${isNewCollection ? 'hidden' : 'block'}`}>
+                <Select firstOption={{ label: 'Pick a collection', value: '' }} options={memoizedKeysOptions} onChange={(o: SelectOption | undefined) => { onChangeKey(o); }} value={collectionKey} />
               </div>
-              {
-                isNewDoc && <input required onChange={onChange} type="text" name="title" placeholder="new doc key(title)" className="input input-bordered w-full max-w-xs" />
-              }
-              {
-                isExsitingDoc && <Select firstOption={{ label: 'Pick a title(doc name)', value: '' }} options={docOptions} onChange={(o: SelectOption | undefined) => { onChangeTitle(o); }} value={docTitle} />
-              }
+              <input required onChange={onChange} type="text" name="collectionKey" placeholder="new collection key" className={`input input-bordered shadow-md rounded-lg w-full max-w-xs ${isNewCollection ? 'block' : 'hidden'}`} />
             </div>
-            )}       
+          </div>
+
+          <div className="flex flex-col sm:w-80 p-2 ">
+            {/* TOGGLE BUTTON */}
+            <label className={`pb-1 flex flex-grow justify-center ${(collectionKey !== undefined && collectionKey.value === '') || isNewCollection ? 'invisible' : 'visible'}`}>
+              <span className="label-text whitespace-nowrap pr-2 font-semibold">New document</span>
+              <input type="checkbox" onClick={() => { setIsNewDoc(!isNewDoc); }} className="toggle toggle-success" disabled={isNewCollection} />
+            </label>
+            {/* INPUT VALUES */}
+            <div className="flex flex-grow justify-center">
+              <div className={`w-full max-w-xs shadow-md rounded-lg ${(isNewCollection || isNewDoc) || (collectionKey !== undefined && collectionKey.value === '') ? 'hidden' : 'block'}`}>
+                <Select firstOption={{ label: 'Pick a title(doc name)', value: '' }} options={docOptions} onChange={(o: SelectOption | undefined) => { onChangeTitle(o); }} value={docTitle} />
+              </div>
+              <div className={`${(collectionKey !== undefined && collectionKey.value === '') ? 'hidden' : 'block'} flex justify-center ${(isNewCollection || isNewDoc) && 'w-full'}`}>
+                <input required onChange={onChange} type="text" name="title" placeholder="new doc key" className={`input input-bordered shadow-md rounded-lg w-full max-w-xs ${isNewCollection || isNewDoc ? 'block' : 'hidden'}`} />
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );
@@ -574,16 +660,16 @@ export const AddFirebase = () => {
       items: values.items,  
     }];
   };
-
+  console.log('values:', values);
   return (
     <div className="flex flex-col justify-center items-center">
-      <div className="xl:container flex justify-center w-full bg-red-700 h-[calc(100vh-24px)]">
-        <form className="bg-purple-300 w-full mx-2 p-2" onSubmit={submitHandler}>
+      <div className="xl:container flex justify-center w-full h-[calc(100vh-24px)]">
+        <form className="w-full p-1" onSubmit={submitHandler}>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-3">
+          <div className="grid grid-cols-1 gap-x-3">
             
             {/* SELECT REF */}
-            <div className="bg-gray-300">
+            <div className="bg-gray-200 rounded-lg mb-2 h-36 px-1 shadow-lg ">
               <SelectDbRef
                 docTitle={{ label: values.title, value: values.title }}
                 collectionKey={{ label: values.collectionKey, value: values.collectionKey }} 
@@ -591,14 +677,15 @@ export const AddFirebase = () => {
                 onChangeTitle={(title) => { title !== undefined && setValues({ ...values, title: title.value }); }}
               />
             </div>
+            <div className="border-t border-gray-700 w-full mb-2 opacity-30"></div>
 
             {/* ADDITEM */}
-            <div className="bg-yellow-300 sm:col-span-2">
+            <div className="bg-gray-200 rounded-lg mb-2 px-1 shadow-lg">
               {/* {values.collectionKey && values.title ? <AddItem /> : ''} */}
               <AddItem />
             </div>   
             {/* ITEMS */}
-            <div className="border border-black h-5 sm:col-span-3">
+            <div className="border border-black h-5">
               <h1>Items</h1>
               {/* render Items[] HERE */}
               {/* create a card review */}

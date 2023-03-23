@@ -32,7 +32,6 @@ export const Select: FC<SelectProps> = ({ firstOption, multiple, value, onChange
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  console.log('firstOption:', firstOption);
   function clearOptions() {
     multiple ? onChange([]) : onChange(firstOption);
   }
