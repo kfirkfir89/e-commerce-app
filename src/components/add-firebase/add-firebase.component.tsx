@@ -206,7 +206,7 @@ const AddItemStock = ({ onChange, colors, sizes }: AddItemStockProps) => {
               stock
             </div>
 
-            <div className="flex flex-col w-72 sm:w-fit">
+            <div className="flex flex-col w-72 sm:w-72">
               { item.colors
                 && item.colors.map((c, i) => {
                   return (
@@ -393,7 +393,7 @@ const AddItem = () => {
       {/* FORM */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 ">
         {/* FORM INPUTS */}
-        <div className="flex justify-center sm:ml-0 ml-2 bg-gray-100 rounded-lg shadow-md">
+        <div className="flex justify-center sm:ml-0 ml-2 bg-gray-100 py-2 rounded-lg shadow-md">
           <div className="flex flex-col w-80">
             <div className="w-full max-w-xs">
               <label className="pb-1">
@@ -448,7 +448,7 @@ const AddItem = () => {
         {/* IMAGES */}
         {(Array.isArray(addItemValues.colors) && addItemValues.colors.length !== 0) 
           && (
-            <div className="flex justify-center col-span-3 lg:col-span-2 bg-gray-100 rounded-lg shadow-md">
+            <div className="flex justify-center col-span-3 py-2 lg:col-span-2 bg-gray-100 rounded-lg shadow-md">
               <div className="flex flex-col">
                 <label className="flex p-0 m-0 justify-center">
                   <span className="label-text">Images</span>
@@ -495,7 +495,7 @@ const AddItem = () => {
           )}
 
         {/* STOCK COMPONENT */}
-        <div className="flex justify-center col-span-3 bg-gray-100 rounded-lg shadow-md">
+        <div className="flex justify-center col-span-3 py-2 bg-gray-100 rounded-lg shadow-md">
           {(Array.isArray(addItemValues.sizes) && addItemValues.sizes.length !== 0) 
               && (Array.isArray(addItemValues.colors) && addItemValues.colors.length !== 0)
               && (
@@ -608,8 +608,8 @@ const SelectDbRef = ({
   return (
     <div className="flex flex-col">
       <div className="flex justify-center text-xl text-gray-800 font-semibold pb-2 bg-gray-100 rounded-lg shadow-md my-2">Data Referance</div>
-      <div className="flex flex-col items-center justify-center bg-gray-100 rounded-lg shadow-md">
-        <div className="grid grid-cols-1 sm:grid-cols-2 ">
+      <div className="flex flex-col items-center justify-center bg-gray-100 h-24 rounded-lg shadow-md">
+        <div className="grid grid-cols-1 sm:grid-cols-2">
 
           <div className="flex flex-col w-72 sm:w-80 p-2">
             {/* TOGGLE BUTTON */}
@@ -626,7 +626,7 @@ const SelectDbRef = ({
             </div>
           </div>
 
-          <div className="flex flex-col sm:w-80 p-2 ">
+          <div className="flex flex-col sm:w-80 p-2">
             {/* TOGGLE BUTTON */}
             <label className={`pb-1 flex flex-grow justify-center ${(collectionKey !== undefined && collectionKey.value === '') || isNewCollection ? 'invisible' : 'visible'}`}>
               <span className="label-text whitespace-nowrap pr-2 font-semibold">New document</span>
@@ -677,12 +677,11 @@ export const AddFirebase = () => {
                 onChangeTitle={(title) => { title !== undefined && setValues({ ...values, title: title.value }); }}
               />
             </div>
-            <div className="border-t border-gray-700 w-full mb-2 opacity-30"></div>
+            <div className="border-t border-gray-700 w-full mt-3 mb-2 opacity-30"></div>
 
             {/* ADDITEM */}
             <div className="bg-gray-200 rounded-lg mb-2 px-1 shadow-lg">
-              {/* {values.collectionKey && values.title ? <AddItem /> : ''} */}
-              <AddItem />
+              {values.collectionKey && values.title ? <AddItem /> : ''}
             </div>   
             {/* ITEMS */}
             <div className="border border-black h-5">
