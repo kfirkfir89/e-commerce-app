@@ -7,9 +7,11 @@ import {
 import { Action, AnyAction } from 'redux';
 import { v4 } from 'uuid';
 
+import { createSelector } from 'reselect';
 import { storageFB } from '../../utils/firebase/firebase.utils';
 import { ActionWithPayload, createAction, withMatcher } from '../../utils/reducer/reducer.utils';
-import { ColorImages } from '../add-firebase/add-firebase.component';
+import { ColorImages } from '../add-firebase/add-item.component';
+import { RootState } from '../../store/store';
 
   
 // ACTION AND TYPES
@@ -93,6 +95,14 @@ export const uploadImgReducer = (
 
   return state;
 };
+// SELECTOR
+const selectUploadImageReducer = (state: RootState): ImageUploadState => state.uploadImg;
+
+export const selectUploadImageUrls = createSelector(
+  [selectUploadImageReducer],
+  (uploadImg) => uploadImg.urlList,
+);
+
 
 // COMPONENT
 const UploadInput: FC<ImageProps> = ({

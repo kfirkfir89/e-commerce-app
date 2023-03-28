@@ -22,11 +22,12 @@ import {
   getDocs,
   QueryDocumentSnapshot,
 } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
-import { NewItem } from '../../store/add-firebase/add-firebase.reducer';
+import * as firestore from 'firebase-admin';
 import { Category } from '../../store/categories/category.types';    
 import { NewOrderDetails } from '../../store/orders/order.types';
+import { AddFirebaseData } from '../../components/add-firebase/add-firebase.component';
 
 
 
@@ -57,17 +58,42 @@ export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googlePro
 
 export const db = getFirestore();
 
-// COLLECTION AND DOC CREATION FUNCUNALITY
-// need to specify the key in db as title
+export const addFirebaseData = async<T extends AddFirebaseData> (newData: T): Promise<void> => {
+  const { collectionKey, title, items } = newData;
+  const collectionRef = collection(db, collectionKey);
+  const docRef = doc(collectionRef, title);
+  const batch = writeBatch(db);
+
+  items.forEach((item) => {
+    batch.set(docRef, item);
+    console.log('item:', item);
+  });
+  
+  await batch.commit();
+  console.log('done');
+};
+
+export const deleteImageUrls = async (urlList: string[]) => {
+  urlList.forEach((url) => {
+    const imageRef = ref(storageFB, url);
+    deleteObject(imageRef)
+      .catch((error) => {
+        console.log('Failed to delete image: ', error);
+      });
+  });
+};
+
 export type ObjectToAdd = {
   title: string;
 };
 
 export type AddCollectionAndDocuments = [{
   title:string,
-  items:NewItem[]
+  items:[]
 }];
 
+// COLLECTION AND DOC CREATION FUNCUNALITY
+// need to specify the key in db as title
 export const addCollectionAndDocuments = async<T extends ObjectToAdd> (
   collectionKey: string,
   objectToAdd: T[],

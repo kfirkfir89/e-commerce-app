@@ -1,16 +1,17 @@
 import {
-  useState, FC, ChangeEvent, InputHTMLAttributes, 
+  useState, FC, ChangeEvent, InputHTMLAttributes, forwardRef, 
 } from 'react';
 
 export type Inputs = {
   errorMessage?: string;
   label: string;
   focused?: string;
+  ref?: React.Ref<HTMLInputElement | undefined>;
 };
 
 export type InputProps = InputHTMLAttributes<HTMLInputElement> & Inputs;
 
-const FormInput: FC<InputProps> = (props: InputProps) => {
+const FormInput: FC<InputProps> = forwardRef((props: InputProps, ref) => {
   const [isFocused, setIsFocused] = useState(false);
   const {
     label, errorMessage, onChange, id, className, focused, ...inputProps
@@ -23,6 +24,7 @@ const FormInput: FC<InputProps> = (props: InputProps) => {
     <div className="flex flex-col justify-center items-center ">
       <input
         {...inputProps}
+        ref={ref}
         className="flex flex-shrink items-center rounded-lg bg-white w-full min-h-[2.8em] border focus:outline focus:outline-offset-2 focus:outline-2 focus:outline-gray-400 p-2 peer"
         onChange={onChange}
         onBlur={handleFocus}
@@ -34,6 +36,6 @@ const FormInput: FC<InputProps> = (props: InputProps) => {
     </div>
     
   );
-};
+});
 
 export default FormInput;
