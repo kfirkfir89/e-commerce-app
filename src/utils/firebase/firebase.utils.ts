@@ -62,15 +62,28 @@ export const addFirebaseData = async<T extends AddFirebaseData> (newData: T): Pr
   const { collectionKey, title, items } = newData;
   const collectionRef = collection(db, collectionKey);
   const docRef = doc(collectionRef, title);
-  const batch = writeBatch(db);
 
-  items.forEach((item) => {
-    batch.set(docRef, item);
-    console.log('item:', item);
-  });
-  
-  await batch.commit();
-  console.log('done');
+  try {
+    // Check if document exists
+    const docSnapshot = await getDoc(docRef);
+    if (docSnapshot.exists()) {
+      // If document exists, append new items to existing items array
+      const existingData = docSnapshot.data() as T;
+      const updatedData = {
+        ...existingData,
+        items: [...existingData.items, ...items],
+      };
+      await setDoc(docRef, updatedData);
+      console.log('Document updated', updatedData);
+    } else {
+      // If document does not exist, create new document with items array
+      const newDataWithItems = { ...newData, items };
+      await setDoc(docRef, newDataWithItems);
+      console.log('Document created');
+    }
+  } catch (error) {
+    console.error('Error adding data:', error);
+  }
 };
 
 export const deleteImageUrls = async (urlList: string[]) => {

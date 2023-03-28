@@ -36,7 +36,7 @@ export const SelectDbRef = ({
       }
     })();
   }, []);
-
+  console.log('docOptions:', docOptions)
   // fetch the collection docs title
   useEffect(() => {
     (async () => {
@@ -44,6 +44,7 @@ export const SelectDbRef = ({
         try {
           const collectionDocs = await getCategoriesAndDocuments(collectionKey?.label);
           const docsTitle: SelectOption[] = collectionDocs.map((doc) => {
+            console.log('doc:', doc);
             return { label: doc.title, value: doc.title };
           });
           setDocOptions(docsTitle);

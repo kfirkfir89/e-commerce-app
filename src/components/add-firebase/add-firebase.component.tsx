@@ -30,7 +30,6 @@ export const AddFirebase = () => {
       title: addFirebaseReducer.title,
       items: addFirebaseReducer.items,
     };
-    
     addFirebaseData(newData);
   };
   return (
