@@ -24,7 +24,6 @@ import {
 } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
-import * as firestore from 'firebase-admin';
 import { Category } from '../../store/categories/category.types';    
 import { NewOrderDetails } from '../../store/orders/order.types';
 import { AddFirebaseData } from '../../components/add-firebase/add-firebase.component';
@@ -64,10 +63,10 @@ export const addFirebaseData = async<T extends AddFirebaseData> (newData: T): Pr
   const docRef = doc(collectionRef, title);
 
   try {
-    // Check if document exists
+    // check if document exists
     const docSnapshot = await getDoc(docRef);
     if (docSnapshot.exists()) {
-      // If document exists, append new items to existing items array
+      // if document exists, append new items to existing items array
       const existingData = docSnapshot.data() as T;
       const updatedData = {
         ...existingData,
@@ -76,7 +75,7 @@ export const addFirebaseData = async<T extends AddFirebaseData> (newData: T): Pr
       await setDoc(docRef, updatedData);
       console.log('Document updated', updatedData);
     } else {
-      // If document does not exist, create new document with items array
+      // if document does not exist, create new document with items array
       const newDataWithItems = { ...newData, items };
       await setDoc(docRef, newDataWithItems);
       console.log('Document created');

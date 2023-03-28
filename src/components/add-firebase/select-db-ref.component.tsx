@@ -1,10 +1,12 @@
 import {
-  ChangeEvent, memo, useEffect, useMemo, useState, 
+  ChangeEvent, memo, RefObject, useEffect, useMemo, useState, 
 } from 'react';
 import { getCategoriesAndDocuments, getUserCollectionKeys, Keys } from '../../utils/firebase/firebase.utils';
 import Select, { SelectOption } from '../select/select.component';
 
 type SelectRefProps = {
+  collectionRef: RefObject<HTMLInputElement>
+  titleRef: RefObject<HTMLInputElement>
   collectionKey: SelectOption | undefined
   docTitle: SelectOption | undefined
   onChangeKey: (collectionKey: SelectOption | undefined) => void
@@ -12,7 +14,7 @@ type SelectRefProps = {
 };
 
 export const SelectDbRef = ({
-  collectionKey, docTitle, onChangeKey, onChangeTitle, 
+  collectionKey, docTitle, onChangeKey, onChangeTitle, collectionRef, titleRef,
 }: SelectRefProps) => {
   const [isNewCollection, setIsNewCollection] = useState(false);
   const [isNewDoc, setIsNewDoc] = useState(false);
@@ -36,7 +38,6 @@ export const SelectDbRef = ({
       }
     })();
   }, []);
-  console.log('docOptions:', docOptions)
   // fetch the collection docs title
   useEffect(() => {
     (async () => {
@@ -44,7 +45,6 @@ export const SelectDbRef = ({
         try {
           const collectionDocs = await getCategoriesAndDocuments(collectionKey?.label);
           const docsTitle: SelectOption[] = collectionDocs.map((doc) => {
-            console.log('doc:', doc);
             return { label: doc.title, value: doc.title };
           });
           setDocOptions(docsTitle);
@@ -99,7 +99,7 @@ export const SelectDbRef = ({
               <div className={`w-full max-w-xs shadow-md rounded-lg ${isNewCollection ? 'hidden' : 'block'}`}>
                 <Select firstOption={{ label: 'Pick a collection', value: '' }} options={memoizedKeysOptions} onChange={(o: SelectOption | undefined) => { onChangeKey(o); }} value={collectionKey} />
               </div>
-              <input onChange={onChange} type="text" name="collectionKey" placeholder="new collection key" className={`input input-bordered shadow-md rounded-lg w-full max-w-xs ${isNewCollection ? 'block' : 'hidden'}`} />
+              <input ref={collectionRef} onChange={onChange} type="text" name="collectionKey" placeholder="new collection key" className={`input input-bordered shadow-md rounded-lg w-full max-w-xs ${isNewCollection ? 'block' : 'hidden'}`} />
             </div>
           </div>
 
@@ -115,7 +115,7 @@ export const SelectDbRef = ({
                 <Select firstOption={{ label: 'Pick a title(doc name)', value: '' }} options={docOptions} onChange={(o: SelectOption | undefined) => { onChangeTitle(o); }} value={docTitle} />
               </div>
               <div className={`${(collectionKey !== undefined && collectionKey.value === '') ? 'hidden' : 'block'} flex justify-center ${(isNewCollection || isNewDoc) && 'w-full'}`}>
-                <input onChange={onChange} type="text" name="title" placeholder="new doc key" className={`input input-bordered shadow-md rounded-lg w-full max-w-xs ${isNewCollection || isNewDoc ? 'block' : 'hidden'}`} />
+                <input ref={titleRef} onChange={onChange} type="text" name="title" placeholder="new doc key" className={`input input-bordered shadow-md rounded-lg w-full max-w-xs ${isNewCollection || isNewDoc ? 'block' : 'hidden'}`} />
               </div>
             </div>
           </div>

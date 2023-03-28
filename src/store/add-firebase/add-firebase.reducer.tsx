@@ -112,11 +112,9 @@ export const addFirebaseReducer = (
   }
 
   if (featchAddFirebaseDataSuccessded.match(action)) {
-    return { ...state, isLoading: false };
-  }
-
-  if (featchAddFirebaseDataSuccessded.match(action)) {
-    return { ...state, isLoading: false };
+    return {
+      collectionKey: '', title: '', items: [], error: null, isLoading: false, 
+    };
   }
 
   if (featchAddFirebaseDataFailed.match(action)) {

@@ -9,7 +9,6 @@ import * as slugFunciton from 'slug';
 import { storageFB } from '../../utils/firebase/firebase.utils';
 import { ActionWithPayload, createAction, withMatcher } from '../../utils/reducer/reducer.utils';
 
-import FormInput from '../input-form/input-form.component';
 import SelectColor, { SelectColorOption } from '../select-color/select-color.component';
 import Select, { SelectOption } from '../select/select.component';
 import UploadInput, { ImageColorsFiles } from '../upload-input/upload-input.component';
@@ -188,8 +187,8 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
   const [isSelectTypeOption, setIsSelectTypeOption] = useState('');
   const [selectedTypeOption, setSelectedTypeOption] = useState<SelectOption[]>([]);
   // useRef to reset the productName and price after reset values;
-  const productNameRef = useRef<HTMLInputElement>();
-  const priceRef = useRef<HTMLInputElement>();
+  const productNameRef = useRef<HTMLInputElement>(null);
+  const priceRef = useRef<HTMLInputElement>(null);
   const detailsRef = useRef<HTMLTextAreaElement>(null);
 
   // image upload functions
@@ -239,9 +238,6 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
 
   // error checker before submit
   function errorChecker() {
-    if (mounted === false) {
-      dispatch(featchMounted(true));
-    }
     const newErrors: AddItemError[] = []; 
 
     if (Array.isArray(imgFileList) && imgFileList.length !== colors.length) {
@@ -277,7 +273,7 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
 
   // mounted is used to prevent this useEffect run on initial load
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { mounted && errorChecker(); }, [addItemValues]);
+  useEffect(() => { !mounted && isError.length > 0 && errorChecker(); }, [addItemValues]);
 
   // useEffect for passing the newItem to parent component AddFirebase also reset form fields
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -310,6 +306,9 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
   const addItemHandler = () => {
     setAddItemValues((prevState) => ({ ...prevState, id: `${prevState.productName + v4()}` }));
     setAddItemValues((prevState) => ({ ...prevState, slug: slugFunciton(addItemValues.productName) }));
+    if (mounted === false) {
+      dispatch(featchMounted(true));
+    }
     errorChecker();
   };
 
@@ -377,13 +376,13 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
               <label className="pb-1">
                 <span className="label-text">Product Name</span>
               </label>
-              <FormInput type="text" ref={productNameRef} name="productName" placeholder="Product Name" label="Product Name" pattern="^[A-Za-z0-9]{3,50}$" onChange={onChange} required errorMessage="Enter product name" />
+              <input ref={productNameRef} onKeyDown={(e) => exceptThisSymbols.includes(e.key) && e.preventDefault()} type="text" name="productName" placeholder="Product Name" onChange={onChange} className="flex flex-shrink items-center rounded-lg bg-white w-full min-h-[2.8em] border focus:outline focus:outline-offset-2 focus:outline-2 focus:outline-gray-400 p-2" />
             </div>
             <div className="w-full max-w-xs">
               <label className="label pb-1">
                 <span className="label-text">Price</span>
               </label>
-              <FormInput ref={priceRef} onKeyDown={(e) => exceptThisSymbols.includes(e.key) && e.preventDefault()} type="number" name="price" placeholder="Price" label="Price" min="0" onChange={onChange} required errorMessage="Price can't be 0" />
+              <input ref={priceRef} onKeyDown={(e) => exceptThisSymbols.includes(e.key) && e.preventDefault()} type="number" name="price" placeholder="Price" min="0" onChange={onChange} className="flex flex-shrink items-center rounded-lg bg-white w-full min-h-[2.8em] border focus:outline focus:outline-offset-2 focus:outline-2 focus:outline-gray-400 p-2" />
             </div>
             <div className="w-full max-w-xs">
               <label className="label pb-1">
