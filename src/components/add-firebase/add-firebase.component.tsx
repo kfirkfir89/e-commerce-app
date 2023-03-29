@@ -79,7 +79,7 @@ export const AddFirebase = () => {
 
   return (
     <div className="flex flex-col justify-center items-center">
-      <div className="xl:container flex justify-center w-full h-[calc(100vh-24px)]">
+      <div className="xl:container flex justify-center w-full">
         <form className="w-full p-1" onSubmit={submitHandler}> 
           <div className="grid grid-cols-1 gap-x-3">
             {/* popup after sucsses */}

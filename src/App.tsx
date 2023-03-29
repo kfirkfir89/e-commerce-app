@@ -5,8 +5,8 @@ import { Routes, Route } from 'react-router-dom';
 import Spinner from './components/spinner/spinner.component';
 import { checkUserSession } from './store/user/user.action';
 import { PaymentSucceeded } from './routes/payment-succeeded/payment-succeeded.component';
-import AddFirebase from './components/add-firebase/add-firebase.component';
-import UploadInput from './components/upload-input/upload-input.component';
+import AdminDashboard from './routes/admin-dashboard/admin-dashboard.component';
+import AdminDBNav from './routes/admin-dashboard-nav/admin-db-nav.component';
 
 const Home = lazy(() => import('./routes/home/home.component'));
 const Authentication = lazy(() => import('./routes/authentication/authentication.component'));
@@ -42,8 +42,7 @@ const App = () => {
           <Route path="auth" element={<Authentication />} />
           <Route path="checkout" element={<CheckOut />} />
           <Route path="payment-succeeded" element={<PaymentSucceeded />} />
-          <Route path="dashboard" element={<AddFirebase />} />
-          <Route path="profile" element={<UploadInput />} />
+          <Route path="admin-dashboard/*" element={<AdminDashboard />} />
         </Route>
       </Routes>
     </Suspense>
