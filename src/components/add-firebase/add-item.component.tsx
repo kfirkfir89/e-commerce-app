@@ -118,14 +118,38 @@ const optionsGlobal: SelectOption[] = [
   { label: 'XXL', value: 'XXL' },
 ];
 const optionsColors: SelectColorOption[] = [
-  { label: 'sky', value: 'bg-sky-500' },
-  { label: 'slate', value: 'bg-slate-500' },
-  { label: 'gray', value: 'bg-gray-500' },
-  { label: 'zinc', value: 'bg-zinc-500' },
-  { label: 'red', value: 'bg-red-500' },
-  { label: 'green', value: 'bg-green-500' },
-  { label: 'yellow', value: 'bg-yellow-500' },
-  { label: 'blue', value: 'bg-blue-500' },
+  { label: 'slate', value: 'bg-slate-50' },
+  { label: 'black', value: 'bg-black' },
+  { label: 'gray1', value: 'bg-gray-300' },
+  { label: 'gray2', value: 'bg-gray-600' },
+  { label: 'stone1', value: 'bg-stone-400' },
+  { label: 'stone2', value: 'bg-stone-600' },
+  { label: 'red1', value: 'bg-red-400' },
+  { label: 'red2', value: 'bg-red-600' },
+  { label: 'orange1', value: 'bg-orange-400' },
+  { label: 'orange2', value: 'bg-orange-600' },
+  { label: 'yellow', value: 'bg-yellow-300' },
+  { label: 'amber1', value: 'bg-amber-300' },
+  { label: 'amber2', value: 'bg-amber-600' },
+  { label: 'lime1', value: 'bg-lime-300' },
+  { label: 'lime2', value: 'bg-lime-400' },
+  { label: 'green1', value: 'bg-green-300' },
+  { label: 'green2', value: 'bg-green-600' },
+  { label: 'teal', value: 'bg-teal-300' },
+  { label: 'teal', value: 'bg-teal-600' },
+  { label: 'cyan1', value: 'bg-cyan-200' },
+  { label: 'cyan3', value: 'bg-cyan-400' },
+  { label: 'sky1', value: 'bg-sky-300' },
+  { label: 'sky2', value: 'bg-sky-800' },
+  { label: 'blue', value: 'bg-blue-600' },
+  { label: 'purple1', value: 'bg-purple-300' },
+  { label: 'purple2', value: 'bg-purple-600' },
+  { label: 'fuchsia1', value: 'bg-fuchsia-300' },
+  { label: 'fuchsia2', value: 'bg-fuchsia-600' },
+  { label: 'pink1', value: 'bg-pink-300' },
+  { label: 'pink2', value: 'bg-pink-600' },
+  { label: 'rose1', value: 'bg-rose-300' },
+  { label: 'rose2', value: 'bg-rose-800' },
   { label: 'nocolor', value: 'bg-white' },
 ];
 
@@ -198,7 +222,7 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
     if (addItemValues.colorImagesUrls.some((colorImg) => colorImg.color === imgFileList.color)) {
       return;
     }
-    const urlList:string[] = [];
+
     try {
       const promises = imgFileList.files.map(async (file) => {
         const imageRef = ref(storageFB, `images/${file.name + v4()}`);
@@ -208,17 +232,8 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
   
       const urlArray = await Promise.all(promises);
   
-      urlArray.forEach((url) => {
-        urlList.push(url);
-      });
-      // Update the state here after all uploads are complete
-      // create an obj type to pass
-      // const colorImages:ColorImages = {
-      //   itemUrlList: urlList,
-      //   color: colorLabel,
-      // }; 
       const colorImages: ColorImages = {
-        itemUrlList: urlList,
+        itemUrlList: urlArray,
         color: imgFileList.color,
       };
       setAddItemValues((prevState) => { return { ...prevState, colorImagesUrls: [...prevState.colorImagesUrls, colorImages], imgFileList: [] }; });
@@ -227,14 +242,14 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
     }
   }, [addItemValues, dispatch]);
   
-  const imageUploadAsync = async () => {
+  async function imageUploadAsync() {
     dispatch(featchUploadImageStart);
     const uploadPromises = imgFileList.map((fileList) => {
       return UploadAsync(fileList);
     });
     const responses = await Promise.all(uploadPromises);
     dispatch(featchUploadImageSuccess);
-  };
+  }
 
   // error checker before submit
   function errorChecker() {
@@ -312,10 +327,10 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
     errorChecker();
   };
 
-  const AddItemAsync = () => {
+  const AddItemAsync = async () => {
     if (isError.length === 0 && mounted) {
       dispatch(featchMounted(false));
-      imageUploadAsync();
+      await imageUploadAsync();
     }
   };
 
@@ -327,7 +342,7 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
       dispatch(featchMounted(false));
     }
     if (mounted && isError.length === 0) {
-      AddItemAsync();
+      const promise = AddItemAsync();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isError, mounted]);

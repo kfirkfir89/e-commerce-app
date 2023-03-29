@@ -12,7 +12,7 @@ import {
 import { SelectDbRef } from './select-db-ref.component';
 import { AddItem, NewItemValues } from './add-item.component';
 import Items from './items.component';
-import { addFirebaseData } from '../../utils/firebase/firebase.utils';
+import { addFirebaseData, setUserCollectionKeys } from '../../utils/firebase/firebase.utils';
 
 export type AddFirebaseData = {
   collectionKey: string
@@ -43,36 +43,38 @@ export const AddFirebase = () => {
     return () => clearTimeout(timer);
   }, [showPopUp]);
  
-  const addDataAsync = async (newData:AddFirebaseData) => {
+  async function addDataAsync(newData:AddFirebaseData) {
     try {
       const res = await addFirebaseData(newData);
-      dispatch(featchAddFirebaseDataSuccessded());
-      if (collectionKeyRef.current !== null && collectionKeyRef.current !== undefined) {
-        collectionKeyRef.current.value = '';
-      }
-      if (titleKeyRef.current !== null && titleKeyRef.current !== undefined) {
-        titleKeyRef.current.value = '';
-      }
-      setShowPopUp(true);
+      const reskey = await setUserCollectionKeys(newData.collectionKey).then(() => {
+        dispatch(featchAddFirebaseDataSuccessded());
+        if (collectionKeyRef.current !== null && collectionKeyRef.current !== undefined) {
+          collectionKeyRef.current.value = '';
+        }
+        if (titleKeyRef.current !== null && titleKeyRef.current !== undefined) {
+          titleKeyRef.current.value = '';
+        }
+        setShowPopUp(true);
+      });
     } catch (error) {
       dispatch(featchAddFirebaseDataFailed(error as Error));
     }
-  };
+  }
 
   const submitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    dispatch(featchAddFirebaseData());
     if (collectionKey === '' || title === '') {
       return setIsRefMissing(true);
     }
-
+    dispatch(featchAddFirebaseData());
+    
     const newData:AddFirebaseData = {
       collectionKey: addFirebaseReducer.collectionKey,
       title: addFirebaseReducer.title,
       items: addFirebaseReducer.items,
     };
     
-    addDataAsync(newData);
+    const res = addDataAsync(newData);
   };
 
   return (

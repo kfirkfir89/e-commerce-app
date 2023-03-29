@@ -88,7 +88,7 @@ export const SelectDbRef = ({
       <div className="flex flex-col items-center justify-center pb-2 bg-gray-100 rounded-lg">
         <div className="grid grid-cols-1 sm:grid-cols-2">
 
-          <div className="flex flex-col w-72 sm:w-80 p-2">
+          <div className="flex flex-col w-72 sm:w-80 sm:h-24 p-2">
             {/* TOGGLE BUTTON */}
             <label className="pb-1 flex justify-center ">
               <span className="label-text whitespace-nowrap pr-2 font-semibold">New collection</span>
@@ -103,7 +103,7 @@ export const SelectDbRef = ({
             </div>
           </div>
 
-          <div className="flex flex-col sm:w-80 p-2">
+          <div className="flex flex-col sm:h-20 sm:w-80 p-2">
             {/* TOGGLE BUTTON */}
             <label className={`pb-1 flex flex-grow justify-center ${(collectionKey !== undefined && collectionKey.value === '') || isNewCollection ? 'invisible' : 'visible'}`}>
               <span className="label-text whitespace-nowrap pr-2 font-semibold">New document</span>

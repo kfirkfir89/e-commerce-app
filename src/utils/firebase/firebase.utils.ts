@@ -56,12 +56,40 @@ export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider)
 export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider);
 
 export const db = getFirestore();
+type UserCollectionKeys = {
+  keys: string[]
+};
+export async function setUserCollectionKeys(collectionKey: string) {
+  const collectionRef = collection(db, 'system-data');
+  const docRef = doc(collectionRef, 'user-collection-keys');
+  const docSnapshot = await getDoc(docRef);
+  const keysData = docSnapshot.data() as UserCollectionKeys;
+  const isExsist = keysData.keys.some((key) => key === collectionKey);
+
+  if (!isExsist) {
+    const updatedKeys = { ...keysData, keys: [...keysData.keys, collectionKey] };
+    await setDoc(docRef, updatedKeys);
+  }
+}
+
+export async function getUserCollectionKeys() {
+  const collectionRef = collection(db, 'system-data');
+  const q = query(collectionRef);
+  const querySnapshot = await getDocs(q);
+
+  const res = querySnapshot.docs.map((docSnapshot) => {
+    return docSnapshot.data() as Keys;
+  });
+  return res;
+}
+
 
 export const addFirebaseData = async<T extends AddFirebaseData> (newData: T): Promise<void> => {
   const { collectionKey, title, items } = newData;
   const collectionRef = collection(db, collectionKey);
   const docRef = doc(collectionRef, title);
 
+  
   try {
     // check if document exists
     const docSnapshot = await getDoc(docRef);
@@ -73,12 +101,10 @@ export const addFirebaseData = async<T extends AddFirebaseData> (newData: T): Pr
         items: [...existingData.items, ...items],
       };
       await setDoc(docRef, updatedData);
-      console.log('Document updated', updatedData);
     } else {
       // if document does not exist, create new document with items array
       const newDataWithItems = { ...newData, items };
       await setDoc(docRef, newDataWithItems);
-      console.log('Document created');
     }
   } catch (error) {
     console.error('Error adding data:', error);
@@ -125,17 +151,6 @@ export const addCollectionAndDocuments = async<T extends ObjectToAdd> (
 export type Keys = {
   keys: string[];
 };
-export async function getUserCollectionKeys() {
-  const collectionRef = collection(db, 'system-data');
-  const q = query(collectionRef);
-  const querySnapshot = await getDocs(q);
-
-  const res = querySnapshot.docs.map((docSnapshot) => {
-    return docSnapshot.data() as Keys;
-  });
-  return res;
-} 
-
 
 export async function getCategoriesAndDocuments(): Promise<Category[]>; 
 export async function getCategoriesAndDocuments<CK extends string>(collectionKey: CK): Promise<Category[]>; 

@@ -32,15 +32,15 @@ const Items = () => {
               {/* all the item data */}
               <div className="p-4">
                 <div className="grid grid-cols-2 gap-1">
-                  <label className="flex h-fit">
+                  <label className="flex flex-wrap h-fit">
                     <span className="label-text ">Name: &nbsp;</span>
                     <span className="label-text font-semibold">{item.productName}</span>
                   </label>   
-                  <label className="flex h-fit">
+                  <label className="flex flex-wrap h-fit">
                     <span className="label-text ">Price: &nbsp;</span>
                     <span className="label-text font-semibold">{item.price}</span>
                   </label>   
-                  <label className="flex h-fit">
+                  <label className="flex flex-wrap h-fit">
                     <span className="label-text ">Colors: &nbsp;</span>
                     {
                     item.colors.map((c) => {
@@ -50,12 +50,12 @@ const Items = () => {
                     })
                   }
                   </label>
-                  <label className="flex h-fit">
+                  <label className="flex flex-wrap h-fit">
                     <span className="label-text ">Sizes: &nbsp;</span>
                     {
                     item.sizes.map((s) => {
                       return (
-                        <span key={s.label} className="label-text font-semibold">
+                        <span key={s.label} className="label-text font-semibold whitespace-nowrap">
                           {`${s.label}`}
                           {' '}
                           &nbsp;
@@ -64,11 +64,7 @@ const Items = () => {
                     })
                   }
                   </label>
-                  <label className="flex h-fit">
-                    <span className="label-text ">Details: &nbsp;</span>
-                    <span className="label-text font-semibold">{`${item.details}`}</span>
-                  </label>
-                  <label className="flex h-fit">
+                  <label className="flex flex-wrap h-fit">
                     <span className="label-text ">Date: &nbsp;</span>
                     <span className="label-text font-semibold">
                       {/* {`${item.created.toString().slice(0, 10).replace(/-/g, '-').split('-')
@@ -76,6 +72,10 @@ const Items = () => {
                       .join('/')}`} */}
                       {`${item.created}`}
                     </span>
+                  </label>
+                  <label className="flex flex-wrap h-fit col-span-2">
+                    <span className="label-text ">Details: &nbsp;</span>
+                    <span className="label-text font-semibold">{`${item.details}`}</span>
                   </label>
                 </div>
               </div>

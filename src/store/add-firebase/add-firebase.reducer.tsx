@@ -124,7 +124,7 @@ export const addFirebaseReducer = (
   return state;
 };
 
-// // SAGA
+// SAGA
 // export function* addNewItem({ payload: { collectionKey } } :FeatchCategoriesStart) {
 //   try {
 //     const categoriesArray = yield* call(getCategoriesAndDocuments, collectionKey);
