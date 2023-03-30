@@ -26,7 +26,7 @@ export const SelectDbRef = ({
   // const urlList = useSelector((state: RootState) => state.uploadImg.urlList);
   // fetch the collection custom keys of the user(admin)
   useEffect(() => {
-    (async () => {
+    const featchUserCollectionKeys = async () => {
       try {
         const keys: Keys[] = await getUserCollectionKeys();
         const keysOptions: SelectOption[] = keys[0].keys.map((key) => {
@@ -36,11 +36,13 @@ export const SelectDbRef = ({
       } catch (error) {
         console.log(error);
       }
-    })();
+    };
+    const featch = featchUserCollectionKeys();
   }, []);
+  
   // fetch the collection docs title
   useEffect(() => {
-    (async () => {
+    const featchUserDocsKeys = async () => {
       if (collectionKey) {
         try {
           const collectionDocs = await getCategoriesAndDocuments(collectionKey?.label);
@@ -52,7 +54,9 @@ export const SelectDbRef = ({
           console.log(error);
         }
       }
-    })();
+    };
+    
+    const featch = featchUserDocsKeys();
   }, [collectionKey]);
 
   useEffect(() => {
@@ -127,3 +131,7 @@ export const SelectDbRef = ({
 };
 
 export default memo(SelectDbRef);
+function featchUserDocsKeys() {
+  throw new Error('Function not implemented.');
+}
+
