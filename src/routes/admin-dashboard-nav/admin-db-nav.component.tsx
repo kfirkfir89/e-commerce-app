@@ -18,10 +18,10 @@ const AdminDBNav = () => {
                   <MenuIcon /> 
                 </div>
               </div>
-              <div className="flex-none z-50 pl-2">
+              <div className="flex-none z-50 ">
                 <Link to="/">
                   <div className="flex flex-col font-dosis whitespace-nowrap text-xl sm:text-3xl text-slate-700">
-                    <img className="opacity-90 w-3/4 sm:w-full" src="src/assets/NANA STYLE.png" alt="gfd" />
+                    <img className="opacity-90 w-3/4 sm:w-full" src="/src/assets/NANA STYLE.png" alt="gfd" />
                   </div>
                 </Link>
               </div>

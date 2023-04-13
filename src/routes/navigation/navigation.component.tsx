@@ -3,7 +3,7 @@ import {
 } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import CartDropdown from '../../components/cart-dropdown/cart-dropdown.componenet';
 
 import { selectCurrentUser } from '../../store/user/user.selector';
@@ -15,21 +15,38 @@ import { signOutStart } from '../../store/user/user.action';
 
 import MenuIcon from '../menu/menu.component';
 import { selectCartCount } from '../../store/cart/cart.selector';
-import { getUserCollectionKeys, Keys } from '../../utils/firebase/firebase.utils';
-import { SelectOption } from '../../components/select/select.component';
+import { getUserCategories, getUserCollectionKeys, Keys } from '../../utils/firebase/firebase.utils';
 
 
 const Navigation = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectCurrentUser);
   const cartCount = useSelector(selectCartCount);
-  const [userCollectionKeys, setUserCollectionKeys] = useState<Keys[]>([]);
 
+  const [isHover, setIsHover] = useState(false);
+  const [hoverSelected, setHoverSelected] = useState('');
+  const [userCategories, setUserCategories] = useState<Map<string, string[]> | null>(null);
+  const [userCollectionKeys, setUserCollectionKeys] = useState<Keys | null >(null);
+
+  // featch only the userKeys(collectionKeys) from the system-data obj
   useEffect(() => {
     const featchUserCollectionKeys = async () => {
       try {
         const keys: Keys[] = await getUserCollectionKeys();
-        setUserCollectionKeys(keys);
+        setUserCollectionKeys(keys[0]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const featch = featchUserCollectionKeys();
+  }, []);
+  
+  // featch all the user categories by userCollectionKeys
+  useEffect(() => {
+    const featchUserCollectionKeys = async () => {
+      try {
+        const keys: Map<string, string[]> = await getUserCategories();
+        setUserCategories(keys);
       } catch (error) {
         console.log(error);
       }
@@ -39,53 +56,57 @@ const Navigation = () => {
 
   // useLocation is used to check if the current path if the admin dashbord to hide the web navbar
   const path = useLocation();
-  const [TEST, setTEST] = useState('');
+  
+
+
+  const memorizedCategories = useMemo(() => userCategories?.get(hoverSelected), [hoverSelected, userCategories]);
 
   const signOutUser = () => dispatch(signOutStart());
-  console.log('TEST:', TEST);
   return (
     <>
       {!(path.pathname === '/admin-dashboard' || path.pathname.match(/^\/admin-dashboard(\/.*)?$/)) && (
-        <div className="flex justify-center lg:px-4 md:py-2 pt-2">
-          <div className="navbar flex-col m-0 bg-base-100 p-0">
+        <div className="flex justify-center pt-2 lg:px-4 md:py-2">
+          <div className="flex-col p-0 m-0 navbar bg-base-100">
             {/* main navbar */}
-            <div className="navbar container min-h-fit p-0 m-0 flex ">
-              <div className="flex-1 ">
-                <div className="flex-none sm:flex-none">
-                  <div className="flex flex-col w-full items-center justify-center pl-2 pt-2 z-40 sm:hidden">
+            <div className="container flex p-0 m-0 navbar min-h-fit">
+
+              <div className="flex-1">
+                <div className="flex-none">
+                  <div className="z-40 flex flex-col items-center justify-center pt-2 pl-2 sm:hidden">
                     <MenuIcon /> 
                   </div>
                 </div>
-                <div className="flex-none z-50 pl-2">
+                <div className="sm:flex-none sm:z-50 sm:pl-2">
                   <Link to="/">
-                    <div className="flex flex-col font-dosis whitespace-nowrap text-xl sm:text-3xl text-slate-700">
-                      <img className="opacity-90 w-3/4 sm:w-full" src="/src/assets/NANA STYLE.png" alt="gfd" />
+                    <div className="flex ">
+                      <img className="w-8/12 pl-2 opacity-90 sm:w-full" src="/src/assets/NANA STYLE.png" alt="gfd" />
                     </div>
                   </Link>
                 </div>
               </div>
+
               <div className="flex-none pt-2">
-                <div className="flex w-full justify-end z-40">
+                <div className="z-40 flex justify-end w-full">
                   <div className="pt-1">
                     <Link to="/admin-dashboard">
-                      <AdminIcon className="w-9 hover:animate-pulse" />
+                      <AdminIcon className="w-8 sm:w-9 hover:animate-pulse" />
                     </Link>
                   </div>
                   {
                     currentUser === null
                       ? (
-                        <div className="flex-1 pt-3 px-4">
-                          <Link to="/auth" className="font-dosis p-1 text-slate-700 link-underline link-underline-black tracking-wide">SIGN IN</Link>
+                        <div className="flex-1 px-4 pt-3">
+                          <Link to="/auth" className="p-1 tracking-wide font-dosis text-slate-700 link-underline link-underline-black">SIGN IN</Link>
                         </div>
                       )
                       : (
-                        <div className="dropdown dropdown-end px-2 ">
+                        <div className="px-1 dropdown dropdown-end sm:px-2">
                           <label tabIndex={0}>
                             <div className="relative cursor-pointer">
-                              <ProfileIcon className="hover:animate-pulse w-11" />
+                              <ProfileIcon className="w-10 hover:animate-pulse sm:w-11" />
                             </div>
                           </label>
-                          <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
+                          <ul tabIndex={0} className="p-2 mt-3 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
                             <li>
                               <Link to="/profile" className="justify-between">
                                 Profile
@@ -98,17 +119,17 @@ const Navigation = () => {
                         </div>
                       )
                     }
-                  <div className="flex-none z-50 pr-4">
-                    <div className="dropdown dropdown-end w-full">
+                  <div className="z-50 flex-none pr-1 sm:pr-4">
+                    <div className="w-full dropdown dropdown-end">
                       <label>
-                        <div className="relative pt-[1px] cursor-pointer">
+                        <div className="relative sm:pt-[1px] cursor-pointer">
                           <div tabIndex={0} className="relative flex items-center justify-center cursor-pointer hover:animate-pulse">
-                            <ShoppingIcon />
+                            <ShoppingIcon className="w-9 sm:w-full" />
                             <span className="absolute text-[10px] opacity-70 sm:text-xs font-bold pt-3">{cartCount}</span>
                           </div>
                         </div>
                       </label>
-                      <div tabIndex={0} className="dropdown-content p-2 drop-shadow-2xl bg-base-100 rounded-box w-80 sm:w-96">
+                      <div tabIndex={0} className="p-2 dropdown-content drop-shadow-2xl bg-base-100 rounded-box w-80 sm:w-96">
                         <CartDropdown />
                       </div>
                     </div>
@@ -118,37 +139,36 @@ const Navigation = () => {
               </div>
             </div>
             {/* categories navbar */}
-            <div className="navbar min-h-min p-0 m-0 flex items-start justify-center">
+            <div className="flex items-start justify-center p-0 m-0 navbar min-h-min">
 
-              <div className="flex flex-col group w-fit items-center justify-center z-40 sm:visible">
+              <div className="z-40 flex flex-col items-center justify-center group w-fit sm:visible">
                 <div className="flex">
                   {/* MAPKEYS HERE */}
-                  <div className="flex justify-center items-center">
-                    <div className="px-3 static flex" onMouseEnter={() => setTEST('ani')} onMouseLeave={() => setTEST('yeayea')}>
-                      <Link to="/shop" className="text-base font-dosis leading-0 p-1 text-slate-700 link-underline link-underline-black tracking-wide">
-                        BOY
-                      </Link>
+                  {userCollectionKeys && userCollectionKeys.keys.map((key) => (
+                    <div key={key} className="flex items-center justify-center">
+                      <div className="static flex px-3" onMouseEnter={() => { setIsHover(true); setHoverSelected(key); }}>
+                        <Link to={`/shop/${key}`} className="p-1 text-base tracking-wide font-dosis leading-0 text-slate-700 link-underline link-underline-black">
+                          {key.toUpperCase()}
+                        </Link>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex justify-center items-center">
-                    <div className="px-3 static flex " onMouseEnter={() => setTEST('itfor')}>
-                      <Link to="/shop" className="text-base font-dosis leading-0 p-1 text-slate-700 link-underline link-underline-black tracking-wide">
-                        GIRL
-                      </Link>
-                    </div>
-                  </div>
-                  <div className="flex justify-center items-center">
-                    <div className="px-3 static flex " onMouseEnter={() => setTEST('otha')}>
-                      <Link to="/shop" className="text-base font-dosis leading-0 p-1 text-slate-700 link-underline link-underline-black tracking-wide">
-                        UNISEX
-                      </Link>
-                    </div>
-                  </div>
+                  ))}
                 </div>
 
-                <div className="group-hover:opacity-100 opacity-0 group-hover:visible invisible absolute top-28 w-screen bg-gray-200 h-20 transition ease-in delay-200">
-                  {TEST}
+                {isHover
+                && (
+                <div onBlur={() => setIsHover(false)} tabIndex={0} onMouseLeave={() => setIsHover(false)} className="absolute flex justify-center w-screen py-4 transition ease-in delay-300 bg-gray-200 top-24 sm:top-28">
+                  {memorizedCategories?.map((sc) => (
+                    <div key={sc} className="flex items-center justify-center">
+                      <div className="static flex px-3">
+                        <Link to={`shop/${hoverSelected}/${sc}`} className="p-1 text-base tracking-wide font-dosis leading-0 text-slate-700 link-underline link-underline-black">
+                          {sc.toUpperCase()}
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
                 </div>
+                )}
 
               </div>
                 

@@ -59,6 +59,42 @@ export const db = getFirestore();
 type UserCollectionKeys = {
   keys: string[]
 };
+
+
+// get the user custom subcategories (doc title) by using user custom collectionKeys
+export async function getUserKeysDocs(collectionKey: string) {
+  const collectionRef = collection(db, collectionKey);
+  const q = query(collectionRef);
+  const querySnapshot = await getDocs(q);
+  const categoryTitles: string[] = [];
+
+  const res = querySnapshot.docs.map((docSnapshot) => {
+    return docSnapshot.data() as any;
+  });
+  res.map((c) => (categoryTitles.push(c.title)));
+
+  return categoryTitles;
+}
+// get the user custom subcategories (doc title) by using user custom collectionKeys
+export async function getUserCategories() {
+  const collectionRef = collection(db, 'system-data');
+  const q = query(collectionRef);
+  const querySnapshot = await getDocs(q);
+  const data = new Map<string, any[]>();
+
+  const res = querySnapshot.docs.map((docSnapshot) => {
+    return docSnapshot.data() as Keys;
+  });  
+
+  res[0].keys.map(async (k) => {
+    const res2 = await getUserKeysDocs(k);
+    data.set(k, res2);
+  });  
+  
+  return data;
+}  
+
+// set user custom collection-keys (categories) if not exsist
 export async function setUserCollectionKeys(collectionKey: string) {
   const collectionRef = collection(db, 'system-data');
   const docRef = doc(collectionRef, 'user-collection-keys');
@@ -72,6 +108,7 @@ export async function setUserCollectionKeys(collectionKey: string) {
   }
 }
 
+// get user custom collection-keys for main navbar
 export async function getUserCollectionKeys() {
   const collectionRef = collection(db, 'system-data');
   const q = query(collectionRef);
