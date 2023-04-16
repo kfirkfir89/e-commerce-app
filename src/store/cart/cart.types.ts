@@ -1,4 +1,4 @@
-import { CategoryItem } from '../categories/category.types';
+import { NewItemValues } from '../../components/add-firebase/add-item.component';
 
 export enum CART_ACTION_TYPES {
   SET_CART_ITEMS = 'cart/SET_CART_ITEMS',
@@ -8,6 +8,6 @@ export enum CART_ACTION_TYPES {
   RESET_CART = 'cart/RESET_CART',
 }
 
-export type CartItemQuantity = CategoryItem & {
+export type CartItemQuantity = NewItemValues & {
   quantity: number;
 };

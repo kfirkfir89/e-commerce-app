@@ -1,10 +1,10 @@
-import { CategoryItem } from '../categories/category.types';
 import { CART_ACTION_TYPES, CartItemQuantity } from './cart.types';
 import {
   createAction, withMatcher, Action, ActionWithPayload, 
 } from '../../utils/reducer/reducer.utils';
+import { NewItemValues } from '../../components/add-firebase/add-item.component';
 
-const addCartItem = (cartItems: CartItemQuantity[], productToAdd: CategoryItem): CartItemQuantity[] => {
+const addCartItem = (cartItems: CartItemQuantity[], productToAdd: NewItemValues): CartItemQuantity[] => {
   // find if cartItems contains productToAdd
   const existingCartItem = cartItems.find(
     (cartItem) => cartItem.id === productToAdd.id,
@@ -56,7 +56,7 @@ export const resetCartItemsState = withMatcher((): ResetCartItemsState => create
 
 
 
-export const addItemToCart = (cartItems: CartItemQuantity[], productToAdd: CategoryItem) => {
+export const addItemToCart = (cartItems: CartItemQuantity[], productToAdd: NewItemValues) => {
   const newCartItems = addCartItem(cartItems, productToAdd);
   return setCartItems(newCartItems);
 };

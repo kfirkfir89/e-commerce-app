@@ -1,5 +1,5 @@
 import {
-  Outlet, Link, useLocation,
+  Outlet, Link, useLocation, useParams,
 } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -17,6 +17,9 @@ import MenuIcon from '../menu/menu.component';
 import { selectCartCount } from '../../store/cart/cart.selector';
 import { getUserCategories, getUserCollectionKeys, Keys } from '../../utils/firebase/firebase.utils';
 
+export type ShopCategoryRouteParams = {
+  shop: string
+};
 
 const Navigation = () => {
   const dispatch = useDispatch();
@@ -27,6 +30,8 @@ const Navigation = () => {
   const [hoverSelected, setHoverSelected] = useState('');
   const [userCategories, setUserCategories] = useState<Map<string, string[]> | null>(null);
   const [userCollectionKeys, setUserCollectionKeys] = useState<Keys | null >(null);
+
+  const { shop } = useParams<keyof ShopCategoryRouteParams>() as ShopCategoryRouteParams;
 
   // featch only the userKeys(collectionKeys) from the system-data obj
   useEffect(() => {
@@ -76,7 +81,7 @@ const Navigation = () => {
                     <MenuIcon /> 
                   </div>
                 </div>
-                <div className="sm:flex-none sm:z-50 sm:pl-2">
+                <div className="sm:flex-none z-50 sm:pl-2">
                   <Link to="/">
                     <div className="flex ">
                       <img className="w-8/12 pl-2 opacity-90 sm:w-full" src="/src/assets/NANA STYLE.png" alt="gfd" />
@@ -138,16 +143,15 @@ const Navigation = () => {
                 </div>
               </div>
             </div>
-            {/* categories navbar */}
-            <div className="flex items-start justify-center p-0 m-0 navbar min-h-min">
 
+            {/* categories navbar */}
+            <div className=" items-start justify-center p-0 m-0 navbar min-h-min hidden sm:flex">
               <div className="z-40 flex flex-col items-center justify-center group w-fit sm:visible">
                 <div className="flex">
-                  {/* MAPKEYS HERE */}
                   {userCollectionKeys && userCollectionKeys.keys.map((key) => (
                     <div key={key} className="flex items-center justify-center">
                       <div className="static flex px-3" onMouseEnter={() => { setIsHover(true); setHoverSelected(key); }}>
-                        <Link to={`/shop/${key}`} className="p-1 text-base tracking-wide font-dosis leading-0 text-slate-700 link-underline link-underline-black">
+                        <Link to={key} state={key} className="p-1 text-base tracking-wide font-dosis leading-0 text-slate-700 link-underline link-underline-black">
                           {key.toUpperCase()}
                         </Link>
                       </div>
@@ -161,7 +165,7 @@ const Navigation = () => {
                   {memorizedCategories?.map((sc) => (
                     <div key={sc} className="flex items-center justify-center">
                       <div className="static flex px-3">
-                        <Link to={`shop/${hoverSelected}/${sc}`} className="p-1 text-base tracking-wide font-dosis leading-0 text-slate-700 link-underline link-underline-black">
+                        <Link to={`${hoverSelected}/${sc}`} state={sc} className="p-1 text-base tracking-wide font-dosis leading-0 text-slate-700 link-underline link-underline-black">
                           {sc.toUpperCase()}
                         </Link>
                       </div>
@@ -169,9 +173,7 @@ const Navigation = () => {
                   ))}
                 </div>
                 )}
-
               </div>
-                
             </div>
 
           </div>

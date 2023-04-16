@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 import CategoriesPreview from '../categories-preview/categories-preview.componenet';
@@ -8,10 +8,11 @@ import { featchCategoriesStart } from '../../store/categories/category.action';
 
 const Shop = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
 
   useEffect(() => {
-    dispatch(featchCategoriesStart());    
-  }, [dispatch]);
+    dispatch(featchCategoriesStart(location.state));    
+  }, [dispatch, location.state]);
 
   return (
     <Routes>

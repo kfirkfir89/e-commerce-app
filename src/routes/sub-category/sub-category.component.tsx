@@ -1,25 +1,21 @@
-import { useState, useEffect, Fragment } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
-import ProductCard from '../../components/product-card/product-card.component';
+import { useEffect, useState } from 'react';
+import { CategoryRouteParams } from '../category/category.component';
+import { selectCategoriesIsLoading, selectCategoriesMap } from '../../store/categories/category.selector';
 import Spinner from '../../components/spinner/spinner.component';
+import ProductCard from '../../components/product-card/product-card.component';
 
-import { selectCategoriesMap, selectCategoriesIsLoading } from '../../store/categories/category.selector';
-
-export type CategoryRouteParams = {
-  category: string;
-};
-
-const Category = () => {
+const SubCategory = () => {
   const { category } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
   const categoriesMap = useSelector(selectCategoriesMap);
   const isLoading = useSelector(selectCategoriesIsLoading);
   const [products, setProducts] = useState(categoriesMap[category]);
+  
   useEffect(() => {
     setProducts(categoriesMap[category]);
-    console.log('products:', products);
   }, [category, categoriesMap]);
+  
   return (
     <>
       <h2 className="text-4xl mb-6 text-center">{category.toUpperCase()}</h2>
@@ -38,5 +34,4 @@ const Category = () => {
   );
 };
 
-
-export default Category;
+export default SubCategory;
