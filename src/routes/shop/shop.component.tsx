@@ -1,24 +1,20 @@
-import { useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 
-import CategoriesPreview from '../categories-preview/categories-preview.componenet';
-import Category from '../category/category.component';
-import { featchCategoriesStart } from '../../store/categories/category.action';
+import { useLocation, Outlet } from 'react-router-dom';
 
 const Shop = () => {
-  const dispatch = useDispatch();
   const location = useLocation();
 
-  useEffect(() => {
-    dispatch(featchCategoriesStart(location.state));    
-  }, [dispatch, location.state]);
+  // useEffect(() => {
+  //   dispatch(featchCategoriesStart(location.state)); 
+  //   console.log('state:', location.state);
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [dispatch]);
 
   return (
-    <Routes>
-      <Route index element={<CategoriesPreview />} />
-      <Route path=":category" element={<Category />} />
-    </Routes>
+    <>
+      <div>{location.state}</div>
+      <Outlet />
+    </>
   );
 };
 

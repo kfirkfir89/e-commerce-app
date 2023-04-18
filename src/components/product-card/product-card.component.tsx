@@ -1,57 +1,36 @@
-import { useDispatch, useSelector } from 'react-redux';
-
-import { addItemToCart } from '../../store/cart/cart.action';
-import { selectCartItems } from '../../store/cart/cart.selector';
-
+import { memo } from 'react';
+import { Link } from 'react-router-dom';
 import { NewItemValues } from '../add-firebase/add-item.component';
-
 
 const ProductCard = ({ product } : { product: NewItemValues }) => {
   const {
-    productName, price, colorImagesUrls, colors, stock, 
+    productName, price, colorImagesUrls, colors,
   } = product;
-  const dispatch = useDispatch();
-  const cartItems = useSelector(selectCartItems);
-
-  const addProductToCart = () => dispatch(addItemToCart(cartItems, product));
 
   return (
-    <div className="flex w-full flex-col relative">
-      <div className="max-h-96 carousel carousel-vertical">
-        {colorImagesUrls.map((color) => color.itemUrlList.filter((_, i) => i < 2)
-          .map((image) => (
-            <div key={image} className="carousel-item  h-full relative">
-              <img src={image} alt={image} />
-            </div>
-          )))}
-      </div>
-      <div className="absolute z-10 bottom-28 flex justify-center w-full bg-opacity-40">
-        <div className="rounded-full h-10 w-10 bg-white bg-opacity-40  flex justify-center items-center">
-          <button type="button" className="text-5xl pb-3 font-thin" onClick={addProductToCart}>+</button>
+    <Link to={`${product.id}`}>
+      <div className="max-w-xs">
+        <div className="relative shadow-sm">
+          <img key={colorImagesUrls[0].itemUrlList[0]} src={colorImagesUrls[0].itemUrlList[0]} alt={colorImagesUrls[0].itemUrlList[0]} className="object-cover object-center w-full max-h-96 transition-opacity duration-200 ease-in-out" />
+          <img key={colorImagesUrls[0].itemUrlList[1]} src={colorImagesUrls[0].itemUrlList[1]} alt={colorImagesUrls[0].itemUrlList[1]} className="absolute top-0 left-0 object-cover object-center w-full max-h-96 opacity-0 hover:opacity-100 transition-opacity duration-200 ease-in-out" />
         </div>
-      </div>
-      <div className="flex flex-col p-2 pb-4 gap-1">
-        <h2>{productName}</h2>
-        <div className="flex gap-1">
-          <div className="flex flex-1 flex-col gap-1">
-            <span>
+        <div className="flex flex-col mt-4">
+          <div className="pl-1 font-dosis">
+            <h2 className="tracking-widest mb-1 text-sm font-semibold">{productName}</h2>
+            <p className="font-semibold text-sm tracking-wide mb-1">
               $
+              {' '}
               {price}
-            </span>
+            </p>
             <div className="flex gap-1">
-              {colors.map((c) => <div key={c.label} className={`${c.value} w-4 h-4 rounded-full border-gray-700 border border-opacity-30`}></div>)}
-            </div>
-          </div>
-          <div className="flex-none">
-            <div className="rounded-full h-10 w-10 hover:bg-gray-100 bg-white active:bg-green-200  flex justify-center items-center">
-              <button type="button" className="text-5xl pb-3 font-thin opacity-50 hover:opacity-100" onClick={addProductToCart}>+</button>
+              {colors.map((c) => <div key={c.label} className={`${c.value} w-2 h-2 rounded-full border-gray-700 border border-opacity-30`}></div>)}
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
 
   );
 };
 
-export default ProductCard;
+export default memo(ProductCard);

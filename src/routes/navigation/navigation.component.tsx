@@ -1,5 +1,5 @@
 import {
-  Outlet, Link, useLocation, useParams,
+  Outlet, Link, useLocation, useParams, NavLink,
 } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -15,7 +15,10 @@ import { signOutStart } from '../../store/user/user.action';
 
 import MenuIcon from '../menu/menu.component';
 import { selectCartCount } from '../../store/cart/cart.selector';
-import { getUserCategories, getUserCollectionKeys, Keys } from '../../utils/firebase/firebase.utils';
+import {
+  getAllCategoriesAndDocuments, getUserCategories, getUserCollectionKeys, Keys, 
+} from '../../utils/firebase/firebase.utils';
+import { featchAllCategoriesStart, featchCategoriesInitialState, featchCategoriesStart } from '../../store/categories/category.action';
 
 export type ShopCategoryRouteParams = {
   shop: string
@@ -32,7 +35,6 @@ const Navigation = () => {
   const [userCollectionKeys, setUserCollectionKeys] = useState<Keys | null >(null);
 
   const { shop } = useParams<keyof ShopCategoryRouteParams>() as ShopCategoryRouteParams;
-
   // featch only the userKeys(collectionKeys) from the system-data obj
   useEffect(() => {
     const featchUserCollectionKeys = async () => {
@@ -58,6 +60,17 @@ const Navigation = () => {
     };
     const featch = featchUserCollectionKeys();
   }, []);
+
+  // useEffect(() => {
+  //   userCollectionKeys 
+  //   && dispatch(featchAllCategoriesStart(userCollectionKeys.keys)); 
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [userCollectionKeys]);
+  useEffect(() => {
+    userCollectionKeys 
+    && dispatch(featchCategoriesInitialState(userCollectionKeys.keys)); 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userCollectionKeys]);
 
   // useLocation is used to check if the current path if the admin dashbord to hide the web navbar
   const path = useLocation();
@@ -151,9 +164,9 @@ const Navigation = () => {
                   {userCollectionKeys && userCollectionKeys.keys.map((key) => (
                     <div key={key} className="flex items-center justify-center">
                       <div className="static flex px-3" onMouseEnter={() => { setIsHover(true); setHoverSelected(key); }}>
-                        <Link to={key} state={key} className="p-1 text-base tracking-wide font-dosis leading-0 text-slate-700 link-underline link-underline-black">
+                        <NavLink to={key} state={key} className="p-1 text-base tracking-wide font-dosis leading-0 text-slate-700 link-underline link-underline-black">
                           {key.toUpperCase()}
-                        </Link>
+                        </NavLink>
                       </div>
                     </div>
                   ))}
@@ -165,9 +178,9 @@ const Navigation = () => {
                   {memorizedCategories?.map((sc) => (
                     <div key={sc} className="flex items-center justify-center">
                       <div className="static flex px-3">
-                        <Link to={`${hoverSelected}/${sc}`} state={sc} className="p-1 text-base tracking-wide font-dosis leading-0 text-slate-700 link-underline link-underline-black">
+                        <NavLink to={`${hoverSelected}/${sc}`} state={hoverSelected} className="p-1 text-base tracking-wide font-dosis leading-0 text-slate-700 link-underline link-underline-black">
                           {sc.toUpperCase()}
-                        </Link>
+                        </NavLink>
                       </div>
                     </div>
                   ))}

@@ -21,6 +21,8 @@ import {
   query,
   getDocs,
   QueryDocumentSnapshot,
+  orderBy,
+  limit,
 } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
@@ -56,10 +58,11 @@ export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider)
 export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider);
 
 export const db = getFirestore();
+
+
 type UserCollectionKeys = {
   keys: string[]
 };
-
 
 // get the user custom subcategories (doc title) by using user custom collectionKeys
 export async function getUserKeysDocs(collectionKey: string) {
@@ -80,7 +83,7 @@ export async function getUserCategories() {
   const collectionRef = collection(db, 'system-data');
   const q = query(collectionRef);
   const querySnapshot = await getDocs(q);
-  const data = new Map<string, any[]>();
+  const data = new Map<string, string[]>();
 
   const res = querySnapshot.docs.map((docSnapshot) => {
     return docSnapshot.data() as Keys;
@@ -189,8 +192,8 @@ export type Keys = {
   keys: string[];
 };
 
-export async function getCategoriesAndDocuments(): Promise<Category[]>; 
-export async function getCategoriesAndDocuments<CK extends string>(collectionKey: CK): Promise<Category[]>; 
+export async function getCategoriesAndDocuments(): Promise<Map<string, Category[]>>; 
+export async function getCategoriesAndDocuments<CK extends string>(collectionKey: CK): Promise<Map<string, Category[]>>; 
 export async function getCategoriesAndDocuments(collectionKey?: string) {
   let key = '';
   if (!collectionKey) {
@@ -198,15 +201,67 @@ export async function getCategoriesAndDocuments(collectionKey?: string) {
   } else {
     key = collectionKey;
   }
-
+  const data = new Map<string, Category[]>();
   const collectionRef = collection(db, key);
   const q = query(collectionRef);
   
   const querySnapshot = await getDocs(q);
 
-  return querySnapshot.docs.map(
-    (docSnapshot) => docSnapshot.data() as Category,
-  );
+  const res = querySnapshot.docs.map((docSnapshot) => {
+    return docSnapshot.data() as Category;
+  });
+
+  data.set(key, res);
+  return data;
+}
+
+export async function getAllCategoriesAndDocuments(collectionKeyArray?: string[]) {
+  const data = new Map<string, Category[]>();
+
+  collectionKeyArray?.forEach(async (key) => {
+    const collectionRef = collection(db, key);
+    const q = query(collectionRef);
+    const querySnapshot = await getDocs(q);
+    const res = querySnapshot.docs.map((docSnapshot) => {
+      return docSnapshot.data() as Category;
+    });
+    data.set(key, res);
+  });
+  return data;
+}
+export async function getPreviewCategoriesAndDocuments() {
+  const data = new Map<string, Category[]>();
+  const userKeys = await getUserCollectionKeys().then((res) => res[0].keys);
+
+  const fetchCategoryData = async (key: string) => {
+    const collectionRef = collection(db, key);
+    const q = query(collectionRef);
+    const querySnapshot = await getDocs(q);
+    const categories = querySnapshot.docs.map((docSnapshot) => {
+      return docSnapshot.data() as Category;
+    });
+
+    const limitedCategories = categories.map((category) => {
+      const limitedItems = category.items.slice(0, 2);
+      return { ...category, items: limitedItems };
+    });
+
+    data.set(key, limitedCategories);
+  };
+
+  await Promise.all(userKeys.map(fetchCategoryData));
+  
+  return data;
+}
+
+export async function getSubCategoryDocument(collectionKey: string, docKey: string): Promise<Category> {
+  const docRef = doc(db, collectionKey, docKey);
+  const docSnapshot = await getDoc(docRef);
+
+  if (docSnapshot.exists()) {
+    return docSnapshot.data() as Category;
+  } 
+  throw Error(`Category with docKey '${docKey}' does not exist in collection '${collectionKey}'`);
 }
 
 // export const getCategoriesAndDocuments = async (): Promise<Category[]> => {

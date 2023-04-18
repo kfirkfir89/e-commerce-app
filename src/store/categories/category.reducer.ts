@@ -2,19 +2,21 @@ import { AnyAction } from 'redux';
 
 import { Category } from './category.types';
 
-import { featchCategoriesStart, featchCategoriesSuccess, featchCategoriesFailed } from './category.action';
+import {
+  featchCategoriesStart, featchCategoriesSuccess, featchCategoriesFailed, featchAllCategoriesStart, featchAllCategoriesSuccess, featchCategoriesInitialState, featchUpdateCategories, featchPreviewCategories, featchSubCategoryData, featchSubCategoryDataSucceeded,
+} from './category.action';
 
 // read only is an additional property you can add so that you force it, 
 // that this state object can never be modified.It can only be read.
 // with reducers you never modify the state. You always spread over and create a new state.
 export type CategoriesState = {
-  readonly categories: Category[];
+  readonly categories: Map<string, Category[]>;
   readonly isLoading: boolean;
   readonly error: Error | null;
 };
 
 export const CATEGORIES_INITIAL_STATE : CategoriesState = {
-  categories: [],
+  categories: new Map(),
   isLoading: false,
   error: null,
 };
@@ -23,11 +25,54 @@ export const categoriesReducer = (
   state = CATEGORIES_INITIAL_STATE,
   action: AnyAction,
 ): CategoriesState => {
+  if (featchCategoriesInitialState.match(action)) {
+    // set initial state for catefories when app first load to follow the expanding categories
+    const initState = new Map<string, Category[]>();
+    action.payload.forEach((key) => { initState.set(key, []); });
+
+    return { ...state, categories: initState };
+  }
+
+  if (featchUpdateCategories.match(action)) {
+    const newCategories = action.payload;
+    const mergedCategories = new Map([...state.categories, ...newCategories]);
+    return { ...state, categories: mergedCategories };
+  }
+
+  if (featchSubCategoryDataSucceeded.match(action)) {
+    const { collectionKey, subCategory } = action.payload;
+    
+    const categoriesCopy = new Map(state.categories);
+    const categoryArray = categoriesCopy.get(collectionKey) || []; // retrieve the existing Category[] array or an empty array if it doesn't exist
+    categoryArray.push(subCategory); // append the subCategory to the array
+    categoriesCopy.set(collectionKey, categoryArray); // set the updated Category[] array back into the map
+    return { ...state, isLoading: false, categories: categoriesCopy };
+  }
+
   if (featchCategoriesStart.match(action)) {
     return { ...state, isLoading: true };
   }
     
+  if (featchAllCategoriesStart.match(action)) {
+    return { ...state, isLoading: true };
+  }
+
   if (featchCategoriesSuccess.match(action)) {
+    // Clone the existing Map to create a new Map instance
+    const updatedCategories = new Map(state.categories);
+
+    // Assuming action.payload is of type Map<string, Category[]>
+    const fetchedCategories: Map<string, Category[]> = action.payload;
+
+    // Merge the fetched categories into the existing Map
+    fetchedCategories.forEach((value, key) => {
+      updatedCategories.set(key, value);
+    });
+
+    return { ...state, categories: updatedCategories, isLoading: false };
+  }
+
+  if (featchAllCategoriesSuccess.match(action)) {
     return { ...state, categories: action.payload, isLoading: false };
   }
 

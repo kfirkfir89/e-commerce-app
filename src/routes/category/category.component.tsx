@@ -1,36 +1,61 @@
 import { useState, useEffect, Fragment } from 'react';
-import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useLocation, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import ProductCard from '../../components/product-card/product-card.component';
 import Spinner from '../../components/spinner/spinner.component';
 
-import { selectCategoriesMap, selectCategoriesIsLoading } from '../../store/categories/category.selector';
+import { Category } from '../../store/categories/category.types';
+import { selectCategories, selectCategoriesIsLoading } from '../../store/categories/category.selector';
+import { featchSubCategoryData } from '../../store/categories/category.action';
 
 export type CategoryRouteParams = {
-  category: string;
+  subCategoryPara: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const Category = () => {
-  const { category } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
-  const categoriesMap = useSelector(selectCategoriesMap);
+  const { subCategoryPara } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
+  const categoriesMap = useSelector(selectCategories);
   const isLoading = useSelector(selectCategoriesIsLoading);
-  const [products, setProducts] = useState(categoriesMap[category]);
+  const [products, setProducts] = useState<Category | undefined>();
+  const location = useLocation();
+  const dispatch = useDispatch();
+
+  // filter the sub category itemsho
   useEffect(() => {
-    setProducts(categoriesMap[category]);
-    console.log('products:', products);
-  }, [category, categoriesMap]);
+    const shopCategory = categoriesMap.get(location.state);
+
+    if (shopCategory && typeof location.state === 'string') {
+      const subCategoryExsist = shopCategory.some((category: Category) => category.title === subCategoryPara);
+      if (subCategoryExsist) {
+        const filteredProducts: Category = shopCategory.find((c) => c.title === subCategoryPara)!;
+        setProducts(filteredProducts);
+      } else {
+        dispatch(featchSubCategoryData(location.state, subCategoryPara));
+      }
+    }
+
+    // const filteredProducts = categoriesMap.get(location.state)?.filter((category: Category) => category.title === categoryPara);
+    // categoriesMap.forEach((value, key) => {
+
+    // });
+  }, [categoriesMap, location.state]);
+
+  console.log('products:', products)
   return (
     <>
-      <h2 className="text-4xl mb-6 text-center">{category.toUpperCase()}</h2>
+      <h2>category page</h2>
+      <h2 className="text-4xl mb-6 text-center">{subCategoryPara.toUpperCase()}</h2>
       
       {isLoading ? (
         <Spinner />
       ) : (
         <div className="grid grid-cols-4 gap-x-5 gap-y-12">
           {products
-            && products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            && products.items.map((product, i) => (
+              products.title === subCategoryPara
+              && <ProductCard key={product.productName} product={product} />
             ))}
         </div>
       )}
