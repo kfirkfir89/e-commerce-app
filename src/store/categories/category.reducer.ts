@@ -39,15 +39,30 @@ export const categoriesReducer = (
     return { ...state, categories: mergedCategories };
   }
 
+  if (featchSubCategoryData.match(action)) {
+    return { ...state, isLoading: true };
+  }
+
   if (featchSubCategoryDataSucceeded.match(action)) {
     const { collectionKey, subCategory } = action.payload;
+    const categoryArray = state.categories.get(collectionKey) || [];
+    let subCategoryUpdated = false;
+    for (let i = 0; i < categoryArray.length; i++) {
+      if (categoryArray[i].title === subCategory.title) {
+        categoryArray[i] = subCategory; // replace the existing subCategory with the same title
+        subCategoryUpdated = true;
+        break;
+      }
+    }
+    if (!subCategoryUpdated) {
+      categoryArray.push(subCategory); // if no matching subCategory found, append the subCategory to the array
+    }
+    // Update the categoryArray in state.categories
+    state.categories.set(collectionKey, categoryArray);
     
-    const categoriesCopy = new Map(state.categories);
-    const categoryArray = categoriesCopy.get(collectionKey) || []; // retrieve the existing Category[] array or an empty array if it doesn't exist
-    categoryArray.push(subCategory); // append the subCategory to the array
-    categoriesCopy.set(collectionKey, categoryArray); // set the updated Category[] array back into the map
-    return { ...state, isLoading: false, categories: categoriesCopy };
+    return { ...state, isLoading: false, categories: new Map(state.categories) };
   }
+
 
   if (featchCategoriesStart.match(action)) {
     return { ...state, isLoading: true };

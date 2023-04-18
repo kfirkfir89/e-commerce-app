@@ -21,7 +21,7 @@ const Category = () => {
   const [products, setProducts] = useState<Category | undefined>();
   const location = useLocation();
   const dispatch = useDispatch();
-
+  console.log('categoriesMap:', categoriesMap)
   // filter the sub category itemsho
   useEffect(() => {
     const shopCategory = categoriesMap.get(location.state);
@@ -30,7 +30,11 @@ const Category = () => {
       const subCategoryExsist = shopCategory.some((category: Category) => category.title === subCategoryPara);
       if (subCategoryExsist) {
         const filteredProducts: Category = shopCategory.find((c) => c.title === subCategoryPara)!;
-        setProducts(filteredProducts);
+        if (filteredProducts.items.length < 1) {
+          dispatch(featchSubCategoryData(location.state, subCategoryPara));
+        } else {
+          setProducts(filteredProducts);
+        }
       } else {
         dispatch(featchSubCategoryData(location.state, subCategoryPara));
       }
@@ -40,9 +44,9 @@ const Category = () => {
     // categoriesMap.forEach((value, key) => {
 
     // });
-  }, [categoriesMap, location.state]);
+  }, [categoriesMap, location.state, subCategoryPara]);
 
-  console.log('products:', products)
+  console.log('products:', products);
   return (
     <>
       <h2>category page</h2>
