@@ -7,7 +7,7 @@ import Spinner from '../../components/spinner/spinner.component';
 
 import { Category } from '../../store/categories/category.types';
 import { selectCategories, selectCategoriesIsLoading } from '../../store/categories/category.selector';
-import { featchSubCategoryData } from '../../store/categories/category.action';
+import { featchSubCategory, featchSubCategoryData } from '../../store/categories/category.action';
 
 export type CategoryRouteParams = {
   subCategoryPara: string;
@@ -19,34 +19,51 @@ const Category = () => {
   const categoriesMap = useSelector(selectCategories);
   const isLoading = useSelector(selectCategoriesIsLoading);
   const [products, setProducts] = useState<Category | undefined>();
+  const [skipItemsCounter, setSkipItemsCounter] = useState(0);
   const location = useLocation();
   const dispatch = useDispatch();
-  console.log('categoriesMap:', categoriesMap)
-  // filter the sub category itemsho
+  
+  // filter the sub category items
   useEffect(() => {
     const shopCategory = categoriesMap.get(location.state);
-
+    console.log('shopCategory:', shopCategory)
     if (shopCategory && typeof location.state === 'string') {
       const subCategoryExsist = shopCategory.some((category: Category) => category.title === subCategoryPara);
       if (subCategoryExsist) {
         const filteredProducts: Category = shopCategory.find((c) => c.title === subCategoryPara)!;
-        if (filteredProducts.items.length < 1) {
-          dispatch(featchSubCategoryData(location.state, subCategoryPara));
-        } else {
+        if (filteredProducts.items.length > 20) {
           setProducts(filteredProducts);
+        } else {
+          dispatch(featchSubCategoryData(location.state, subCategoryPara, skipItemsCounter));
         }
       } else {
-        dispatch(featchSubCategoryData(location.state, subCategoryPara));
+        dispatch(featchSubCategory(location.state, subCategoryPara));
       }
+    } else {
+      dispatch(featchSubCategory(location.state, subCategoryPara));
     }
 
-    // const filteredProducts = categoriesMap.get(location.state)?.filter((category: Category) => category.title === categoryPara);
-    // categoriesMap.forEach((value, key) => {
-
     // });
-  }, [categoriesMap, location.state, subCategoryPara]);
+  }, [location.state, subCategoryPara]);
 
-  console.log('products:', products);
+  // update the products
+  useEffect(() => {
+    const shopCategory = categoriesMap.get(location.state);
+    if (shopCategory) {
+      const subCategoryExsist = shopCategory.some((category: Category) => category.title === subCategoryPara);
+      if (subCategoryExsist) {
+        const filteredProducts: Category = shopCategory.find((c) => c.title === subCategoryPara)!;
+        setProducts(filteredProducts);
+      }
+    }
+  }, [categoriesMap, subCategoryPara, location.state]);
+
+  useEffect(() => {
+    if (products !== undefined) {
+      setSkipItemsCounter(products.items.length);
+    }
+  }, [products]);
+
   return (
     <>
       <h2>category page</h2>

@@ -61,22 +61,9 @@ const Navigation = () => {
     const featch = featchUserCollectionKeys();
   }, []);
 
-  // useEffect(() => {
-  //   userCollectionKeys 
-  //   && dispatch(featchAllCategoriesStart(userCollectionKeys.keys)); 
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [userCollectionKeys]);
-  useEffect(() => {
-    userCollectionKeys 
-    && dispatch(featchCategoriesInitialState(userCollectionKeys.keys)); 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userCollectionKeys]);
-
   // useLocation is used to check if the current path if the admin dashbord to hide the web navbar
   const path = useLocation();
   
-
-
   const memorizedCategories = useMemo(() => userCategories?.get(hoverSelected), [hoverSelected, userCategories]);
 
   const signOutUser = () => dispatch(signOutStart());

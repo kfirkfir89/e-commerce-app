@@ -29,6 +29,7 @@ import { getFunctions } from 'firebase/functions';
 import { Category } from '../../store/categories/category.types';    
 import { NewOrderDetails } from '../../store/orders/order.types';
 import { AddFirebaseData } from '../../components/add-firebase/add-firebase.component';
+import { NewItemValues } from '../../components/add-firebase/add-item.component';
 
 
 
@@ -254,14 +255,45 @@ export async function getPreviewCategoriesAndDocuments() {
   return data;
 }
 
-export async function getSubCategoryDocument(collectionKey: string, docKey: string): Promise<Category> {
+export type CategoryDataState = {
+  collectionMapKey: string,
+  title: string,
+  sliceItems: NewItemValues[]
+};
+
+// add additional items
+export async function getSubCategoryDocument(collectionKey: string, docKey: string, skipItemsCounter: number): Promise<CategoryDataState> {
   const docRef = doc(db, collectionKey, docKey);
   const docSnapshot = await getDoc(docRef);
 
   if (docSnapshot.exists()) {
-    return docSnapshot.data() as Category;
+    const category = docSnapshot.data() as Category;
+    const sliceItemsArray: NewItemValues[] = category.items.slice(skipItemsCounter, skipItemsCounter + 20);
+    
+    const categoryData: CategoryDataState = {
+      collectionMapKey: collectionKey, 
+      title: docKey,
+      sliceItems: sliceItemsArray,
+    };
+    
+    return categoryData;
   } 
   throw Error(`Category with docKey '${docKey}' does not exist in collection '${collectionKey}'`);
+}
+
+export async function getCategory(collectionKey: string, docKey: string): Promise<Map<string, Category[]>> {
+  const data = new Map<string, Category[]>();
+
+  const docRef = doc(db, collectionKey, docKey);
+  const docSnapshot = await getDoc(docRef);
+
+  if (docSnapshot.exists()) {
+    const subCategory: Category = docSnapshot.data() as Category;
+    data.set(collectionKey, [subCategory]);
+    return data;
+  }
+  data.set(collectionKey, []);
+  return data;
 }
 
 // export const getCategoriesAndDocuments = async (): Promise<Category[]> => {

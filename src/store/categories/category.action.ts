@@ -3,6 +3,7 @@ import { CATEGORIES_ACTION_TYPES, Category } from './category.types';
 import {
   createAction, Action, ActionWithPayload, withMatcher, 
 } from '../../utils/reducer/reducer.utils';
+import { CategoryDataState } from '../../utils/firebase/firebase.utils';
 
 export type FeatchCategoriesInitialState = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_INITIAL_STATE, string[]>;
 
@@ -10,9 +11,13 @@ export type FeatchUpdateCategories = ActionWithPayload<CATEGORIES_ACTION_TYPES.F
 
 export type FeatchPreviewCategories = Action<CATEGORIES_ACTION_TYPES.FETCH_PREVIEW_CATEGORIES_START>;
 
-export type FeatchSubCategoryData = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORYS_DATA, { collectionKey: string, docKey: string }>;
+export type FeatchSubCategory = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORY, { collectionKey: string, docKey: string }>;
 
-export type FeatchSubCategoryDataSucceeded = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORYS_DATA_SUCCEEDED, { collectionKey: string, subCategory: Category }>;
+export type FeatchSubCategorySucceeded = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORY_SUCCEEDED, Map<string, Category[]>>;
+
+export type FeatchSubCategoryData = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORY_DATA, { collectionKey: string, docKey: string, skipItemsCounter: number }>;
+
+export type FeatchSubCategoryDataSucceeded = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORY_DATA_SUCCEEDED, CategoryDataState>;
 
 export type FeatchAllCategoriesStart = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_ALL_CATEGORIES_START, string[]>;
 
@@ -40,12 +45,20 @@ export const featchPreviewCategories = withMatcher(
   (): FeatchPreviewCategories => createAction(CATEGORIES_ACTION_TYPES.FETCH_PREVIEW_CATEGORIES_START),
 );
 
+export const featchSubCategory = withMatcher(
+  (collectionKey: string, docKey: string): FeatchSubCategory => createAction(CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORY, { collectionKey, docKey }),
+);
+
+export const featchSubCategorySucceeded = withMatcher(
+  (category: Map<string, Category[]>): FeatchSubCategorySucceeded => createAction(CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORY_SUCCEEDED, category),
+);
+
 export const featchSubCategoryData = withMatcher(
-  (collectionKey: string, docKey: string): FeatchSubCategoryData => createAction(CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORYS_DATA, { collectionKey, docKey }),
+  (collectionKey: string, docKey: string, skipItemsCounter: number): FeatchSubCategoryData => createAction(CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORY_DATA, { collectionKey, docKey, skipItemsCounter }),
 );
 
 export const featchSubCategoryDataSucceeded = withMatcher(
-  (collectionKey: string, subCategory: Category): FeatchSubCategoryDataSucceeded => createAction(CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORYS_DATA_SUCCEEDED, { collectionKey, subCategory }),
+  (categoryData: CategoryDataState): FeatchSubCategoryDataSucceeded => createAction(CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORY_DATA_SUCCEEDED, categoryData),
 );
 
 export const featchCategoriesStart = withMatcher(

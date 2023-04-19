@@ -8,6 +8,7 @@ import Spinner from '../../components/spinner/spinner.component';
 import ProductCard from '../../components/product-card/product-card.component';
 import { ShopCategoryRouteParams } from '../navigation/navigation.component';
 import { featchPreviewCategories } from '../../store/categories/category.action';
+import { Category } from '../../store/categories/category.types';
 
 const CategoriesPreview = () => {
   const { shop } = useParams<keyof ShopCategoryRouteParams>() as ShopCategoryRouteParams;
@@ -17,18 +18,15 @@ const CategoriesPreview = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    let oneEmpty = false;
-    categoriesMap.forEach((value, key) => {
-      if (value.length === 0) {
-        oneEmpty = true;
-      }
-    });
-    if (oneEmpty) {
-      dispatch(featchPreviewCategories());
-    }
-  }, [categoriesMap, dispatch]);
-  
-  const categoriesMapMemo = useMemo(() => categoriesMap.get(location.state), [categoriesMap, location.state]);
+    dispatch(featchPreviewCategories());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function getCategories() {
+    return categoriesMap.get(location.state);
+  }
+    
+  const categories = getCategories();
 
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -38,7 +36,7 @@ const CategoriesPreview = () => {
         <div className="container2">
           {
         isLoading ? <Spinner />
-          : (categoriesMapMemo !== undefined && categoriesMapMemo.map((category) => {
+          : (categories !== undefined && categories.map((category) => {
             return (
               <div key={category.title} className="flex flex-col mb-7">
                 <h2>

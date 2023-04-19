@@ -3,8 +3,9 @@ import { AnyAction } from 'redux';
 import { Category } from './category.types';
 
 import {
-  featchCategoriesStart, featchCategoriesSuccess, featchCategoriesFailed, featchAllCategoriesStart, featchAllCategoriesSuccess, featchCategoriesInitialState, featchUpdateCategories, featchPreviewCategories, featchSubCategoryData, featchSubCategoryDataSucceeded,
+  featchCategoriesStart, featchCategoriesSuccess, featchCategoriesFailed, featchAllCategoriesStart, featchAllCategoriesSuccess, featchCategoriesInitialState, featchUpdateCategories, featchPreviewCategories, featchSubCategoryData, featchSubCategoryDataSucceeded, featchSubCategory, featchSubCategorySucceeded,
 } from './category.action';
+import { NewItemValues } from '../../components/add-firebase/add-item.component';
 
 // read only is an additional property you can add so that you force it, 
 // that this state object can never be modified.It can only be read.
@@ -33,7 +34,44 @@ export const categoriesReducer = (
     return { ...state, categories: initState };
   }
 
+  if (featchPreviewCategories.match(action)) {
+    return { ...state, isLoading: true };
+  }
+
   if (featchUpdateCategories.match(action)) {
+    const newCategories = action.payload;
+    // map the newCategories and check for key(main category) if no exsist add this newMap to the categories
+    newCategories.forEach((newCategoryValue, key) => {
+      if (state.categories.has(key)) {
+        const subCategoriesArray = state.categories.get(key)!;
+        // loop and check each category if exsist in the current state
+        newCategoryValue.forEach((category) => {
+          // if catrgory exsit check the items[] leangth
+          if (subCategoriesArray.some((exsistCategory) => exsistCategory.title === category.title)) {
+            const exsistCategory = subCategoriesArray.find((exsistCategory) => exsistCategory.title === category.title)!;
+            // if leangth is of the current state small replace
+            if (exsistCategory.items.length < category.items.length) {
+              for (let i = 0; i < subCategoriesArray.length; i++) {
+                if (subCategoriesArray[i].title === category.title) {
+                  subCategoriesArray[i].items = category.items;
+                  break;
+                }
+              }
+            }
+          } else {
+            subCategoriesArray.push(category);
+            state.categories.set(key, subCategoriesArray);
+          }
+        });
+      } else {
+        state.categories.set(key, newCategoryValue);
+      }
+    });
+  
+    return { ...state, isLoading: false, categories: state.categories };
+  }
+
+  if (featchSubCategorySucceeded.match(action)) {
     const newCategories = action.payload;
     const mergedCategories = new Map([...state.categories, ...newCategories]);
     return { ...state, categories: mergedCategories };
@@ -42,25 +80,27 @@ export const categoriesReducer = (
   if (featchSubCategoryData.match(action)) {
     return { ...state, isLoading: true };
   }
-
+  
   if (featchSubCategoryDataSucceeded.match(action)) {
-    const { collectionKey, subCategory } = action.payload;
-    const categoryArray = state.categories.get(collectionKey) || [];
-    let subCategoryUpdated = false;
-    for (let i = 0; i < categoryArray.length; i++) {
-      if (categoryArray[i].title === subCategory.title) {
-        categoryArray[i] = subCategory; // replace the existing subCategory with the same title
-        subCategoryUpdated = true;
-        break;
+    const { collectionMapKey, title, sliceItems } = action.payload;
+    const categoryArray = state.categories.get(collectionMapKey);
+    if (categoryArray !== undefined) {
+      if (categoryArray.some((c) => c.title === title)) {
+        const subCategoryItems = categoryArray.find((c) => c.title === title);
+        
+        if (subCategoryItems && subCategoryItems.items) {
+          subCategoryItems.items.push(
+            ...sliceItems.filter(
+              (newItem) => !subCategoryItems.items.some((existingItem) => existingItem.id === newItem.id),
+            ),
+          );
+          categoryArray.map((c) => c.title === subCategoryItems.title && c.items === subCategoryItems.items);
+          state.categories.set(collectionMapKey, categoryArray);
+        }
       }
     }
-    if (!subCategoryUpdated) {
-      categoryArray.push(subCategory); // if no matching subCategory found, append the subCategory to the array
-    }
-    // Update the categoryArray in state.categories
-    state.categories.set(collectionKey, categoryArray);
-    
-    return { ...state, isLoading: false, categories: new Map(state.categories) };
+
+    return { ...state, isLoading: false, categories: state.categories };
   }
 
 
