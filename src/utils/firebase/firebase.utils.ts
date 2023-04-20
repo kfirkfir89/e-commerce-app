@@ -268,14 +268,14 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
 
   if (docSnapshot.exists()) {
     const category = docSnapshot.data() as Category;
-    const sliceItemsArray: NewItemValues[] = category.items.slice(skipItemsCounter, skipItemsCounter + 20);
+    const sliceItemsArray: NewItemValues[] = category.items.slice(skipItemsCounter, skipItemsCounter + 1);
     
     const categoryData: CategoryDataState = {
       collectionMapKey: collectionKey, 
       title: docKey,
       sliceItems: sliceItemsArray,
     };
-    
+
     return categoryData;
   } 
   throw Error(`Category with docKey '${docKey}' does not exist in collection '${collectionKey}'`);
@@ -289,9 +289,11 @@ export async function getCategory(collectionKey: string, docKey: string): Promis
 
   if (docSnapshot.exists()) {
     const subCategory: Category = docSnapshot.data() as Category;
+    subCategory.items = subCategory.items.slice(0, 2);
     data.set(collectionKey, [subCategory]);
     return data;
   }
+
   data.set(collectionKey, []);
   return data;
 }

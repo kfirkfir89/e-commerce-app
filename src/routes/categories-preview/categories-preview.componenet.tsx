@@ -1,20 +1,18 @@
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Link, useLocation, useParams } from 'react-router-dom';
-import { useEffect, useMemo } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 import { selectCategories, selectCategoriesIsLoading } from '../../store/categories/category.selector';
 
 import Spinner from '../../components/spinner/spinner.component';
 import ProductCard from '../../components/product-card/product-card.component';
 import { ShopCategoryRouteParams } from '../navigation/navigation.component';
 import { featchPreviewCategories } from '../../store/categories/category.action';
-import { Category } from '../../store/categories/category.types';
 
 const CategoriesPreview = () => {
   const { shop } = useParams<keyof ShopCategoryRouteParams>() as ShopCategoryRouteParams;
   const categoriesMap = useSelector(selectCategories);
   const isLoading = useSelector(selectCategoriesIsLoading);
-  const location = useLocation();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -23,7 +21,7 @@ const CategoriesPreview = () => {
   }, []);
 
   function getCategories() {
-    return categoriesMap.get(location.state);
+    return categoriesMap.get(shop);
   }
     
   const categories = getCategories();

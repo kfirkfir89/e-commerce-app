@@ -151,7 +151,7 @@ const Navigation = () => {
                   {userCollectionKeys && userCollectionKeys.keys.map((key) => (
                     <div key={key} className="flex items-center justify-center">
                       <div className="static flex px-3" onMouseEnter={() => { setIsHover(true); setHoverSelected(key); }}>
-                        <NavLink to={key} state={key} className="p-1 text-base tracking-wide font-dosis leading-0 text-slate-700 link-underline link-underline-black">
+                        <NavLink to={key} className="p-1 text-base tracking-wide font-dosis leading-0 text-slate-700 link-underline link-underline-black">
                           {key.toUpperCase()}
                         </NavLink>
                       </div>
@@ -165,7 +165,7 @@ const Navigation = () => {
                   {memorizedCategories?.map((sc) => (
                     <div key={sc} className="flex items-center justify-center">
                       <div className="static flex px-3">
-                        <NavLink to={`${hoverSelected}/${sc}`} state={hoverSelected} className="p-1 text-base tracking-wide font-dosis leading-0 text-slate-700 link-underline link-underline-black">
+                        <NavLink to={`${hoverSelected}/${sc}`} className="p-1 text-base tracking-wide font-dosis leading-0 text-slate-700 link-underline link-underline-black">
                           {sc.toUpperCase()}
                         </NavLink>
                       </div>

@@ -1,14 +1,16 @@
 import { memo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { NewItemValues } from '../add-firebase/add-item.component';
+import { CategoryRouteParams } from '../../routes/category/category.component';
 
 const ProductCard = ({ product } : { product: NewItemValues }) => {
   const {
     productName, price, colorImagesUrls, colors,
   } = product;
+  const { subCategoryPara, shop } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
 
   return (
-    <Link to={`${product.id}`}>
+    <Link to={`${shop}/${subCategoryPara}/${product.id}`}>
       <div className="max-w-xs">
         <div className="relative shadow-sm">
           <img key={colorImagesUrls[0].itemUrlList[0]} src={colorImagesUrls[0].itemUrlList[0]} alt={colorImagesUrls[0].itemUrlList[0]} className="object-cover object-center w-full max-h-96 transition-opacity duration-200 ease-in-out" />

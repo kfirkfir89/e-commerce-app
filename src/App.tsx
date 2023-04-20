@@ -15,6 +15,7 @@ import CategoriesPreview from './routes/categories-preview/categories-preview.co
 import Category from './routes/category/category.component';
 import NotFound from './routes/not-found/not-found.component';
 import { selectCategories } from './store/categories/category.selector';
+import ItemPreview from './routes/item-preview/item-preview.component';
 
 const Home = lazy(() => import('./routes/home/home.component'));
 const Authentication = lazy(() => import('./routes/authentication/authentication.component'));
@@ -38,7 +39,10 @@ const App = () => {
 
         <Route path=":shop/*" element={<Shop />}>
           <Route index element={<CategoriesPreview />} errorElement={<NotFound />} />
-          <Route path=":subCategoryPara" element={<Category />} />
+          <Route path=":subCategoryPara/*" element={<Category />}>
+            <Route path=":item" element={<ItemPreview />} />
+          </Route>
+
         </Route>
         
         <Route path="auth" element={<Authentication />} />

@@ -81,28 +81,68 @@ export const categoriesReducer = (
     return { ...state, isLoading: true };
   }
   
+  // if (featchSubCategoryDataSucceeded.match(action)) {
+  //   const { collectionMapKey, title, sliceItems } = action.payload;
+
+  //   const categoryArray = state.categories.get(collectionMapKey);
+    
+  //   if (categoryArray !== undefined) {
+  //     if (categoryArray.some((c) => c.title === title)) {
+  //       const subCategoryItems = categoryArray.find((c) => c.title === title);
+        
+  //       if (subCategoryItems && subCategoryItems.items) {
+  //         subCategoryItems.items.push(
+  //           ...sliceItems.filter(
+  //             (newItem) => !subCategoryItems.items.some((existingItem) => existingItem.id === newItem.id),
+  //           ),
+  //         );
+  //         categoryArray.map((c) => c.title === subCategoryItems.title && c.items === subCategoryItems.items);
+  //       }
+  //     }
+  //   }
+
+  //   return { ...state, isLoading: false, categories: state.categories };
+  // }
   if (featchSubCategoryDataSucceeded.match(action)) {
     const { collectionMapKey, title, sliceItems } = action.payload;
     const categoryArray = state.categories.get(collectionMapKey);
+  
     if (categoryArray !== undefined) {
       if (categoryArray.some((c) => c.title === title)) {
-        const subCategoryItems = categoryArray.find((c) => c.title === title);
-        
+        const subCategoryItemsIndex = categoryArray.findIndex((c) => c.title === title);
+        const subCategoryItems = categoryArray[subCategoryItemsIndex];
+  
         if (subCategoryItems && subCategoryItems.items) {
-          subCategoryItems.items.push(
+          const newItems = [
+            ...subCategoryItems.items,
             ...sliceItems.filter(
               (newItem) => !subCategoryItems.items.some((existingItem) => existingItem.id === newItem.id),
             ),
-          );
-          categoryArray.map((c) => c.title === subCategoryItems.title && c.items === subCategoryItems.items);
-          state.categories.set(collectionMapKey, categoryArray);
+          ];
+  
+          const newSubCategoryItems = {
+            ...subCategoryItems,
+            items: newItems,
+          };
+  
+          const newCategoryArray = [
+            ...categoryArray.slice(0, subCategoryItemsIndex),
+            newSubCategoryItems,
+            ...categoryArray.slice(subCategoryItemsIndex + 1),
+          ];
+  
+          // Update the state with the new category array
+          return {
+            ...state,
+            isLoading: false,
+            categories: new Map(state.categories.set(collectionMapKey, newCategoryArray)),
+          };
         }
       }
     }
-
+  
     return { ...state, isLoading: false, categories: state.categories };
   }
-
 
   if (featchCategoriesStart.match(action)) {
     return { ...state, isLoading: true };
