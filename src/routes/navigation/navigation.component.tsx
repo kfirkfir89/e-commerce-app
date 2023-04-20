@@ -16,9 +16,8 @@ import { signOutStart } from '../../store/user/user.action';
 import MenuIcon from '../menu/menu.component';
 import { selectCartCount } from '../../store/cart/cart.selector';
 import {
-  getAllCategoriesAndDocuments, getUserCategories, getUserCollectionKeys, Keys, 
+  getUserCategories, getUserCollectionKeys, Keys, 
 } from '../../utils/firebase/firebase.utils';
-import { featchAllCategoriesStart, featchCategoriesInitialState, featchCategoriesStart } from '../../store/categories/category.action';
 
 export type ShopCategoryRouteParams = {
   shop: string

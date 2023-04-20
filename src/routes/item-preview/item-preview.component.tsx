@@ -1,16 +1,46 @@
-import { useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { CategoryRouteParams } from '../category/category.component';
+import { NewItemValues } from '../../components/add-firebase/add-item.component';
+import { getItemFromRoute } from '../../utils/firebase/firebase.utils';
 
-export type ItemPreviewRouteParams = {
-  item: string;
-};
 const ItemPreview = () => {
-  const { item } = useParams<keyof ItemPreviewRouteParams>() as ItemPreviewRouteParams;
+  const { item, subCategoryPara, shop } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
+  const location = useLocation();
+  const [product, setProduct] = useState<NewItemValues | undefined>(location.state);
 
+  const fetchItem = async () => {
+    try {
+      const res = await getItemFromRoute(shop, subCategoryPara, item);
+      if (res !== undefined) {
+        setProduct(res);
+      }
+    } catch (error) {
+      console.error('Error fetching item:', error);
+    }
+  };
+  
+  useEffect(() => {
+    if (location.state === null) {
+      const res = fetchItem();
+    }
+  }, []);
+
+  console.log('product:', product);
   return (
-    <>
-      <div className="text-3xl text-red-900">this is the new page</div>
-      <div>{item}</div>
-    </>
+    <div>
+      {
+        product
+        && (
+        <div>
+          <div className="text-3xl text-red-900">{product.productName}</div>
+          <div className="flex flex-col">
+            
+          </div>
+        </div>
+        )
+      }
+    </div>
   );
 };
 

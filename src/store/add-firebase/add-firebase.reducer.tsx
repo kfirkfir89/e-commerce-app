@@ -123,22 +123,3 @@ export const addFirebaseReducer = (
 
   return state;
 };
-
-// SAGA
-// export function* addNewItem({ payload: { collectionKey } } :FeatchCategoriesStart) {
-//   try {
-//     const categoriesArray = yield* call(getCategoriesAndDocuments, collectionKey);
-//     // console.log({categoriesArray});
-//     yield* put(featchCategoriesSuccess(categoriesArray));
-//   } catch (error) {
-//     yield* put(featchCategoriesFailed(error as Error));
-//   }
-// }
-
-// export function* onFetchCategories() {
-//   yield* takeLatest(ADDFIREBASE_ACTION_TYPES.FETCH_ADDFIREBASE_START, featchCategoriesAsync);
-// }
-
-// export function* categoriesSaga() {
-//   yield* all([call(onFetchCategories)]);
-// }

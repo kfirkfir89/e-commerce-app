@@ -298,6 +298,19 @@ export async function getCategory(collectionKey: string, docKey: string): Promis
   return data;
 }
 
+export async function getItemFromRoute(collectionKey: string, docKey: string, itemId: string): Promise<NewItemValues | undefined> {
+  const docRef = doc(db, collectionKey, docKey);
+  const docSnapshot = await getDoc(docRef);
+
+  if (docSnapshot.exists()) {
+    const subCategory: Category = docSnapshot.data() as Category;
+    const item = subCategory.items.find((item) => item.id === itemId);
+    if (item) {
+      return item;
+    }
+  }
+}
+
 // export const getCategoriesAndDocuments = async (): Promise<Category[]> => {
 //   const collectionRef = collection(db, 'categories');
 //   const q = query(collectionRef);

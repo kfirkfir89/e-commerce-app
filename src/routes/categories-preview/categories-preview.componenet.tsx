@@ -31,7 +31,7 @@ const CategoriesPreview = () => {
     <> 
       <h2 className="text-4xl mb-6 text-center">{shop.toUpperCase()}</h2>
       <div className="flex flex-col items-center top-0 z-30">
-        <div className="container2">
+        <div className="container">
           {
         isLoading ? <Spinner />
           : (categories !== undefined && categories.map((category) => {
@@ -45,7 +45,7 @@ const CategoriesPreview = () => {
                   {category.items
                     .filter((_, idx) => idx < 4)
                     .map((product) => (
-                      <ProductCard key={product.id} product={product} />
+                      <ProductCard key={product.id} product={product} categoryTitle={category.title} />
                     ))}
                 </div>
               </div>

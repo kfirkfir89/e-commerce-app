@@ -319,8 +319,8 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
 
   
   const addItemHandler = () => {
-    setAddItemValues((prevState) => ({ ...prevState, id: `${prevState.productName + v4()}` }));
     setAddItemValues((prevState) => ({ ...prevState, slug: slugFunciton(addItemValues.productName) }));
+    setAddItemValues((prevState) => ({ ...prevState, id: `${prevState.slug + v4()}` }));
     if (mounted === false) {
       dispatch(featchMounted(true));
     }

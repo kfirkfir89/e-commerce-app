@@ -3,18 +3,29 @@ import { Link, useParams } from 'react-router-dom';
 import { NewItemValues } from '../add-firebase/add-item.component';
 import { CategoryRouteParams } from '../../routes/category/category.component';
 
-const ProductCard = ({ product } : { product: NewItemValues }) => {
+// eslint-disable-next-line react/require-default-props
+const ProductCard = ({ product, categoryTitle } : { product: NewItemValues, categoryTitle?: string }) => {
   const {
     productName, price, colorImagesUrls, colors,
   } = product;
-  const { subCategoryPara, shop } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
+
+  const { subCategoryPara } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
+
+  // route dipandancy for navigation from diffrent placeses
+  let route = '';
+  if (!subCategoryPara) {
+    route = `${categoryTitle}/`;
+  }
+  if (subCategoryPara) {
+    route = '';
+  }
 
   return (
-    <Link to={`${shop}/${subCategoryPara}/${product.id}`}>
+    <Link to={`${route}${product.id}`} state={product}>
       <div className="max-w-xs">
         <div className="relative shadow-sm">
-          <img key={colorImagesUrls[0].itemUrlList[0]} src={colorImagesUrls[0].itemUrlList[0]} alt={colorImagesUrls[0].itemUrlList[0]} className="object-cover object-center w-full max-h-96 transition-opacity duration-200 ease-in-out" />
-          <img key={colorImagesUrls[0].itemUrlList[1]} src={colorImagesUrls[0].itemUrlList[1]} alt={colorImagesUrls[0].itemUrlList[1]} className="absolute top-0 left-0 object-cover object-center w-full max-h-96 opacity-0 hover:opacity-100 transition-opacity duration-200 ease-in-out" />
+          <img key={colorImagesUrls[0].itemUrlList[0]} src={colorImagesUrls[0].itemUrlList[0]} alt={colorImagesUrls[0].itemUrlList[0]} className="object-cover object-center w-full max-h-full transition-opacity duration-200 ease-in-out" />
+          <img key={colorImagesUrls[0].itemUrlList[1]} src={colorImagesUrls[0].itemUrlList[1]} alt={colorImagesUrls[0].itemUrlList[1]} className="absolute top-0 left-0 object-cover object-center w-full max-h-full opacity-0 hover:opacity-100 transition-opacity duration-200 ease-in-out" />
         </div>
         <div className="flex flex-col mt-4">
           <div className="pl-1 font-dosis">
