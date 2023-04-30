@@ -16,7 +16,7 @@ import { addFirebaseData, setUserCollectionKeys } from '../../utils/firebase/fir
 
 export type AddFirebaseData = {
   collectionKey: string
-  title: string
+  docKey: string
   items: NewItemValues[]
 };
 // ADD TO FIREBASE MAIN COMPONENT
@@ -28,13 +28,13 @@ export const AddFirebase = () => {
   const collectionKeyRef = useRef<HTMLInputElement>(null);
   const titleKeyRef = useRef<HTMLInputElement>(null);
 
-  const { collectionKey, title, isLoading } = addFirebaseReducer;
+  const { collectionKey, docKey, isLoading } = addFirebaseReducer;
 
   useEffect(() => {
-    if (collectionKey !== '' && title !== '') {
+    if (collectionKey !== '' && docKey !== '') {
       setIsRefMissing(false);
     }
-  }, [collectionKey, title]);
+  }, [collectionKey, docKey]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -43,6 +43,7 @@ export const AddFirebase = () => {
     return () => clearTimeout(timer);
   }, [showPopUp]);
  
+  // add the data to the server called by the submitHandler
   async function addDataAsync(newData:AddFirebaseData) {
     try {
       const res = await addFirebaseData(newData);
@@ -63,14 +64,14 @@ export const AddFirebase = () => {
 
   const submitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (collectionKey === '' || title === '') {
+    if (collectionKey === '' || docKey === '') {
       return setIsRefMissing(true);
     }
     dispatch(featchAddFirebaseData());
     
     const newData:AddFirebaseData = {
       collectionKey: addFirebaseReducer.collectionKey,
-      title: addFirebaseReducer.title,
+      docKey: addFirebaseReducer.docKey,
       items: addFirebaseReducer.items,
     };
     
@@ -108,15 +109,15 @@ export const AddFirebase = () => {
               <SelectDbRef
                 titleRef={titleKeyRef}
                 collectionRef={collectionKeyRef}
-                docTitle={{ label: title, value: title }}
+                docTitle={{ label: docKey, value: docKey }}
                 collectionKey={{ label: collectionKey, value: collectionKey }} 
                 onChangeKey={(collectionKey) => { collectionKey !== undefined && dispatch(featchSetCollectionKey(collectionKey.value)); }}
-                onChangeTitle={(title) => { title !== undefined && dispatch(featchSetTitleDocKey(title.value)); }}
+                onChangeTitle={(docKey) => { docKey !== undefined && dispatch(featchSetTitleDocKey(docKey.value)); }}
               />
             </div>
             {/* ADDITEM */}
             <div className="bg-gray-200 rounded-lg my-2 shadow-lg">
-              {collectionKey && title ? <AddItem onAddItem={(newItem) => { dispatch(featchAddItem(newItem)); }} /> : ''}
+              {collectionKey && docKey ? <AddItem onAddItem={(newItem) => { dispatch(featchAddItem(newItem)); }} /> : ''}
             </div>   
             {/* ITEMS */}
             <div className="bg-gray-200 rounded-lg my-2 pb-2 shadow-lg">

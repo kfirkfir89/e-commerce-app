@@ -1,31 +1,31 @@
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Link, useParams } from 'react-router-dom';
-import { useEffect } from 'react';
-import { selectCategories, selectCategoriesIsLoading } from '../../store/categories/category.selector';
+import { Suspense, lazy, useEffect } from 'react';
+import { selectCategoriesIsLoading, selectCategoriesPreview } from '../../store/categories/category.selector';
 
 import Spinner from '../../components/spinner/spinner.component';
-import ProductCard from '../../components/product-card/product-card.component';
 import { ShopCategoryRouteParams } from '../navigation/navigation.component';
 import { featchPreviewCategories } from '../../store/categories/category.action';
 
+const ProductCard = lazy(() => import('../../components/product-card/product-card.component'));
+
 const CategoriesPreview = () => {
   const { shop } = useParams<keyof ShopCategoryRouteParams>() as ShopCategoryRouteParams;
-  const categoriesMap = useSelector(selectCategories);
+  const categoriesPreviewMap = useSelector(selectCategoriesPreview);
   const isLoading = useSelector(selectCategoriesIsLoading);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(featchPreviewCategories());
+    dispatch(featchPreviewCategories(shop));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function getCategories() {
-    return categoriesMap.get(shop);
+    return categoriesPreviewMap.get(shop);
   }
     
   const categories = getCategories();
-
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <> 

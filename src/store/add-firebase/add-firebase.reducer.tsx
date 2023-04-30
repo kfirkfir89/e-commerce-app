@@ -29,7 +29,7 @@ export enum ADDFIREBASE_ACTION_TYPES {
 
 export type AddFireBaseState = {
   readonly collectionKey: string;
-  readonly title: string;
+  readonly docKey: string;
   readonly items: NewItemValues[];
   readonly isLoading: boolean;
   readonly error: Error | null;
@@ -81,7 +81,7 @@ export const featchAddFirebaseDataFailed = withMatcher(
 // REDUCER
 export const ADDFIREBASE_INITIAL_STATE : AddFireBaseState = {
   collectionKey: '',
-  title: '',
+  docKey: '',
   items: [],
   isLoading: false,
   error: null,
@@ -96,7 +96,7 @@ export const addFirebaseReducer = (
   }
     
   if (featchSetTitleDocKey.match(action)) {
-    return { ...state, title: action.payload };
+    return { ...state, docKey: action.payload };
   }
 
   if (featchAddItem.match(action)) {
@@ -113,7 +113,7 @@ export const addFirebaseReducer = (
 
   if (featchAddFirebaseDataSuccessded.match(action)) {
     return {
-      collectionKey: '', title: '', items: [], error: null, isLoading: false, 
+      collectionKey: '', docKey: '', items: [], error: null, isLoading: false, 
     };
   }
 

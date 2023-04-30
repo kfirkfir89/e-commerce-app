@@ -1,7 +1,9 @@
 import {
-  ChangeEvent, memo, RefObject, useEffect, useMemo, useState, 
+  ChangeEvent, memo, RefObject, useEffect, useState, 
 } from 'react';
-import { getCategoriesAndDocuments, getUserCollectionKeys, Keys } from '../../utils/firebase/firebase.utils';
+import {
+  getUserCategories, getUserCollectionKeys, UserCollectionKeys, 
+} from '../../utils/firebase/firebase.utils';
 import Select, { SelectOption } from '../select/select.component';
 
 type SelectRefProps = {
@@ -19,20 +21,20 @@ export const SelectDbRef = ({
   const [isNewCollection, setIsNewCollection] = useState(false);
   const [isNewDoc, setIsNewDoc] = useState(false);
 
-  const [keysOptions, setKeysOptions] = useState<SelectOption[]>([]);
-  const [docOptions, setDocOptions] = useState<SelectOption[]>([]);
-  const memoizedKeysOptions = useMemo(() => keysOptions, [keysOptions]);
+  const [userCategories, setUserCategories] = useState<Map<string, string[]> | null>(null);
 
-  // const urlList = useSelector((state: RootState) => state.uploadImg.urlList);
+  const [collectionKeysOptions, setCollectionKeysOptions] = useState<SelectOption[]>([]);
+  const [docKeysOptions, setDocKeysOptions] = useState<SelectOption[]>([]);
+
   // fetch the collection custom keys of the user(admin)
   useEffect(() => {
     const featchUserCollectionKeys = async () => {
       try {
-        const keys: Keys[] = await getUserCollectionKeys();
+        const keys: UserCollectionKeys[] = await getUserCollectionKeys();
         const keysOptions: SelectOption[] = keys[0].keys.map((key) => {
           return { label: key, value: key };
         }); 
-        setKeysOptions(keysOptions);
+        setCollectionKeysOptions(keysOptions);
       } catch (error) {
         console.log(error);
       }
@@ -40,24 +42,33 @@ export const SelectDbRef = ({
     const featch = featchUserCollectionKeys();
   }, []);
   
-  // fetch the collection docs title
+  // featch all the user categories by userCollectionKeys
   useEffect(() => {
-    const featchUserDocsKeys = async () => {
-      if (collectionKey) {
-        try {
-          const collectionDocs = await getCategoriesAndDocuments(collectionKey?.label);
-          const docsTitle: SelectOption[] = collectionDocs.map((doc) => {
-            return { label: doc.title, value: doc.title };
-          });
-          setDocOptions(docsTitle);
-        } catch (error) {
-          console.log(error);
-        }
+    const featchUserCollectionKeys = async () => {
+      try {
+        const keys: Map<string, string[]> = await getUserCategories();
+        setUserCategories(keys);
+      } catch (error) {
+        console.log(error);
       }
     };
-    
-    const featch = featchUserDocsKeys();
+    const featch = featchUserCollectionKeys();
+  }, []);
+
+  // set sub collection keys of the chossen category by collectionKey
+  useEffect(() => {
+    if (collectionKey && userCategories) {
+      const docsKeys = userCategories.get(collectionKey.value);
+      if (docsKeys) {
+        const docsTitle: SelectOption[] = docsKeys.map((key) => {
+          return { label: key, value: key };
+        });
+        setDocKeysOptions(docsTitle);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collectionKey]);
+
 
   useEffect(() => {
     if (isNewCollection) {
@@ -101,7 +112,7 @@ export const SelectDbRef = ({
             {/* INPUT VALUES */}
             <div className="flex justify-center">
               <div className={`w-full max-w-xs shadow-md rounded-lg ${isNewCollection ? 'hidden' : 'block'}`}>
-                <Select firstOption={{ label: 'Pick a collection', value: '' }} options={memoizedKeysOptions} onChange={(o: SelectOption | undefined) => { onChangeKey(o); }} value={collectionKey} />
+                <Select firstOption={{ label: 'Pick a collection', value: '' }} options={collectionKeysOptions} onChange={(o: SelectOption | undefined) => { onChangeKey(o); }} value={collectionKey} />
               </div>
               <input ref={collectionRef} onChange={onChange} type="text" name="collectionKey" placeholder="new collection key" className={`input input-bordered shadow-md rounded-lg w-full max-w-xs ${isNewCollection ? 'block' : 'hidden'}`} />
             </div>
@@ -116,7 +127,7 @@ export const SelectDbRef = ({
             {/* INPUT VALUES */}
             <div className="flex flex-grow justify-center">
               <div className={`w-full max-w-xs shadow-md rounded-lg ${(isNewCollection || isNewDoc) || (collectionKey !== undefined && collectionKey.value === '') ? 'hidden' : 'block'}`}>
-                <Select firstOption={{ label: 'Pick a title(doc name)', value: '' }} options={docOptions} onChange={(o: SelectOption | undefined) => { onChangeTitle(o); }} value={docTitle} />
+                <Select firstOption={{ label: 'Pick a title(doc name)', value: '' }} options={docKeysOptions} onChange={(o: SelectOption | undefined) => { onChangeTitle(o); }} value={docTitle} />
               </div>
               <div className={`${(collectionKey !== undefined && collectionKey.value === '') ? 'hidden' : 'block'} flex justify-center ${(isNewCollection || isNewDoc) && 'w-full'}`}>
                 <input ref={titleRef} onChange={onChange} type="text" name="title" placeholder="new doc key" className={`input input-bordered shadow-md rounded-lg w-full max-w-xs ${isNewCollection || isNewDoc ? 'block' : 'hidden'}`} />
@@ -131,7 +142,4 @@ export const SelectDbRef = ({
 };
 
 export default memo(SelectDbRef);
-function featchUserDocsKeys() {
-  throw new Error('Function not implemented.');
-}
 

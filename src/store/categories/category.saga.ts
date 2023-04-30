@@ -14,14 +14,14 @@ import {
   FeatchUpdateCategorySucceeded, 
   featchUpdateCategorySucceeded,
   featchUpdateCategoriesSucceeded,
+  FeatchPreviewCategories,
 } from './category.action';
 
 import { CATEGORIES_ACTION_TYPES } from './category.types';
 
-export function* featchPreviewCategoriesAndDocuments() {
+export function* featchPreviewCategoriesAndDocuments({ payload: collectionKey }: FeatchPreviewCategories) {
   try {
-    const categoriesArray = yield* call(getPreviewCategoriesAndDocuments);
-    // console.log({categoriesArray});
+    const categoriesArray = yield* call(getPreviewCategoriesAndDocuments, collectionKey);
     yield* put(featchUpdateCategoriesSucceeded(categoriesArray));
   } catch (error) {
     yield* put(featchCategoriesFailed(error as Error));

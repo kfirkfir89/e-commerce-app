@@ -17,6 +17,13 @@ export const selectCategories = createSelector(
   (categoriesSlice) => categoriesSlice.categories,
 );
 
+export const selectCategoriesPreview = createSelector(
+  // input
+  [selectCategoryReducer],
+  // output the output will run only if the input value change
+  (categoriesSlice) => categoriesSlice.categoriesPreview,
+);
+
 export const selectCategoriesIsLoading = createSelector(
   [selectCategoryReducer],
   (categoriesSlice) => categoriesSlice.isLoading,

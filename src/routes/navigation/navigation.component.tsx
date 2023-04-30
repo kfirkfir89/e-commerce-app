@@ -16,8 +16,10 @@ import { signOutStart } from '../../store/user/user.action';
 import MenuIcon from '../menu/menu.component';
 import { selectCartCount } from '../../store/cart/cart.selector';
 import {
-  getUserCategories, getUserCollectionKeys, Keys, 
+  UserCollectionKeys,
+  getUserCategories, getUserCollectionKeys,
 } from '../../utils/firebase/firebase.utils';
+import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
 
 export type ShopCategoryRouteParams = {
   shop: string
@@ -31,14 +33,14 @@ const Navigation = () => {
   const [isHover, setIsHover] = useState(false);
   const [hoverSelected, setHoverSelected] = useState('');
   const [userCategories, setUserCategories] = useState<Map<string, string[]> | null>(null);
-  const [userCollectionKeys, setUserCollectionKeys] = useState<Keys | null >(null);
+  const [userCollectionKeys, setUserCollectionKeys] = useState<UserCollectionKeys | null >(null);
 
   const { shop } = useParams<keyof ShopCategoryRouteParams>() as ShopCategoryRouteParams;
   // featch only the userKeys(collectionKeys) from the system-data obj
   useEffect(() => {
     const featchUserCollectionKeys = async () => {
       try {
-        const keys: Keys[] = await getUserCollectionKeys();
+        const keys: UserCollectionKeys[] = await getUserCollectionKeys();
         setUserCollectionKeys(keys[0]);
       } catch (error) {
         console.log(error);
@@ -178,7 +180,7 @@ const Navigation = () => {
           </div>
         </div>
       )}
-
+      <Breadcrumbs />
       <Outlet />
     </>
   );

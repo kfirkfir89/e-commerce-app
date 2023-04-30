@@ -172,6 +172,33 @@ export type NewItemValues = {
   details: string
 };
 
+export type ItemPreview = {
+  id: string
+  collectionKey: string
+  docKey: string
+  productName: string
+  price: number
+  colors: SelectColorOption[]
+  imagesUrls: string[]
+};
+
+export type ItemsSizePreview = {
+  id: string
+  collectionKey: string
+  docKey: string
+  productName: string
+  imagesUrls: string[],
+  stock: SizeStock[],
+};
+
+export type AllItemsPreview = {
+  id: string
+  collectionKey: string
+  docKey: string
+  productName: string
+  imagesUrls: string[]
+};
+
 type AddItemError = {
   key: string
   message: string

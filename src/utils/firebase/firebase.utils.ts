@@ -23,13 +23,21 @@ import {
   QueryDocumentSnapshot,
   orderBy,
   limit,
+  where,
+  addDoc,
+  startAfter,
+  startAt,
+  getCountFromServer,
 } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
-import { Category } from '../../store/categories/category.types';    
+import { Category, PreviewCategory } from '../../store/categories/category.types';    
 import { NewOrderDetails } from '../../store/orders/order.types';
 import { AddFirebaseData } from '../../components/add-firebase/add-firebase.component';
-import { NewItemValues } from '../../components/add-firebase/add-item.component';
+import {
+  AllItemsPreview, ItemPreview, ItemsSizePreview, NewItemValues, 
+} from '../../components/add-firebase/add-item.component';
+import { SizeStock } from '../../components/add-firebase/add-item-stock.component';
 
 
 
@@ -61,7 +69,7 @@ export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googlePro
 export const db = getFirestore();
 
 
-type UserCollectionKeys = {
+export type UserCollectionKeys = {
   keys: string[]
 };
 
@@ -72,14 +80,13 @@ export async function getUserKeysDocs(collectionKey: string) {
   const querySnapshot = await getDocs(q);
   const categoryTitles: string[] = [];
 
-  const res = querySnapshot.docs.map((docSnapshot) => {
-    return docSnapshot.data() as any;
+  querySnapshot.forEach((doc) => {
+    categoryTitles.push(doc.id);
   });
-  res.map((c) => (categoryTitles.push(c.title)));
 
   return categoryTitles;
 }
-// get the user custom subcategories (doc title) by using user custom collectionKeys
+// get the user custom categories (collections keys) and call getUserKeysDocs to get all subCategories
 export async function getUserCategories() {
   const collectionRef = collection(db, 'system-data');
   const q = query(collectionRef);
@@ -87,14 +94,13 @@ export async function getUserCategories() {
   const data = new Map<string, string[]>();
 
   const res = querySnapshot.docs.map((docSnapshot) => {
-    return docSnapshot.data() as Keys;
+    return docSnapshot.data() as UserCollectionKeys;
   });  
 
   res[0].keys.map(async (k) => {
     const res2 = await getUserKeysDocs(k);
     data.set(k, res2);
   });  
-  
   return data;
 }  
 
@@ -103,12 +109,18 @@ export async function setUserCollectionKeys(collectionKey: string) {
   const collectionRef = collection(db, 'system-data');
   const docRef = doc(collectionRef, 'user-collection-keys');
   const docSnapshot = await getDoc(docRef);
-  const keysData = docSnapshot.data() as UserCollectionKeys;
-  const isExsist = keysData.keys.some((key) => key === collectionKey);
 
-  if (!isExsist) {
-    const updatedKeys = { ...keysData, keys: [...keysData.keys, collectionKey] };
-    await setDoc(docRef, updatedKeys);
+  if (docSnapshot.exists()) {
+    const keysData = docSnapshot.data() as UserCollectionKeys;
+    const isExsist = keysData.keys.some((key) => key === collectionKey);
+
+    if (!isExsist) {
+      const updatedKeys = { ...keysData, keys: [...keysData.keys, collectionKey] };
+      await setDoc(docRef, updatedKeys);
+    }
+  } else {
+    // If the document doesn't exist, create it with the specified data.
+    await setDoc(docRef, { keys: [collectionKey] });
   }
 }
 
@@ -119,40 +131,101 @@ export async function getUserCollectionKeys() {
   const querySnapshot = await getDocs(q);
 
   const res = querySnapshot.docs.map((docSnapshot) => {
-    return docSnapshot.data() as Keys;
+    return docSnapshot.data() as UserCollectionKeys;
   });
   return res;
 }
 
+export async function addFirebaseData<T extends AddFirebaseData>(newData: T): Promise<void> {
+  const { collectionKey, docKey, items } = newData;
 
-export const addFirebaseData = async<T extends AddFirebaseData> (newData: T): Promise<void> => {
-  const { collectionKey, title, items } = newData;
-  const collectionRef = collection(db, collectionKey);
-  const docRef = doc(collectionRef, title);
+  const collectionRef = collection(db, 'system-data');
+  const querySnapshot = await getDocs(collectionRef);
 
-  
-  try {
-    // check if document exists
-    const docSnapshot = await getDoc(docRef);
-    if (docSnapshot.exists()) {
-      // if document exists, append new items to existing items array
-      const existingData = docSnapshot.data() as T;
-      const updatedData = {
-        ...existingData,
-        items: [...existingData.items, ...items],
-      };
-      await setDoc(docRef, updatedData);
-    } else {
-      // if document does not exist, create new document with items array
-      const newDataWithItems = { ...newData, items };
-      await setDoc(docRef, newDataWithItems);
+  if (querySnapshot.empty) {
+    try {
+      const res = await setUserCollectionKeys(collectionKey);
+    } catch (error) {
+      console.log('error:', error);
     }
-  } catch (error) {
-    console.error('Error adding data:', error);
   }
-};
 
-export const deleteImageUrls = async (urlList: string[]) => {
+  const docRef = doc(db, collectionKey, docKey);
+  const docSnapshot = await getDoc(docRef);
+
+  if (!docSnapshot.exists()) {
+    try {
+      const docRef = await setDoc(doc(db, collectionKey, docKey), { collectionKey, docKey });
+    } catch (error) {
+      console.log('error:', error);
+    }
+  }
+
+  // create each item with full data
+  items.forEach(async (item) => {
+    try {
+      const docRef = await setDoc(doc(db, collectionKey, docKey, 'items', item.id.toString()), item);
+    } catch (error) {
+      console.log('error:', error);
+    }
+  });
+  
+  // careate a preview for each item 
+  items.forEach(async (item) => {
+    try {
+      const itemPreview: ItemPreview = {
+        id: item.id,
+        collectionKey,
+        docKey,
+        productName: item.productName,
+        price: item.price,
+        colors: item.colors,
+        imagesUrls: [item.colorImagesUrls[0].itemUrlList[0], item.colorImagesUrls[0].itemUrlList[1]],
+      };
+
+      const docRef = await setDoc(doc(db, `${collectionKey}/${docKey}/items-preview`, itemPreview.id.toString()), itemPreview);
+    } catch (error) {
+      console.log('error:', error);
+    }
+  });
+
+  // create a search preview for each item
+  items.forEach(async (item) => {
+    try {
+      const itemPreview: AllItemsPreview = {
+        id: item.id,
+        collectionKey,
+        docKey,
+        productName: item.productName,
+        imagesUrls: [item.colorImagesUrls[0].itemUrlList[0]],
+      };
+
+      const docRef = await setDoc(doc(db, 'all-items-search', itemPreview.id.toString()), itemPreview);
+    } catch (error) {
+      console.log('error:', error);
+    }
+  });
+
+  // create a stock preview for each item
+  items.forEach(async (item) => {
+    try {
+      const itemPreview: ItemsSizePreview = {
+        id: item.id,
+        collectionKey,
+        docKey,
+        productName: item.productName,
+        imagesUrls: [item.colorImagesUrls[0].itemUrlList[0]],
+        stock: item.stock,
+      };
+
+      const docRef = await setDoc(doc(db, `${collectionKey}/${docKey}/items-stock`, itemPreview.id.toString()), itemPreview);
+    } catch (error) {
+      console.log('error:', error);
+    }
+  });
+}
+
+export async function deleteImageUrls(urlList: string[]) {
   urlList.forEach((url) => {
     const imageRef = ref(storageFB, url);
     deleteObject(imageRef)
@@ -160,168 +233,171 @@ export const deleteImageUrls = async (urlList: string[]) => {
         console.log('Failed to delete image: ', error);
       });
   });
-};
+}
 
-export type ObjectToAdd = {
-  title: string;
-};
+// export type ObjectToAdd = {
+//   title: string;
+// };
 
-export type AddCollectionAndDocuments = [{
-  title:string,
-  items:[]
-}];
+// export type AddCollectionAndDocuments = [{
+//   title:string,
+//   items:[]
+// }];
 
 // COLLECTION AND DOC CREATION FUNCUNALITY
 // need to specify the key in db as title
-export const addCollectionAndDocuments = async<T extends ObjectToAdd> (
-  collectionKey: string,
-  objectToAdd: T[],
-): Promise<void> => {
-  const collectionRef = collection(db, collectionKey);
-  const batch = writeBatch(db);
+// export const addCollectionAndDocuments = async<T extends ObjectToAdd> (
+//   collectionKey: string,
+//   objectToAdd: T[],
+// ): Promise<void> => {
+//   const collectionRef = collection(db, collectionKey);
+//   const batch = writeBatch(db);
 
-  objectToAdd.forEach((object) => {
-    const docRef = doc(collectionRef, object.title.toLowerCase());
-    batch.set(docRef, object);
-  });
+//   objectToAdd.forEach((object) => {
+//     const docRef = doc(collectionRef, object.title.toLowerCase());
+//     batch.set(docRef, object);
+//   });
 
-  await batch.commit();
-  console.log('done');
-};
+//   await batch.commit();
+//   console.log('done');
+// };
 
-export type Keys = {
-  keys: string[];
-};
+// export type Keys = {
+//   keys: string[];
+// };
 
-export async function getCategoriesAndDocuments(): Promise<Map<string, Category[]>>; 
-export async function getCategoriesAndDocuments<CK extends string>(collectionKey: CK): Promise<Map<string, Category[]>>; 
-export async function getCategoriesAndDocuments(collectionKey?: string) {
-  let key = '';
-  if (!collectionKey) {
-    key = 'categories';
-  } else {
-    key = collectionKey;
-  }
-  const data = new Map<string, Category[]>();
-  const collectionRef = collection(db, key);
-  const q = query(collectionRef);
+// export async function getCategoriesAndDocuments(): Promise<Map<string, Category[]>>; 
+// export async function getCategoriesAndDocuments<CK extends string>(collectionKey: CK): Promise<Map<string, Category[]>>; 
+// export async function getCategoriesAndDocuments(collectionKey?: string) {
+//   let key = '';
+//   if (!collectionKey) {
+//     key = 'categories';
+//   } else {
+//     key = collectionKey;
+//   }
+//   const data = new Map<string, Category[]>();
+//   const collectionRef = collection(db, key);
+//   const q = query(collectionRef);
   
-  const querySnapshot = await getDocs(q);
+//   const querySnapshot = await getDocs(q);
 
-  const res = querySnapshot.docs.map((docSnapshot) => {
-    return docSnapshot.data() as Category;
-  });
+//   const res = querySnapshot.docs.map((docSnapshot) => {
+//     return docSnapshot.data() as Category;
+//   });
 
-  data.set(key, res);
-  return data;
-}
+//   data.set(key, res);
+//   return data;
+// }
 
-export async function getAllCategoriesAndDocuments(collectionKeyArray?: string[]) {
-  const data = new Map<string, Category[]>();
-
-  collectionKeyArray?.forEach(async (key) => {
-    const collectionRef = collection(db, key);
-    const q = query(collectionRef);
+export async function getPreviewCategoriesAndDocuments(collectionKey: string) {
+  const userDocsKeys = await getUserKeysDocs(collectionKey);
+  const previewArray: PreviewCategory[] = [];
+  const data = new Map<string, PreviewCategory[]>();
+  
+  const fetchCategoryData = async (docKey: string) => {
+    const collectionRef = collection(db, collectionKey, docKey, 'items-preview');
+    const q = query(
+      collectionRef,
+      limit(4),
+    );
+    
     const querySnapshot = await getDocs(q);
-    const res = querySnapshot.docs.map((docSnapshot) => {
-      return docSnapshot.data() as Category;
-    });
-    data.set(key, res);
-  });
-  return data;
-}
-export async function getPreviewCategoriesAndDocuments() {
-  const data = new Map<string, Category[]>();
-  const userKeys = await getUserCollectionKeys().then((res) => res[0].keys);
 
-  const fetchCategoryData = async (key: string) => {
-    const collectionRef = collection(db, key);
-    const q = query(collectionRef);
-    const querySnapshot = await getDocs(q);
-    const categories = querySnapshot.docs.map((docSnapshot) => {
-      return docSnapshot.data() as Category;
+    const previewCategoryItems: ItemPreview[] = querySnapshot.docs.map((docSnapshot) => {
+      return docSnapshot.data() as ItemPreview;
     });
 
-    const limitedCategories = categories.map((category) => {
-      const limitedItems = category.items.slice(0, 2);
-      return { ...category, items: limitedItems };
-    });
+    const newCategory:PreviewCategory = { title: docKey, items: previewCategoryItems };
 
-    data.set(key, limitedCategories);
+    return newCategory;
   };
 
-  await Promise.all(userKeys.map(fetchCategoryData));
-  
+  await Promise.all(userDocsKeys.map(async (docKey) => {
+    const newCategory = await fetchCategoryData(docKey);
+    previewArray.push(newCategory);
+  }));
+
+  if (previewArray.length > 0) {
+    data.set(collectionKey, previewArray);
+  }
   return data;
 }
 
 export type CategoryDataState = {
   collectionMapKey: string,
   title: string,
-  sliceItems: NewItemValues[]
+  sliceItems: ItemPreview[]
 };
 
-// add additional items
-export async function getSubCategoryDocument(collectionKey: string, docKey: string, skipItemsCounter: number): Promise<CategoryDataState> {
-  const docRef = doc(db, collectionKey, docKey);
-  const docSnapshot = await getDoc(docRef);
+export async function getCategoryCount(collectionKey: string, docKey: string): Promise<number> {
+  const subCollectionRef = collection(db, collectionKey, docKey, 'items-preview');
+  const snapshot = await getCountFromServer(subCollectionRef);
 
-  if (docSnapshot.exists()) {
-    const category = docSnapshot.data() as Category;
-    const sliceItemsArray: NewItemValues[] = category.items.slice(skipItemsCounter, skipItemsCounter + 1);
-    
-    const categoryData: CategoryDataState = {
-      collectionMapKey: collectionKey, 
-      title: docKey,
-      sliceItems: sliceItemsArray,
-    };
-
-    return categoryData;
-  } 
-  throw Error(`Category with docKey '${docKey}' does not exist in collection '${collectionKey}'`);
+  return snapshot.data().count;
 }
 
-export async function getCategory(collectionKey: string, docKey: string): Promise<Map<string, Category[]>> {
-  const data = new Map<string, Category[]>();
+// loading more data to category
+export async function getSubCategoryDocument(
+  collectionKey: string,
+  docKey: string,
+  skipItemsCounter: number,
+): Promise<CategoryDataState> {
+  const subCollectionRef = collection(db, collectionKey, docKey, 'items-preview');
+  const orderedQuery = query(subCollectionRef, orderBy('id'));
+  const documentSnapshots = await getDocs(orderedQuery);
+  const lastVisible = documentSnapshots.docs[skipItemsCounter];
 
-  const docRef = doc(db, collectionKey, docKey);
-  const docSnapshot = await getDoc(docRef);
+  const next = query(
+    collection(db, collectionKey, docKey, 'items-preview'),
+    orderBy('id'),
+    startAt(lastVisible),
+    limit(20),
+  );
 
-  if (docSnapshot.exists()) {
-    const subCategory: Category = docSnapshot.data() as Category;
-    subCategory.items = subCategory.items.slice(0, 2);
-    data.set(collectionKey, [subCategory]);
-    return data;
-  }
+  const itemQuerySnapshot = await getDocs(next);
 
-  data.set(collectionKey, []);
+  const sliceItemsArray: ItemPreview[] = itemQuerySnapshot.docs.map((docSnapshot) => {
+    const item = docSnapshot.data() as ItemPreview;
+    return item;
+  });
+
+
+  const categoryData: CategoryDataState = {
+    collectionMapKey: collectionKey,
+    title: docKey,
+    sliceItems: sliceItemsArray,
+  };
+
+  return categoryData;
+}
+
+// initial load of category
+export async function getCategory(collectionKey: string, docKey: string): Promise<Map<string, PreviewCategory[]>> {
+  const data = new Map<string, PreviewCategory[]>();
+
+  const collectionRef = collection(db, collectionKey, docKey, 'items-preview');
+  const itemQuery = query(collectionRef, limit(20));
+  const itemQuerySnapshot = await getDocs(itemQuery);
+  const result: ItemPreview[] = itemQuerySnapshot.docs.map((doc) => doc.data() as ItemPreview);
+
+  data.set(collectionKey, [{
+    title: docKey,
+    items: result,
+  }]);
   return data;
 }
 
+// featch item when using click direct link or typing path in broswer search (singel item)
 export async function getItemFromRoute(collectionKey: string, docKey: string, itemId: string): Promise<NewItemValues | undefined> {
-  const docRef = doc(db, collectionKey, docKey);
-  const docSnapshot = await getDoc(docRef);
+  const collectionRef = collection(db, collectionKey, docKey, 'items');
+  const itemQuery = query(collectionRef, where('id', '==', itemId));
+  const itemQuerySnapshot = await getDocs(itemQuery);
 
-  if (docSnapshot.exists()) {
-    const subCategory: Category = docSnapshot.data() as Category;
-    const item = subCategory.items.find((item) => item.id === itemId);
-    if (item) {
-      return item;
-    }
+  if (itemQuerySnapshot.docs.length > 0) {
+    const CategoryItem = itemQuerySnapshot.docs[0].data() as NewItemValues;
+    return CategoryItem;
   }
 }
-
-// export const getCategoriesAndDocuments = async (): Promise<Category[]> => {
-//   const collectionRef = collection(db, 'categories');
-//   const q = query(collectionRef);
-  
-//   const querySnapshot = await getDocs(q);
-
-//   return querySnapshot.docs.map(
-//     (docSnapshot) => docSnapshot.data() as Category,
-//   );
-// };
-
 
 /* 
 db structure
