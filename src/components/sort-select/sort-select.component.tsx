@@ -28,7 +28,7 @@ type SelectProps = {
 } & (SingleSelectProps | MultipleSelectProps);
 
 // eslint-disable-next-line object-curly-newline
-export const Select: FC<SelectProps> = ({ firstOption, multiple, value, onChange, options }: SelectProps) => {
+export const SortSelect: FC<SelectProps> = ({ firstOption, multiple, value, onChange, options }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -101,12 +101,12 @@ export const Select: FC<SelectProps> = ({ firstOption, multiple, value, onChange
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, highlightedIndex, options]);
-
+  
   return (
     <div ref={containerRef} tabIndex={0} onBlur={() => setIsOpen(false)} onClick={() => { setIsOpen(!isOpen); }} className="relative container flex flex-shrink items-center rounded-lg bg-white max-w-[20rem] min-h-[2.8em] border focus:outline focus:outline-offset-2 focus:outline-2 focus:outline-gray-400 p-2">
       {/* value */}
       {Array.isArray(value) && value.length === 0 && <span className="font-semibold text-gray-700">{firstOption?.label}</span>}
-      {value && !Array.isArray(value) && value !== undefined && value.value === '' && <span className="font-semibold text-gray-700">{firstOption?.label}</span>}
+      {value !== undefined && 'value' in value && value.label === '' && <span className="font-semibold text-gray-700">{firstOption?.label}</span>}
       <span className="flex-grow flex gap-2 flex-wrap font-semibold text-gray-700">
         {multiple ? value.map((v) => (
           <button key={v.value} onClick={(e) => { e.stopPropagation(); selectOption(v); }} className="flex items-center px-2 border-2 rounded cursor-pointer bg-none hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1">
@@ -134,4 +134,4 @@ export const Select: FC<SelectProps> = ({ firstOption, multiple, value, onChange
   );
 };
 
-export default Select;
+export default SortSelect;

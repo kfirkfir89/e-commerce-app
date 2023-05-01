@@ -10,7 +10,9 @@ import {
   featchUpdateCategory, 
   featchUpdateCategorySucceeded,
   featchUpdateCategoriesSucceeded,
+  featchNewSort,
 } from './category.action';
+import { SortOption } from '../../routes/category/category.component';
 
 // read only is an additional property you can add so that you force it, 
 // that this state object can never be modified.It can only be read.
@@ -18,6 +20,7 @@ import {
 export type CategoriesState = {
   readonly categories: Map<string, PreviewCategory[]>;
   readonly categoriesPreview: Map<string, PreviewCategory[]>,
+  readonly sortOption: SortOption
   readonly isLoading: boolean;
   readonly error: Error | null;
 };
@@ -25,6 +28,7 @@ export type CategoriesState = {
 export const CATEGORIES_INITIAL_STATE : CategoriesState = {
   categories: new Map(),
   categoriesPreview: new Map(),
+  sortOption: { sort: { value: '', label: '' }, colors: [], sizes: [] },
   isLoading: false,
   error: null,
 };
@@ -44,10 +48,14 @@ export const categoriesReducer = (
   if (featchSubCategory.match(action)) {
     return { ...state, isLoading: true };
   }
+
+  if (featchNewSort.match(action)) {
+    return { ...state, sortOption: action.payload };
+  }
   
   if (featchUpdateCategorySucceeded.match(action)) {
     const { collectionKey, docKey, newItems } = action.payload;
-
+    
     const currentCategoriesArray = state.categories.get(collectionKey);
 
     if (currentCategoriesArray !== undefined) {
@@ -95,24 +103,28 @@ export const categoriesReducer = (
   }
 
   if (featchSubCategorySucceeded.match(action)) {
-    const newCategories = action.payload;
+    const newCategories = action.payload.category;
 
-    newCategories.forEach((value, key) => {
-      if (!state.categories.has(key)) {
-        state.categories.set(key, value);
-      } else {
-        const stateCategory = state.categories.get(key)!;
-        const newCategory = newCategories.get(key)!;
 
-        newCategory.forEach((newCategory) => {
-          if (!stateCategory.some((c) => c.title === newCategory.title)) {
-            stateCategory.push(newCategory);
-          }
-        });
-      }
-    });
+    // const newCategories = action.payload.category;
+    // const sort = action.payload.sortOption;
 
-    return { ...state, isLoading: false, categories: state.categories };
+    // newCategories.forEach((value, key) => {
+    //   if (!state.categories.has(key)) {
+    //     state.categories.set(key, value);
+    //   } else {
+    //     const stateCategory = state.categories.get(key)!;
+    //     const newCategory = newCategories.get(key)!;
+
+    //     newCategory.forEach((newCategory) => {
+    //       if (!stateCategory.some((c) => c.title === newCategory.title)) {
+    //         stateCategory.push(newCategory);
+    //       }
+    //     });
+    //   }
+    // });
+
+    return { ...state, isLoading: false, categories: newCategories };
   }
 
   if (featchCategoriesFailed.match(action)) {

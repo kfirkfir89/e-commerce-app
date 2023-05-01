@@ -28,19 +28,23 @@ export function* featchPreviewCategoriesAndDocuments({ payload: collectionKey }:
   }
 }
 
-export function* featchCategory({ payload: { collectionKey, docKey } } : FeatchSubCategory) {
+export function* featchCategory({ payload: { collectionKey, docKey, sortOption } } : FeatchSubCategory) {
   try {
-    const categoriesArray = yield* call(getCategory, collectionKey, docKey);
+    const categoriesArray = yield* call(getCategory, collectionKey, docKey, sortOption);
     // console.log({categoriesArray});
-    yield* put(featchSubCategorySucceeded(categoriesArray));
+    yield* put(featchSubCategorySucceeded(categoriesArray, sortOption));
   } catch (error) {
     yield* put(featchCategoriesFailed(error as Error));
   }
 }
 
-export function* featchUpdateCategory({ payload: { collectionKey, docKey, newItems } } : FeatchUpdateCategorySucceeded) {
+export function* featchUpdateCategory({
+  payload: {
+    collectionKey, docKey, newItems, sortOption, 
+  }, 
+} : FeatchUpdateCategorySucceeded) {
   try {
-    yield* put(featchUpdateCategorySucceeded(collectionKey, docKey, newItems));
+    yield* put(featchUpdateCategorySucceeded(collectionKey, docKey, newItems, sortOption));
   } catch (error) {
     yield* put(featchCategoriesFailed(error as Error));
   }

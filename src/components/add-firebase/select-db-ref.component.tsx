@@ -69,7 +69,7 @@ export const SelectDbRef = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collectionKey]);
 
-
+  // set new collection and docs values
   useEffect(() => {
     if (isNewCollection) {
       onChangeKey({ label: '', value: '' });
@@ -97,6 +97,7 @@ export const SelectDbRef = ({
       onChangeTitle(newTitle);
     }
   };
+  
   return (
     <div className="flex flex-col">
       <div className="flex justify-center text-xl pt-2 text-gray-800 mb-2 font-semibold">Data Referance</div>

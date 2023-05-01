@@ -6,6 +6,7 @@ import { Action, AnyAction } from 'redux';
 import { v4 } from 'uuid';
 import * as slugFunciton from 'slug';
 
+import { FieldValue, Timestamp, serverTimestamp } from 'firebase/firestore';
 import { storageFB } from '../../utils/firebase/firebase.utils';
 import { ActionWithPayload, createAction, withMatcher } from '../../utils/reducer/reducer.utils';
 
@@ -158,12 +159,17 @@ export type ColorImages = {
   color: string
 };
 
-export type NewItemValues = {
+// shared item values
+type ItemValues = {
   id: string
-  created: string
+  created: Timestamp
   productName: string
   slug: string
   price: number
+};
+
+// item/ product full data 
+export type NewItemValues = ItemValues & {
   colors: SelectColorOption[]
   sizes: SelectOption[]
   colorImagesUrls: ColorImages[]
@@ -172,18 +178,25 @@ export type NewItemValues = {
   details: string
 };
 
-export type ItemPreview = {
-  id: string
+// category item
+export type ItemPreview = ItemValues & {
   collectionKey: string
   docKey: string
-  productName: string
-  price: number
   colors: SelectColorOption[]
+  sizes: SelectOption[]
+  imagesUrls: string[]
+};
+
+// search preview collection
+export type AllItemsPreview = ItemValues & {
+  collectionKey: string
+  docKey: string
   imagesUrls: string[]
 };
 
 export type ItemsSizePreview = {
   id: string
+  created: Timestamp
   collectionKey: string
   docKey: string
   productName: string
@@ -191,13 +204,6 @@ export type ItemsSizePreview = {
   stock: SizeStock[],
 };
 
-export type AllItemsPreview = {
-  id: string
-  collectionKey: string
-  docKey: string
-  productName: string
-  imagesUrls: string[]
-};
 
 type AddItemError = {
   key: string
@@ -211,7 +217,8 @@ type AddItemProps = {
 const defualtItemValues: NewItemValues = {
   id: '',
   // eslint-disable-next-line newline-per-chained-call
-  created: (new Date().toLocaleString().slice(0, 10).replace(/-/g, '-').replace(',', '').split('-').reverse().join('/')),
+  // created: (new Date().toLocaleString().slice(0, 10).replace(/-/g, '-').replace(',', '').split('-').reverse().join('/')), // print this format 4/30/2023
+  created: Timestamp.fromDate(new Date()),
   productName: '',
   slug: '',
   price: 0,
@@ -241,7 +248,6 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
   const productNameRef = useRef<HTMLInputElement>(null);
   const priceRef = useRef<HTMLInputElement>(null);
   const detailsRef = useRef<HTMLTextAreaElement>(null);
-
   // image upload functions
   const UploadAsync = useCallback(async (imgFileList: ImageColorsFiles) => {
     // dispatch(featchUploadImageStart());
@@ -378,8 +384,11 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
     setAddItemValues({ ...addItemValues, [e.target.name]: e.target.value });
   };
 
+  const onChangePrice = (e: ChangeEvent<HTMLInputElement>) => {
+    setAddItemValues({ ...addItemValues, price: e.target.valueAsNumber });
+  };
   // prevent input number to except the following chars
-  const exceptThisSymbols = ['e', 'E', '+', '-', '.'];
+  const exceptThisSymbols = ['e', 'E', '+', '-'];
   return (
     <div className="flex flex-col">
       {/* title */}
@@ -418,13 +427,13 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
               <label className="pb-1">
                 <span className="label-text">Product Name</span>
               </label>
-              <input ref={productNameRef} onKeyDown={(e) => exceptThisSymbols.includes(e.key) && e.preventDefault()} type="text" name="productName" placeholder="Product Name" onChange={onChange} className="flex flex-shrink items-center rounded-lg bg-white w-full min-h-[2.8em] border focus:outline focus:outline-offset-2 focus:outline-2 focus:outline-gray-400 p-2" />
+              <input ref={productNameRef} type="text" name="productName" placeholder="Product Name" onChange={onChange} className="flex flex-shrink items-center rounded-lg bg-white w-full min-h-[2.8em] border focus:outline focus:outline-offset-2 focus:outline-2 focus:outline-gray-400 p-2" />
             </div>
             <div className="w-full max-w-xs">
               <label className="label pb-1">
                 <span className="label-text">Price</span>
               </label>
-              <input ref={priceRef} onKeyDown={(e) => exceptThisSymbols.includes(e.key) && e.preventDefault()} type="number" name="price" placeholder="Price" min="0" onChange={onChange} className="flex flex-shrink items-center rounded-lg bg-white w-full min-h-[2.8em] border focus:outline focus:outline-offset-2 focus:outline-2 focus:outline-gray-400 p-2" />
+              <input ref={priceRef} onKeyDown={(e) => exceptThisSymbols.includes(e.key) && e.preventDefault()} type="number" name="price" placeholder="Price" min="0" onChange={onChangePrice} className="flex flex-shrink items-center rounded-lg bg-white w-full min-h-[2.8em] border focus:outline focus:outline-offset-2 focus:outline-2 focus:outline-gray-400 p-2" />
             </div>
             <div className="w-full max-w-xs">
               <label className="label pb-1">

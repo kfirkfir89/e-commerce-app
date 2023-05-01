@@ -92,7 +92,8 @@ export const AddItemStock = ({ onChange, colors, sizes }: AddItemStockProps) => 
                           name={c.label}
                           label={`stock of size ${item.size} color ${c.label}`}
                           min="0"
-                          onChange={(e) => { // Find the index of the selected size in the stock state
+                          onChange={(e) => { 
+                            // Find the index of the selected size in the stock state
                             const sizeIndex = stock.findIndex((s) => s.size === item.size);
                             if (stock[sizeIndex].colors === undefined) return;
                             // Find the index of the selected color in the colors array of the selected size

@@ -17,11 +17,10 @@ import ItemPreview from './routes/item-preview/item-preview.component';
 import AdminDBNav from './routes/admin-dashboard-nav/admin-db-nav.component';
 import Dashboard from './components/dashboard/dashboard.component';
 import AddFirebase from './components/add-firebase/add-firebase.component';
-import Breadcrumbs from './components/breadcrumbs/breadcrumbs';
+import Navigation from './routes/navigation/navigation.component';
 
 const Home = lazy(() => import('./routes/home/home.component'));
 const Authentication = lazy(() => import('./routes/authentication/authentication.component'));
-const Navigation = lazy(() => import('./routes/navigation/navigation.component'));
 const CheckOut = lazy(() => import('./routes/checkout/checkout.component'));
 
 

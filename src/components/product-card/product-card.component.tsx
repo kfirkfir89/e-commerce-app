@@ -29,6 +29,7 @@ const ProductCard = ({ product, categoryTitle } : { product: ItemPreview, catego
   };
 
   return (
+
     <div className={`max-w-xs ${!isImageLoaded ? 'invisible' : 'visible'}`}>
       <Link to={`${route}${product.productName}`} state={product}>
         <div className="relative shadow-sm">
@@ -52,7 +53,6 @@ const ProductCard = ({ product, categoryTitle } : { product: ItemPreview, catego
         </div>
       </div>
     </div>
-
   );
 };
 

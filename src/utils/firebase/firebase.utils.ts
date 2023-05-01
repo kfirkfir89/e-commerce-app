@@ -28,6 +28,8 @@ import {
   startAfter,
   startAt,
   getCountFromServer,
+  OrderByDirection,
+  Query,
 } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
@@ -38,6 +40,8 @@ import {
   AllItemsPreview, ItemPreview, ItemsSizePreview, NewItemValues, 
 } from '../../components/add-firebase/add-item.component';
 import { SizeStock } from '../../components/add-firebase/add-item-stock.component';
+import { SelectOption } from '../../components/select/select.component';
+import { SortOption } from '../../routes/category/category.component';
 
 
 
@@ -136,6 +140,7 @@ export async function getUserCollectionKeys() {
   return res;
 }
 
+// add new data (products) to server
 export async function addFirebaseData<T extends AddFirebaseData>(newData: T): Promise<void> {
   const { collectionKey, docKey, items } = newData;
 
@@ -175,15 +180,18 @@ export async function addFirebaseData<T extends AddFirebaseData>(newData: T): Pr
     try {
       const itemPreview: ItemPreview = {
         id: item.id,
+        created: item.created,
         collectionKey,
         docKey,
         productName: item.productName,
+        slug: item.slug,
         price: item.price,
         colors: item.colors,
+        sizes: item.sizes,
         imagesUrls: [item.colorImagesUrls[0].itemUrlList[0], item.colorImagesUrls[0].itemUrlList[1]],
       };
 
-      const docRef = await setDoc(doc(db, `${collectionKey}/${docKey}/items-preview`, itemPreview.id.toString()), itemPreview);
+      const docRef = await setDoc(doc(db, `${collectionKey}/${docKey}/items-preview`, itemPreview.id), itemPreview);
     } catch (error) {
       console.log('error:', error);
     }
@@ -194,9 +202,12 @@ export async function addFirebaseData<T extends AddFirebaseData>(newData: T): Pr
     try {
       const itemPreview: AllItemsPreview = {
         id: item.id,
+        created: item.created,
         collectionKey,
         docKey,
         productName: item.productName,
+        slug: item.slug,
+        price: item.price,
         imagesUrls: [item.colorImagesUrls[0].itemUrlList[0]],
       };
 
@@ -211,6 +222,7 @@ export async function addFirebaseData<T extends AddFirebaseData>(newData: T): Pr
     try {
       const itemPreview: ItemsSizePreview = {
         id: item.id,
+        created: item.created,
         collectionKey,
         docKey,
         productName: item.productName,
@@ -225,6 +237,7 @@ export async function addFirebaseData<T extends AddFirebaseData>(newData: T): Pr
   });
 }
 
+// delete images in addFirebase component
 export async function deleteImageUrls(urlList: string[]) {
   urlList.forEach((url) => {
     const imageRef = ref(storageFB, url);
@@ -329,6 +342,7 @@ export type CategoryDataState = {
   sliceItems: ItemPreview[]
 };
 
+// get the collection count to present in category down page
 export async function getCategoryCount(collectionKey: string, docKey: string): Promise<number> {
   const subCollectionRef = collection(db, collectionKey, docKey, 'items-preview');
   const snapshot = await getCountFromServer(subCollectionRef);
@@ -337,22 +351,74 @@ export async function getCategoryCount(collectionKey: string, docKey: string): P
 }
 
 // loading more data to category
-export async function getSubCategoryDocument(
-  collectionKey: string,
-  docKey: string,
-  skipItemsCounter: number,
-): Promise<CategoryDataState> {
+export async function getSubCategoryDocument(collectionKey: string, docKey: string, skipItemsCounter: number, sortOption?: SortOption): Promise<CategoryDataState> {
   const subCollectionRef = collection(db, collectionKey, docKey, 'items-preview');
-  const orderedQuery = query(subCollectionRef, orderBy('id'));
-  const documentSnapshots = await getDocs(orderedQuery);
-  const lastVisible = documentSnapshots.docs[skipItemsCounter];
+  let test:any = '';
+  let next:any = '';
 
-  const next = query(
-    collection(db, collectionKey, docKey, 'items-preview'),
-    orderBy('id'),
-    startAt(lastVisible),
-    limit(20),
-  );
+  if (sortOption?.sort.value) {
+    if (sortOption.sort.value === 'recommended') {
+      test = query(subCollectionRef, orderBy('created', 'asc'));
+    }
+    if (sortOption.sort.value === 'new') {
+      test = query(subCollectionRef, orderBy('created', 'desc'));
+    }
+    if (sortOption.sort.value === 'price-low') {
+      test = query(subCollectionRef, orderBy('price', 'asc'));
+    }
+    if (sortOption.sort.value === 'price-high') {
+      test = query(subCollectionRef, orderBy('price', 'desc'));
+    }
+  } else {
+    test = query(subCollectionRef, orderBy('created'));
+  }
+  console.log('sortOption:', sortOption, skipItemsCounter)
+  // const orderedQuery = query(subCollectionRef, orderBy('created'));
+  const documentSnapshots = await getDocs(test);
+  const lastVisible = documentSnapshots.docs[skipItemsCounter];
+  
+  if (sortOption?.sort.value) {
+    if (sortOption.sort.value === 'recommended') {
+      next = query(
+        collection(db, collectionKey, docKey, 'items-preview'),
+        orderBy('created', 'asc'),
+        startAt(lastVisible),
+        limit(8),
+      );
+    }
+    if (sortOption.sort.value === 'new') {
+      next = query(
+        collection(db, collectionKey, docKey, 'items-preview'),
+        orderBy('created', 'desc'),
+        startAt(lastVisible),
+        limit(8),
+      );
+    }
+    if (sortOption.sort.value === 'price-low') {
+      next = query(
+        collection(db, collectionKey, docKey, 'items-preview'),
+        orderBy('price', 'asc'),
+        startAt(lastVisible),
+        limit(8),
+      );
+    }
+    if (sortOption.sort.value === 'price-high') {
+      next = query(
+        collection(db, collectionKey, docKey, 'items-preview'),
+        orderBy('price', 'desc'),
+        startAt(lastVisible),
+        limit(8),
+      );
+    }
+  } else {
+    next = query(
+      collection(db, collectionKey, docKey, 'items-preview'),
+      orderBy('created'),
+      startAt(lastVisible),
+      limit(8),
+    );
+  }
+  
 
   const itemQuerySnapshot = await getDocs(next);
 
@@ -361,23 +427,38 @@ export async function getSubCategoryDocument(
     return item;
   });
 
-
+  console.log('sliceItemsArray:', sliceItemsArray)
   const categoryData: CategoryDataState = {
     collectionMapKey: collectionKey,
     title: docKey,
     sliceItems: sliceItemsArray,
   };
-
   return categoryData;
 }
 
 // initial load of category
-export async function getCategory(collectionKey: string, docKey: string): Promise<Map<string, PreviewCategory[]>> {
+export async function getCategory(collectionKey: string, docKey: string, sortOption?: SortOption): Promise<Map<string, PreviewCategory[]>> {
   const data = new Map<string, PreviewCategory[]>();
-
   const collectionRef = collection(db, collectionKey, docKey, 'items-preview');
-  const itemQuery = query(collectionRef, limit(20));
-  const itemQuerySnapshot = await getDocs(itemQuery);
+  let test:any = '';
+
+  if (sortOption?.sort.value) {
+    if (sortOption.sort.value === 'recommended') {
+      test = query(collectionRef, orderBy('created', 'asc'), limit(8));
+    }
+    if (sortOption.sort.value === 'new') {
+      test = query(collectionRef, orderBy('created', 'desc'), limit(8));
+    }
+    if (sortOption.sort.value === 'price-low') {
+      test = query(collectionRef, orderBy('price', 'asc'), limit(8));
+    }
+    if (sortOption.sort.value === 'price-high') {
+      test = query(collectionRef, orderBy('price', 'desc'), limit(8));
+    }
+  } else {
+    test = query(collectionRef, orderBy('created'), limit(8));
+  }
+  const itemQuerySnapshot = await getDocs(test);
   const result: ItemPreview[] = itemQuerySnapshot.docs.map((doc) => doc.data() as ItemPreview);
 
   data.set(collectionKey, [{
@@ -385,6 +466,17 @@ export async function getCategory(collectionKey: string, docKey: string): Promis
     items: result,
   }]);
   return data;
+}
+
+// get all items search
+export async function getItemsSearch(): Promise<AllItemsPreview[]> {
+  const collectionRef = collection(db, 'all-items-search');
+
+  const itemsQuery = query(collectionRef, orderBy('id'));
+  const itemsQuerySnapshot = await getDocs(itemsQuery);
+  const result: AllItemsPreview[] = itemsQuerySnapshot.docs.map((doc) => doc.data() as AllItemsPreview);
+
+  return result;
 }
 
 // featch item when using click direct link or typing path in broswer search (singel item)

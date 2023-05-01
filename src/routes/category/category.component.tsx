@@ -1,5 +1,5 @@
 import {
-  useState, useEffect, memo, Suspense,
+  useState, useEffect
 } from 'react';
 import { Outlet, useLocation, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,15 +8,17 @@ import ProductCard from '../../components/product-card/product-card.component';
 import Spinner from '../../components/spinner/spinner.component';
 
 import { PreviewCategory } from '../../store/categories/category.types';
-import { selectCategories, selectCategoriesIsLoading } from '../../store/categories/category.selector';
+import { selectCategories, selectCategoriesIsLoading, selectSortOption } from '../../store/categories/category.selector';
 import {
+  featchNewSort,
   featchSubCategory, featchUpdateCategory,
 } from '../../store/categories/category.action';
-import { ItemPreview } from '../../components/add-firebase/add-item.component';
+import {  ItemPreview } from '../../components/add-firebase/add-item.component';
 import {
   getCategoryCount, getSubCategoryDocument, 
 } from '../../utils/firebase/firebase.utils';
-import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
+import Sort from '../../components/sort/Sort';
+import { SelectOption } from '../../components/select/select.component';
 
 export type CategoryRouteParams = {
   shop: string;
@@ -24,17 +26,25 @@ export type CategoryRouteParams = {
   item: string;
 };
 
+export type SortOption = {
+  sort: SelectOption
+  colors: SelectOption[]
+  sizes: SelectOption[]
+};
+
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const Category = () => {
   let { shop, subCategoryPara } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
   const categoriesMap = useSelector(selectCategories);
+  const sortOptionSelector = useSelector(selectSortOption);
   const isLoading = useSelector(selectCategoriesIsLoading);
   const [products, setProducts] = useState<ItemPreview[]>([]);
   const [isLoadingItems, setIsLoadingItems] = useState(false);
+  const [sortOption, setSortOption] = useState<SortOption>({ sort: { label: '', value: '' }, colors: [], sizes: [] });
   const [categoryCount, setCategoryCount] = useState(0);
   const location = useLocation();
   const dispatch = useDispatch();
-
+  
   // in case use typing path in broswer search no para and state pass we need to definde them 
   if (shop === null && subCategoryPara === undefined) {
     const pathArraySplit = location.pathname.split('/');
@@ -54,6 +64,7 @@ const Category = () => {
     };
     const res = getCount();
   }, [shop, subCategoryPara]);
+
   // filter the sub category items
   useEffect(() => {
     const shopCategory = categoriesMap.get(shop);
@@ -72,6 +83,15 @@ const Category = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shop, subCategoryPara]);
 
+  // filter the sub category items using the sort component
+  useEffect(() => {
+    if (sortOption.sort.value !== '') {
+      // dispatch(featchNewSort(sortOption));
+      dispatch(featchSubCategory(shop, subCategoryPara, sortOption));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortOption]);
+
   // update the products
   useEffect(() => {
     const shopCategory = categoriesMap.get(shop);
@@ -86,18 +106,18 @@ const Category = () => {
   }, [subCategoryPara, shop, isLoading]);
 
   // load more items directly to prevent rerender
-  const loadMoreData = (async (shop:string, subCategoryPara: string, count: number) => {
-    const res = await getSubCategoryDocument(shop, subCategoryPara, count);
+  const loadMoreData = (async (shop:string, subCategoryPara: string, count: number, sortOption?: SortOption) => {
+    const res = await getSubCategoryDocument(shop, subCategoryPara, count, sortOption);
     const newArray: ItemPreview[] = products;
-    res.sliceItems.forEach((item) => {
+    res.sliceItems.filter((item) => !products.some((exsistItem) => item.id === exsistItem.id)).forEach((item) => {
       newArray.push(item);
     });
     return newArray;
   });
-
+  // commit above
   const loadMore = () => {
     setIsLoadingItems(true);
-    const asyncfunction = loadMoreData(shop, subCategoryPara, products.length)
+    const asyncfunction = loadMoreData(shop, subCategoryPara, products.length, sortOptionSelector)
       .then((res) => {
         dispatch(featchUpdateCategory(shop, subCategoryPara, res));
         setProducts(() => [...res]); 
@@ -105,17 +125,31 @@ const Category = () => {
       });
   };
 
+  // set sort option to send it back to sort Select and display the current value also for dispatch the sortOption for future featching of more data
+  const onSortChangeHandler = (sort: SelectOption) => {
+    setSortOption((prevState) => ({ ...prevState, sort }));
+  };
+
+  // commit above
+  useEffect(() => {
+    dispatch(featchNewSort(sortOption));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortOption]);
+
   return (
     <>
-      {isLoading ? (
-        <Spinner />
-      ) : (
-        <>
-          <h2 className="text-2xl mb-6 text-center">
-            {`${shop.charAt(0).toUpperCase() + shop.slice(1, shop.length - 1)}'${shop.charAt(shop.length - 1)}`}
-            {' '}
-            {subCategoryPara.charAt(0).toUpperCase() + subCategoryPara.slice(1)}
-          </h2>
+
+      <>
+        <h2 className="text-2xl mb-6 text-center">
+          {`${shop.charAt(0).toUpperCase() + shop.slice(1, shop.length - 1)}'${shop.charAt(shop.length - 1)}`}
+          {' '}
+          {subCategoryPara.charAt(0).toUpperCase() + subCategoryPara.slice(1)}
+        </h2>
+
+        <Sort onChange={onSortChangeHandler} valueOption={sortOption} />
+        {isLoading ? (
+          <Spinner />
+        ) : (
           <div className="flex flex-col items-center justify-center">
             <div className="container">
               <div className="flex flex-col mb-7">
@@ -152,16 +186,13 @@ const Category = () => {
 
             </div>
           </div>
-        </>
-      )}
+        )}
+      </>
+
       <Outlet />
     </>
   );
 };
 
 
-export default memo(() => (
-  <Suspense fallback={<Spinner />}>
-    <Category />
-  </Suspense>
-));
+export default Category;
