@@ -1,5 +1,5 @@
 import {
-  useState, useEffect
+  useState, useEffect, Suspense,
 } from 'react';
 import { Outlet, useLocation, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,7 +13,7 @@ import {
   featchNewSort,
   featchSubCategory, featchUpdateCategory,
 } from '../../store/categories/category.action';
-import {  ItemPreview } from '../../components/add-firebase/add-item.component';
+import { ItemPreview } from '../../components/add-firebase/add-item.component';
 import {
   getCategoryCount, getSubCategoryDocument, 
 } from '../../utils/firebase/firebase.utils';
@@ -140,7 +140,24 @@ const Category = () => {
     <>
 
       <>
-        <h2 className="text-2xl mb-6 text-center">
+        {/* banner */}
+        <div className="flex justify-center mb-4">
+          <div className="container">
+            <div className="p-6 bg-emerald-200 flex justify-center mx-2">
+              <div className="flex flex-col gap-5 items-center justify-between">
+                <h2 className="text-center text-5xl tracking-tighter font-bold">
+                  Up to 25% Off
+                </h2>
+                <div className="space-x-2 text-center py-2 lg:py-0">
+                  <span className="text-sm">Plus free shipping! Use code:</span>
+                  <span className="font-bold">NANA17</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h2 className="text-2xl mb-6 text-center font-semibold text-gray-600">
           {`${shop.charAt(0).toUpperCase() + shop.slice(1, shop.length - 1)}'${shop.charAt(shop.length - 1)}`}
           {' '}
           {subCategoryPara.charAt(0).toUpperCase() + subCategoryPara.slice(1)}
@@ -152,17 +169,19 @@ const Category = () => {
         ) : (
           <div className="flex flex-col items-center justify-center">
             <div className="container">
-              <div className="flex flex-col mb-7">
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 px-2">
+              <div className="flex flex-col mb-7 mt-4">
+                <div className="grid grid-cols-2  sm:grid-cols-3 md:grid-cols-4 2xl:grid-cols-5 gap-2 sm:gap-6 sm:gap-y-10 px-2">
                   {products
-                && products.map((product, i) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
+                    && products.map((product, i) => (
+                      <div key={product.id}>
+                        <ProductCard product={product} />
+                      </div>
+                    ))}
                 </div>
               </div>
 
-              <div className="flex justify-center pt-14">
-                <div className="flex flex-col justify-center mt-4">
+              <div className="flex justify-center mt-20">
+                <div className="flex flex-col justify-center mt-4 ">
                   <p>
                     You&apos;ve viewed
                     {' '}

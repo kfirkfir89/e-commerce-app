@@ -25,7 +25,7 @@ const ProductCard = ({ product, categoryTitle } : { product: ItemPreview, catego
   }
 
   const onLoad = () => {
-    setIsImageLoaded(true);
+    setTimeout(() => setIsImageLoaded(true), 800);
   };
 
   return (

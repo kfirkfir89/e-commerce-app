@@ -126,7 +126,7 @@ export const AddFirebase = () => {
           </div>
           {/* SUBMIT BUTTON */}
           <div className="md:col-span-3 flex flex-col w-full pb-8">
-            <div className="border-t border-gray-700 m-4 opacity-30"></div>
+            <div className="divider mx-4"></div>
             <div className="flex justify-center">
               <button type="submit" className={`btn btn-accent ${isLoading ? 'loading' : ''} mx-2 px-20 text-gray-700`}>save changes</button>
             </div>

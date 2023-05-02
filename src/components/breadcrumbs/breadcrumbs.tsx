@@ -38,7 +38,7 @@ const Breadcrumbs = () => {
             </div>
           </div>
         </div>
-        <div className="border-t border-gray-700 m-4 opacity-30"></div>
+        <div className="divider"></div>
       </>
       )}
     </>

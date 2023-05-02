@@ -372,7 +372,7 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
   } else {
     test = query(subCollectionRef, orderBy('created'));
   }
-  console.log('sortOption:', sortOption, skipItemsCounter)
+  console.log('sortOption:', sortOption, skipItemsCounter);
   // const orderedQuery = query(subCollectionRef, orderBy('created'));
   const documentSnapshots = await getDocs(test);
   const lastVisible = documentSnapshots.docs[skipItemsCounter];
@@ -427,7 +427,7 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
     return item;
   });
 
-  console.log('sliceItemsArray:', sliceItemsArray)
+  console.log('sliceItemsArray:', sliceItemsArray);
   const categoryData: CategoryDataState = {
     collectionMapKey: collectionKey,
     title: docKey,
@@ -444,19 +444,19 @@ export async function getCategory(collectionKey: string, docKey: string, sortOpt
 
   if (sortOption?.sort.value) {
     if (sortOption.sort.value === 'recommended') {
-      test = query(collectionRef, orderBy('created', 'asc'), limit(8));
+      test = query(collectionRef, orderBy('created', 'asc'), limit(20));
     }
     if (sortOption.sort.value === 'new') {
-      test = query(collectionRef, orderBy('created', 'desc'), limit(8));
+      test = query(collectionRef, orderBy('created', 'desc'), limit(20));
     }
     if (sortOption.sort.value === 'price-low') {
-      test = query(collectionRef, orderBy('price', 'asc'), limit(8));
+      test = query(collectionRef, orderBy('price', 'asc'), limit(20));
     }
     if (sortOption.sort.value === 'price-high') {
-      test = query(collectionRef, orderBy('price', 'desc'), limit(8));
+      test = query(collectionRef, orderBy('price', 'desc'), limit(20));
     }
   } else {
-    test = query(collectionRef, orderBy('created'), limit(8));
+    test = query(collectionRef, orderBy('created'), limit(20));
   }
   const itemQuerySnapshot = await getDocs(test);
   const result: ItemPreview[] = itemQuerySnapshot.docs.map((doc) => doc.data() as ItemPreview);

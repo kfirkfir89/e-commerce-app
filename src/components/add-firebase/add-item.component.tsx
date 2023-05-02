@@ -539,7 +539,7 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
               )}
 
         <div className="md:col-span-3 flex flex-col w-full pb-2">
-          <div className="border-t border-gray-700 m-4 opacity-30"></div>
+          <div className="divider mx-4"></div>
           <div className="flex justify-end">
             <button type="button" className={`btn btn-accent ${isLoading ? 'loading' : ''} mx-4 btn-sm text-gray-700`} onClick={addItemHandler}>Create Item</button>
           </div>

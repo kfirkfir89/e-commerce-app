@@ -26,7 +26,6 @@ const CheckOut = lazy(() => import('./routes/checkout/checkout.component'));
 
 const App = () => {
   const dispatch = useDispatch();
-  const categoriesMap = useSelector(selectCategories);
 
   useEffect(() => {
     dispatch(checkUserSession());

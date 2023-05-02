@@ -16,9 +16,13 @@ const Sort = ({ onChange, valueOption }: { onChange: (sortOption: SelectOption) 
   };
 
   return (
-    <div className="bg-gray-300 w-full">
-      <div className="w-full max-w-xs shadow-md rounded-lg">
-        <SortSelect firstOption={{ label: 'Sort', value: '' }} options={optionsShoes} onChange={(o: SelectOption | undefined) => { onChangeKey(o); }} value={valueOption.sort} />
+    <div className="bg-gray-100 w-full py-3 mb-8">
+      <div className="flex justify-center">
+        <div className="container">
+          <div className="mx-2">
+            <SortSelect firstOption={{ label: 'Sort', value: '' }} options={optionsShoes} onChange={(o: SelectOption | undefined) => { onChangeKey(o); }} value={valueOption.sort} />
+          </div>
+        </div>
       </div>
     </div>
   );

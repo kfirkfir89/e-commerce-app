@@ -103,11 +103,11 @@ export const SortSelect: FC<SelectProps> = ({ firstOption, multiple, value, onCh
   }, [isOpen, highlightedIndex, options]);
   
   return (
-    <div ref={containerRef} tabIndex={0} onBlur={() => setIsOpen(false)} onClick={() => { setIsOpen(!isOpen); }} className="relative container flex flex-shrink items-center rounded-lg bg-white max-w-[20rem] min-h-[2.8em] border focus:outline focus:outline-offset-2 focus:outline-2 focus:outline-gray-400 p-2">
+    <div ref={containerRef} tabIndex={0} onBlur={() => setIsOpen(false)} onClick={() => { setIsOpen(!isOpen); }} className="relative container flex flex-shrink items-center border-t-4 border-b-4 border-gray-300 border-double bg-transparent max-w-[16rem] min-h-[2rem] p-2">
       {/* value */}
-      {Array.isArray(value) && value.length === 0 && <span className="font-semibold text-gray-700">{firstOption?.label}</span>}
-      {value !== undefined && 'value' in value && value.label === '' && <span className="font-semibold text-gray-700">{firstOption?.label}</span>}
-      <span className="flex-grow flex gap-2 flex-wrap font-semibold text-gray-700">
+      {/* {Array.isArray(value) && value.length === 0 && <span className="font-semibold text-gray-700">{firstOption?.label}</span>} */}
+      {/* {value !== undefined && 'value' in value && value.label === '' && <span className="font-semibold text-gray-700">{firstOption?.label}</span>} */}
+      <span className="flex-grow flex gap-2 flex-wrap font-semibold text-gray-500">
         {multiple ? value.map((v) => (
           <button key={v.value} onClick={(e) => { e.stopPropagation(); selectOption(v); }} className="flex items-center px-2 border-2 rounded cursor-pointer bg-none hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1">
             {v.label}
@@ -115,14 +115,10 @@ export const SortSelect: FC<SelectProps> = ({ firstOption, multiple, value, onCh
           </button>
         )) : value?.label}
       </span>
-      {/* close btn */}
-      {/* <button onClick={(e) => { e.stopPropagation(); clearOptions(); }} type="button" className="bg-none border-none outline-none text-gray-400 text-lg focus:text-black hover:text-black">&times;</button> */}
-      {/* diviver */}
-      <div className="bg-gray-400 self-stretch w-[.05em] mx-2 opacity-70"></div>
       {/* down arrow */}
       <div className="border-4 w-2 border-transparent border-t-gray-400 translate-y-1 cursor-pointer hover:border-t-gray-700"></div>
       {/* ul items */}  
-      <div className={`absolute  list-none ${isOpen ? 'block' : 'hidden'} p-1 mt-1 rounded w-full left-0 top-full bg-white border border-gray-400 focus:border-white z-[100]`}>
+      <div className={`absolute  list-none ${isOpen ? 'block' : 'hidden'} p-1 mt-1 w-full left-0 top-full bg-gray-100 border-4 border-t-0 border-gray-300 border-double z-[100]`}>
         <ul defaultValue="option1">
           {options.map((option, index) => (
             <li role="presentation" onClick={(e) => { e.stopPropagation(); selectOption(option); multiple ? setIsOpen(true) : setIsOpen(false); }} onMouseEnter={() => setHighlightedIndex(index)} key={option.value} className={`${isOptionSelected(option) && 'bg-gray-300'} ${index === highlightedIndex && !isOptionSelected(option) && 'bg-gray-200'} p-1 px-2 cursor-pointer`}>{option.label}</li>
