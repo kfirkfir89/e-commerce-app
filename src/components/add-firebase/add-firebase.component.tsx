@@ -11,7 +11,7 @@ import {
 } from '../../store/add-firebase/add-firebase.reducer';
 import { SelectDbRef } from './select-db-ref.component';
 import { AddItem, NewItemValues } from './add-item.component';
-import Items from './items.component';
+import AddItemsPreview from './add-items-preview.component';
 import { addFirebaseData, setUserCollectionKeys } from '../../utils/firebase/firebase.utils';
 
 export type AddFirebaseData = {
@@ -121,7 +121,7 @@ export const AddFirebase = () => {
             </div>   
             {/* ITEMS */}
             <div className="bg-gray-200 rounded-lg my-2 pb-2 shadow-lg">
-              <Items />
+              <AddItemsPreview />
             </div>
           </div>
           {/* SUBMIT BUTTON */}

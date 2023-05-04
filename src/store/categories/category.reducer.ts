@@ -28,7 +28,9 @@ export type CategoriesState = {
 export const CATEGORIES_INITIAL_STATE : CategoriesState = {
   categories: new Map(),
   categoriesPreview: new Map(),
-  sortOption: { sort: { value: '', label: '' }, colors: [], sizes: [] },
+  sortOption: {
+    sort: { value: '', label: '' }, colors: [], sizes: [], 
+  },
   isLoading: false,
   error: null,
 };
@@ -104,27 +106,27 @@ export const categoriesReducer = (
 
   if (featchSubCategorySucceeded.match(action)) {
     const newCategories = action.payload.category;
+    const sort = action.payload.sortOption;
 
-
-    // const newCategories = action.payload.category;
-    // const sort = action.payload.sortOption;
-
-    // newCategories.forEach((value, key) => {
-    //   if (!state.categories.has(key)) {
-    //     state.categories.set(key, value);
-    //   } else {
-    //     const stateCategory = state.categories.get(key)!;
-    //     const newCategory = newCategories.get(key)!;
-
-    //     newCategory.forEach((newCategory) => {
-    //       if (!stateCategory.some((c) => c.title === newCategory.title)) {
-    //         stateCategory.push(newCategory);
-    //       }
-    //     });
-    //   }
-    // });
-
-    return { ...state, isLoading: false, categories: newCategories };
+    let stateCategory: PreviewCategory[] = [];
+    
+    newCategories.forEach((value, key) => {
+      if (!state.categories.has(key)) {
+        state.categories.set(key, value);
+      } else {
+        stateCategory = state.categories.get(key)!;
+        const newCategory = newCategories.get(key)!;
+        
+        // filter the items that got the disere sizes from the current state
+        if (sort?.sizes) {
+          stateCategory[0].items = stateCategory[0].items.filter((stateItem) => stateItem.sizesSort.some((size) => sort.sizes.map((s) => s.value).includes(size)));
+        }
+        // push new array item to current items only items that not exsist in the current state
+        stateCategory[0].items.push(...newCategory[0].items.filter((newItem) => !stateCategory[0].items.some((stateItem) => stateItem.id === newItem.id)));
+      }
+    });
+    
+    return { ...state, isLoading: false, categories: state.categories };
   }
 
   if (featchCategoriesFailed.match(action)) {

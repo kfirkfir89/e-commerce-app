@@ -5,7 +5,7 @@ import { deleteImageUrls } from '../../utils/firebase/firebase.utils';
 import { ColorImages, NewItemValues } from './add-item.component';
 
 
-const Items = () => {
+const AddItemsPreview = () => {
   const addFirebaseItems = useSelector(selectAddFirebaseItems);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -70,7 +70,11 @@ const Items = () => {
                       {/* {`${item.created.toString().slice(0, 10).replace(/-/g, '-').split('-')
                       .reverse()
                       .join('/')}`} */}
-                      {`${item.created}`}
+                      {`${item.created.toDate().toLocaleString().slice(0, 10).replace(/-/g, '-')
+                        .replace(',', '')
+                        .split('-')
+                        .reverse()
+                        .join('/')}`}
                     </span>
                   </label>
                   <label className="flex flex-wrap h-fit col-span-2">
@@ -120,4 +124,4 @@ const Items = () => {
   );
 };
 
-export default memo(Items);
+export default memo(AddItemsPreview);

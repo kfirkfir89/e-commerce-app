@@ -91,7 +91,7 @@ export const AddItemReducer = (
 
 
 // select options
-const optionsShoes: SelectOption[] = [
+export const optionsShoes: SelectOption[] = [
   { label: '36', value: '36' },
   { label: '37', value: '37' },
   { label: '38', value: '38' },
@@ -101,7 +101,7 @@ const optionsShoes: SelectOption[] = [
   { label: '42', value: '42' },
   { label: '43', value: '43' },
 ];
-const optionsClothes: SelectOption[] = [
+export const optionsClothes: SelectOption[] = [
   { label: 'y-6', value: 'y-6' },
   { label: 'y-7', value: 'y-7' },
   { label: 'y-8', value: 'y-8' },
@@ -110,7 +110,7 @@ const optionsClothes: SelectOption[] = [
   { label: 'y-11', value: 'y-11' },
   { label: 'y-12', value: 'y-12' },
 ];
-const optionsGlobal: SelectOption[] = [
+export const optionsGlobal: SelectOption[] = [
   { label: 'xs', value: 'XS' },
   { label: 's', value: 'S' },
   { label: 'm', value: 'M' },
@@ -118,7 +118,7 @@ const optionsGlobal: SelectOption[] = [
   { label: 'xl', value: 'XL' },
   { label: 'XXL', value: 'XXL' },
 ];
-const optionsColors: SelectColorOption[] = [
+export const optionsColors: SelectColorOption[] = [
   { label: 'slate', value: 'bg-slate-50' },
   { label: 'black', value: 'bg-black' },
   { label: 'gray1', value: 'bg-gray-300' },
@@ -160,7 +160,7 @@ export type ColorImages = {
 };
 
 // shared item values
-type ItemValues = {
+export type ItemValues = {
   id: string
   created: Timestamp
   productName: string
@@ -183,7 +183,9 @@ export type ItemPreview = ItemValues & {
   collectionKey: string
   docKey: string
   colors: SelectColorOption[]
-  sizes: SelectOption[]
+  colorsSort: string[]
+  sizesSort: string[]
+  stock: SizeStock[];
   imagesUrls: string[]
 };
 
@@ -193,17 +195,6 @@ export type AllItemsPreview = ItemValues & {
   docKey: string
   imagesUrls: string[]
 };
-
-export type ItemsSizePreview = {
-  id: string
-  created: Timestamp
-  collectionKey: string
-  docKey: string
-  productName: string
-  imagesUrls: string[],
-  stock: SizeStock[],
-};
-
 
 type AddItemError = {
   key: string
