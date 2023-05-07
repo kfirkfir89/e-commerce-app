@@ -17,13 +17,6 @@ export const selectCategories = createSelector(
   (categoriesSlice) => categoriesSlice.categories,
 );
 
-export const selectSortOption = createSelector(
-  // input
-  [selectCategoryReducer],
-  // output the output will run only if the input value change
-  (categoriesSlice) => categoriesSlice.sortOption,
-);
-
 export const selectCategoriesPreview = createSelector(
   // input
   [selectCategoryReducer],

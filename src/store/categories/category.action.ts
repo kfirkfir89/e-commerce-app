@@ -1,9 +1,9 @@
-import { CATEGORIES_ACTION_TYPES, Category, PreviewCategory } from './category.types';
+import { CATEGORIES_ACTION_TYPES, PreviewCategory } from './category.types';
 
 import {
-  createAction, Action, ActionWithPayload, withMatcher, 
+  createAction, ActionWithPayload, withMatcher, Action, 
 } from '../../utils/reducer/reducer.utils';
-import { ItemPreview, NewItemValues } from '../../components/add-firebase/add-item.component';
+import { ItemPreview } from '../../components/add-firebase/add-item.component';
 import { SortOption } from '../../routes/category/category.component';
 
 export type FeatchPreviewCategories = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_PREVIEW_CATEGORIES_START, string>;
@@ -14,13 +14,10 @@ export type FeatchUpdateCategory = ActionWithPayload<CATEGORIES_ACTION_TYPES.FET
 
 export type FeatchUpdateCategorySucceeded = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_UPDATE_CATEGORY_SUCCEEDED, { collectionKey: string, docKey: string, newItems: ItemPreview[], sortOption?: SortOption }>;
 
-export type FeatchSubCategory = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORY, { collectionKey: string, docKey: string, sortOption?: SortOption }>;
-
-export type FeatchSubCategorySucceeded = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORY_SUCCEEDED, { category: Map<string, PreviewCategory[]>, sortOption?: SortOption }>;
+export type FeatchCategoriesExsist = Action<CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_EXSIST>;
 
 export type FeatchCategoriesFailed = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_FAILED, Error>;
 
-export type FeatchNewSort = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_NEW_SORT, SortOption>;
 
 export const featchPreviewCategories = withMatcher(
   (collectionKey: string): FeatchPreviewCategories => createAction(CATEGORIES_ACTION_TYPES.FETCH_PREVIEW_CATEGORIES_START, collectionKey),
@@ -42,18 +39,10 @@ export const featchUpdateCategorySucceeded = withMatcher(
   }),
 );
 
-export const featchSubCategory = withMatcher(
-  (collectionKey: string, docKey: string, sortOption?: SortOption): FeatchSubCategory => createAction(CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORY, { collectionKey, docKey, sortOption }),
-);
-
-export const featchSubCategorySucceeded = withMatcher(
-  (category: Map<string, PreviewCategory[]>, sortOption?: SortOption): FeatchSubCategorySucceeded => createAction(CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORY_SUCCEEDED, { category, sortOption }),
+export const featchCategoriesExsist = withMatcher(
+  (): FeatchCategoriesExsist => createAction(CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_EXSIST),
 );
 
 export const featchCategoriesFailed = withMatcher(
   (error: Error): FeatchCategoriesFailed => createAction(CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_FAILED, error),
-);
-
-export const featchNewSort = withMatcher(
-  (sortOption: SortOption): FeatchNewSort => createAction(CATEGORIES_ACTION_TYPES.FETCH_NEW_SORT, sortOption),
 );

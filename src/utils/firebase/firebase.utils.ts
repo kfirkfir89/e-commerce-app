@@ -17,31 +17,25 @@ import {
   getDoc, 
   setDoc, 
   collection, 
-  writeBatch,
   query,
   getDocs,
   QueryDocumentSnapshot,
   orderBy,
   limit,
   where,
-  addDoc,
-  startAfter,
   startAt,
   getCountFromServer,
-  OrderByDirection,
   Query,
   DocumentData,
 } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
-import { Category, PreviewCategory } from '../../store/categories/category.types';    
+import { PreviewCategory } from '../../store/categories/category.types';    
 import { NewOrderDetails } from '../../store/orders/order.types';
 import { AddFirebaseData } from '../../components/add-firebase/add-firebase.component';
 import {
   AllItemsPreview, ItemPreview, NewItemValues, 
 } from '../../components/add-firebase/add-item.component';
-import { SizeStock } from '../../components/add-firebase/add-item-stock.component';
-import { SelectOption } from '../../components/select/select.component';
 import { SortOption } from '../../routes/category/category.component';
 
 
@@ -232,60 +226,7 @@ export async function deleteImageUrls(urlList: string[]) {
   });
 }
 
-// export type ObjectToAdd = {
-//   title: string;
-// };
-
-// export type AddCollectionAndDocuments = [{
-//   title:string,
-//   items:[]
-// }];
-
-// COLLECTION AND DOC CREATION FUNCUNALITY
-// need to specify the key in db as title
-// export const addCollectionAndDocuments = async<T extends ObjectToAdd> (
-//   collectionKey: string,
-//   objectToAdd: T[],
-// ): Promise<void> => {
-//   const collectionRef = collection(db, collectionKey);
-//   const batch = writeBatch(db);
-
-//   objectToAdd.forEach((object) => {
-//     const docRef = doc(collectionRef, object.title.toLowerCase());
-//     batch.set(docRef, object);
-//   });
-
-//   await batch.commit();
-//   console.log('done');
-// };
-
-// export type Keys = {
-//   keys: string[];
-// };
-
-// export async function getCategoriesAndDocuments(): Promise<Map<string, Category[]>>; 
-// export async function getCategoriesAndDocuments<CK extends string>(collectionKey: CK): Promise<Map<string, Category[]>>; 
-// export async function getCategoriesAndDocuments(collectionKey?: string) {
-//   let key = '';
-//   if (!collectionKey) {
-//     key = 'categories';
-//   } else {
-//     key = collectionKey;
-//   }
-//   const data = new Map<string, Category[]>();
-//   const collectionRef = collection(db, key);
-//   const q = query(collectionRef);
-  
-//   const querySnapshot = await getDocs(q);
-
-//   const res = querySnapshot.docs.map((docSnapshot) => {
-//     return docSnapshot.data() as Category;
-//   });
-
-//   data.set(key, res);
-//   return data;
-// }
-
+// get preview items for each category for main category page(preview page)
 export async function getPreviewCategoriesAndDocuments(collectionKey: string) {
   const userDocsKeys = await getUserKeysDocs(collectionKey);
   const previewArray: PreviewCategory[] = [];
@@ -320,114 +261,21 @@ export async function getPreviewCategoriesAndDocuments(collectionKey: string) {
   return data;
 }
 
-export type CategoryDataState = {
+// 
+export type CategoryDataSlice = {
   collectionMapKey: string,
   title: string,
   sliceItems: ItemPreview[]
   count: number
 };
 
-// get the collection count to present in category down page
-export async function getCategoryCount(collectionKey: string, docKey: string): Promise<number> {
-  const subCollectionRef = collection(db, collectionKey, docKey, 'items-preview');
-  const snapshot = await getCountFromServer(subCollectionRef);
-
-  return snapshot.data().count;
-}
-
 // loading more data to category
-export async function getSubCategoryDocumentOLD(collectionKey: string, docKey: string, skipItemsCounter: number, sortOption?: SortOption): Promise<CategoryDataState> {
-  const subCollectionRef = collection(db, collectionKey, docKey, 'items-preview');
-  let test:any = '';
-  let next:any = '';
-
-  if (sortOption?.sort.value) {
-    if (sortOption.sort.value === 'recommended') {
-      test = query(subCollectionRef, orderBy('created', 'asc'));
-    }
-    if (sortOption.sort.value === 'new') {
-      test = query(subCollectionRef, orderBy('created', 'desc'));
-    }
-    if (sortOption.sort.value === 'price-low') {
-      test = query(subCollectionRef, orderBy('price', 'asc'));
-    }
-    if (sortOption.sort.value === 'price-high') {
-      test = query(subCollectionRef, orderBy('price', 'desc'));
-    }
-  } else {
-    test = query(subCollectionRef, orderBy('created'));
-  }
-  console.log('sortOption:', sortOption, skipItemsCounter);
-  // const orderedQuery = query(subCollectionRef, orderBy('created'));
-  const documentSnapshots = await getDocs(test);
-  const lastVisible = documentSnapshots.docs[skipItemsCounter];
-  
-  if (sortOption?.sort.value) {
-    if (sortOption.sort.value === 'recommended') {
-      next = query(
-        collection(db, collectionKey, docKey, 'items-preview'),
-        orderBy('created', 'asc'),
-        startAt(lastVisible),
-        limit(8),
-      );
-    }
-    if (sortOption.sort.value === 'new') {
-      next = query(
-        collection(db, collectionKey, docKey, 'items-preview'),
-        orderBy('created', 'desc'),
-        startAt(lastVisible),
-        limit(8),
-      );
-    }
-    if (sortOption.sort.value === 'price-low') {
-      next = query(
-        collection(db, collectionKey, docKey, 'items-preview'),
-        orderBy('price', 'asc'),
-        startAt(lastVisible),
-        limit(8),
-      );
-    }
-    if (sortOption.sort.value === 'price-high') {
-      next = query(
-        collection(db, collectionKey, docKey, 'items-preview'),
-        orderBy('price', 'desc'),
-        startAt(lastVisible),
-        limit(8),
-      );
-    }
-  } else {
-    next = query(
-      collection(db, collectionKey, docKey, 'items-preview'),
-      orderBy('created'),
-      startAt(lastVisible),
-      limit(8),
-    );
-  }
-  
-
-  const itemQuerySnapshot = await getDocs(next);
-
-  const sliceItemsArray: ItemPreview[] = itemQuerySnapshot.docs.map((docSnapshot) => {
-    const item = docSnapshot.data() as ItemPreview;
-    return item;
-  });
-
-  console.log('sliceItemsArray:', sliceItemsArray);
-  const categoryData: CategoryDataState = {
-    collectionMapKey: collectionKey,
-    title: docKey,
-    sliceItems: sliceItemsArray,
-  };
-  return categoryData;
-}
-
-// loading more data to category
-export async function getSubCategoryDocument(collectionKey: string, docKey: string, itemsCounter: number, sortOption: SortOption, prevSortOption: SortOption): Promise<CategoryDataState> {
-  const data = new Map<string, PreviewCategory[]>();
+export async function getSubCategoryDocument(collectionKey: string, docKey: string, itemsCounter: number, sortOption: SortOption, prevSortOption: SortOption): Promise<CategoryDataSlice> {
   const collectionRef = collection(db, collectionKey, docKey, 'items-preview');
-
   function equalSortsObjects(sortOption: SortOption, prevSortOption: SortOption): boolean {
-    if (sortOption.sort.label === 'Sort' || JSON.stringify(sortOption) === JSON.stringify(prevSortOption)) {
+    if (JSON.stringify(sortOption.sort) === JSON.stringify(prevSortOption.sort) 
+      && JSON.stringify(sortOption.sizes) === JSON.stringify(prevSortOption.sizes)
+      && JSON.stringify(sortOption.colors) === JSON.stringify(prevSortOption.colors)) {
       return true;
     }
     return false;
@@ -440,21 +288,69 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
     skipItemsCounter = itemsCounter;
   }
   
+  
+  // options of sizes selected
+  if (sortOption && sortOption.sizes.length > 0) {
+    const sortOptionsSizes = sortOption.sizes.map((size) => (size.value));
+    
+    const itemsQuery = query(collectionRef, where('sizesSort', 'array-contains-any', sortOptionsSizes));
+    const itemsSnapshot = await getDocs(itemsQuery);
+    const itemsSortBySizes = itemsSnapshot.docs.map((doc) => doc.data() as ItemPreview);
+    let sortCount = itemsSortBySizes.length;
+
+    if (sortOption?.sort.value) {
+      if (sortOption.sort.value === 'recommended') {
+        itemsSortBySizes.sort((a, b) => a.created.toMillis() - b.created.toMillis());
+      }
+      if (sortOption.sort.value === 'new') {
+        itemsSortBySizes.sort((a, b) => b.created.toMillis() - a.created.toMillis());
+      }
+      if (sortOption.sort.value === 'price-low') {
+        itemsSortBySizes.sort((a, b) => a.price - b.price);
+      }
+      if (sortOption.sort.value === 'price-high') {
+        itemsSortBySizes.sort((a, b) => b.price - a.price);
+      }
+    }
+
+    // when colors selected filter after the sizes
+    if (sortOption.colors.length > 0) {
+      const filteredByColors = itemsSortBySizes
+        .filter((item) => item.stock
+          .some((sizeStock) => sizeStock.colors
+            .some((colorStock) => sortOption.colors
+              .some((sortColor) => sortColor.label === colorStock.label) && colorStock.count > 0)));
+      
+      sortCount = filteredByColors.length;
+      const slice = filteredByColors.slice(skipItemsCounter, skipItemsCounter + 3);
+
+      const categoryData: CategoryDataSlice = {
+        collectionMapKey: collectionKey,
+        title: docKey,
+        sliceItems: slice,
+        count: sortCount,
+      };
+      return categoryData;
+    }
+
+    const slice = itemsSortBySizes.slice(skipItemsCounter, skipItemsCounter + 3);
+    const categoryData: CategoryDataSlice = {
+      collectionMapKey: collectionKey,
+      title: docKey,
+      sliceItems: slice,
+      count: sortCount,
+    };
+    return categoryData;
+  }
+  
   // options of colors selected
   if (sortOption && sortOption.colors.length > 0) {
     const sortOptionsColor = sortOption.colors.map((color) => (color.label));
 
     const itemsQuery = query(collectionRef, where('colorsSort', 'array-contains-any', sortOptionsColor));
     const itemsSnapshot = await getDocs(itemsQuery);
-    let itemsSortByColors = itemsSnapshot.docs.map((doc) => doc.data() as ItemPreview);
+    const itemsSortByColors = itemsSnapshot.docs.map((doc) => doc.data() as ItemPreview);
     const sortCount = itemsSortByColors.length;
-
-    // sort sizes if exsist
-    if (sortOption.sizes.length > 0) {
-      itemsSortByColors = itemsSortByColors.filter((item) => item.sizesSort
-        .some((size) => sortOption.sizes
-          .some((sizeSortOptions) => sizeSortOptions.value === size)));
-    }
 
     if (sortOption?.sort.value) {
       if (sortOption.sort.value === 'recommended') {
@@ -471,51 +367,17 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
       }
     }
 
-    const categoryData: CategoryDataState = {
+    const categoryData: CategoryDataSlice = {
       collectionMapKey: collectionKey,
       title: docKey,
       sliceItems: itemsSortByColors.slice(skipItemsCounter, skipItemsCounter + 3),
       count: sortCount,
     };
-    console.log('categoryData:', categoryData.sliceItems);
 
     return categoryData;
   }
-  
-  // options of sizes selected
-  if (sortOption && sortOption.sizes.length > 0) {
-    const sortOptionsSizes = sortOption.sizes.map((size) => (size.value));
 
-    const itemsQuery = query(collectionRef, where('sizesSort', 'array-contains-any', sortOptionsSizes));
-    const itemsSnapshot = await getDocs(itemsQuery);
-    const itemsSortBySizes = itemsSnapshot.docs.map((doc) => doc.data() as ItemPreview);
-    const sortCount = itemsSortBySizes.length;
-
-    if (sortOption?.sort.value) {
-      if (sortOption.sort.value === 'recommended') {
-        itemsSortBySizes.sort((a, b) => a.created.toMillis() - b.created.toMillis());
-      }
-      if (sortOption.sort.value === 'new') {
-        itemsSortBySizes.sort((a, b) => b.created.toMillis() - a.created.toMillis());
-      }
-      if (sortOption.sort.value === 'price-low') {
-        itemsSortBySizes.sort((a, b) => a.price - b.price);
-      }
-      if (sortOption.sort.value === 'price-high') {
-        itemsSortBySizes.sort((a, b) => b.price - a.price);
-      }
-    }
-    
-    const categoryData: CategoryDataState = {
-      collectionMapKey: collectionKey,
-      title: docKey,
-      sliceItems: itemsSortBySizes.slice(skipItemsCounter, skipItemsCounter + 3),
-      count: sortCount,
-    };
-
-    return categoryData;
-  }
-  
+  // same sort mean load more check for main sort desc/asc
   if (isSameSort) {
     let itemsQuery:Query<DocumentData> = query(collectionRef);
     if (sortOption?.sort.value) {
@@ -598,7 +460,7 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
       return item;
     });
 
-    const categoryData: CategoryDataState = {
+    const categoryData: CategoryDataSlice = {
       collectionMapKey: collectionKey,
       title: docKey,
       sliceItems: sliceItemsArray,
@@ -607,6 +469,7 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
     return categoryData;
   }
 
+  // in case of changing sort without sort option of colors or sizes
   let itemsQuery:Query<DocumentData> = query(collectionRef);
     
   if (sortOption?.sort.value) {
@@ -647,113 +510,13 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
     return item;
   });
   
-  const categoryData: CategoryDataState = {
+  const categoryData: CategoryDataSlice = {
     collectionMapKey: collectionKey,
     title: docKey,
     sliceItems: sliceItemsArray,
     count: sortCount,
   };
   return categoryData;
-}
-
-// initial load of category
-export async function getCategory(collectionKey: string, docKey: string, sortOption?: SortOption): Promise<Map<string, PreviewCategory[]>> {
-  const data = new Map<string, PreviewCategory[]>();
-  const collectionRef = collection(db, collectionKey, docKey, 'items-preview');
-  
-  
-  if (sortOption && sortOption.colors.length > 0) {
-    const sortOptionsColor = sortOption.colors.map((color) => (color.label));
-
-    const itemsQuery = query(collectionRef, where('colorsSort', 'array-contains-any', sortOptionsColor));
-    const itemsSnapshot = await getDocs(itemsQuery);
-    let itemsSortByColors = itemsSnapshot.docs.map((doc) => doc.data() as ItemPreview);
-
-    // sort sizes if exsist
-    if (sortOption.sizes.length > 0) {
-      itemsSortByColors = itemsSortByColors.filter((item) => item.sizesSort
-        .some((size) => sortOption.sizes
-          .some((sizeSortOptions) => sizeSortOptions.value === size)));
-    }
-
-    if (sortOption?.sort.value) {
-      if (sortOption.sort.value === 'recommended') {
-        itemsSortByColors.sort((a, b) => a.created.toMillis() - b.created.toMillis());
-      }
-      if (sortOption.sort.value === 'new') {
-        itemsSortByColors.sort((a, b) => b.created.toMillis() - a.created.toMillis());
-      }
-      if (sortOption.sort.value === 'price-low') {
-        itemsSortByColors.sort((a, b) => a.price - b.price);
-      }
-      if (sortOption.sort.value === 'price-high') {
-        itemsSortByColors.sort((a, b) => b.price - a.price);
-      }
-    }
-
-    data.set(collectionKey, [{
-      title: docKey,
-      items: itemsSortByColors.slice(0, 3),
-    }]);
-    
-    return data;
-  }
-  
-  if (sortOption && sortOption.sizes.length > 0) {
-    const sortOptionsSizes = sortOption.sizes.map((size) => (size.value));
-
-    const itemsQuery = query(collectionRef, where('sizesSort', 'array-contains-any', sortOptionsSizes));
-    const itemsSnapshot = await getDocs(itemsQuery);
-    const itemsSortBySizes = itemsSnapshot.docs.map((doc) => doc.data() as ItemPreview);
-
-    if (sortOption?.sort.value) {
-      if (sortOption.sort.value === 'recommended') {
-        itemsSortBySizes.sort((a, b) => a.created.toMillis() - b.created.toMillis());
-      }
-      if (sortOption.sort.value === 'new') {
-        itemsSortBySizes.sort((a, b) => b.created.toMillis() - a.created.toMillis());
-      }
-      if (sortOption.sort.value === 'price-low') {
-        itemsSortBySizes.sort((a, b) => a.price - b.price);
-      }
-      if (sortOption.sort.value === 'price-high') {
-        itemsSortBySizes.sort((a, b) => b.price - a.price);
-      }
-    }
-    
-    data.set(collectionKey, [{
-      title: docKey,
-      items: itemsSortBySizes.slice(0, 3),
-    }]);
-    
-    return data;
-  }
-  
-  const itemsQuery = query(collectionRef, limit(3));
-  const itemsSnapshot = await getDocs(itemsQuery);
-  const itemsSlice = itemsSnapshot.docs.map((doc) => doc.data() as ItemPreview);
-
-  if (sortOption?.sort.value) {
-    if (sortOption.sort.value === 'recommended') {
-      itemsSlice.sort((a, b) => a.created.toMillis() - b.created.toMillis());
-    }
-    if (sortOption.sort.value === 'new') {
-      itemsSlice.sort((a, b) => b.created.toMillis() - a.created.toMillis());
-    }
-    if (sortOption.sort.value === 'price-low') {
-      itemsSlice.sort((a, b) => a.price - b.price);
-    }
-    if (sortOption.sort.value === 'price-high') {
-      itemsSlice.sort((a, b) => b.price - a.price);
-    }
-  }
-
-  data.set(collectionKey, [{
-    title: docKey,
-    items: itemsSlice,
-  }]);
-  
-  return data;
 }
 
 // get all items search
@@ -779,25 +542,12 @@ export async function getItemFromRoute(collectionKey: string, docKey: string, it
   }
 }
 
-/* 
-db structure
-{
-  hats: {
-    title: 'Hats',
-    items: [
-      {},
-      {}
-    ]
-  },
-  sneakers: {
-    title: 'Sneakers',
-    items: [
-      {},
-      {}
-    ]
-  }
+export async function getCategoryCount(collectionKey: string, docKey: string): Promise<number> {
+  const subCollectionRef = collection(db, collectionKey, docKey, 'items-preview');
+  const snapshot = await getCountFromServer(subCollectionRef);
+
+  return snapshot.data().count;
 }
- */
 
 // USER AUTH FUNCTIONLITY
 

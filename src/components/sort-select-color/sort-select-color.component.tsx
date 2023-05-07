@@ -120,7 +120,7 @@ export const SortSelectColor: FC<SelectColorProps> = ({ firstOption, value, onCh
       <div className="border-4 w-2 border-transparent border-t-gray-400 translate-y-1 cursor-pointer hover:border-t-gray-700"></div>
       {/* ul items */}  
       <div className={`absolute list-none ${isOpen ? 'block' : 'hidden'} p-1 mt-1 rounded w-full left-0 top-full bg-white border border-gray-400 focus:border-white z-[100]`}>
-        <div className="flex flex-wrap gap-x-4 gap-y-3">
+        <div className="flex flex-wrap gap-x-3 gap-y-2">
           {options.map((option, index) => (
             option.label === 'nocolor' 
               ? (
@@ -129,7 +129,7 @@ export const SortSelectColor: FC<SelectColorProps> = ({ firstOption, value, onCh
                   onClick={(e) => { e.stopPropagation(); selectOption(option); setIsOpen(true); }} 
                   onMouseEnter={() => setHighlightedIndex(index)} 
                   key={option.value} 
-                  className={`${isOptionSelected(option) && ''} ${index === highlightedIndex && !isOptionSelected(option) && ''} px-2 flex justify-center items-center ${option.value} bg-[${option.value}] p-1 px-2 cursor-pointer shadow-lg h-9 w-9 rounded-lg hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1`}
+                  className={`${isOptionSelected(option) && ''} ${index === highlightedIndex && !isOptionSelected(option) && ''} px-2 flex justify-center items-center ${option.value} bg-[${option.value}] p-1 px-2 cursor-pointer shadow-lg h-6 w-6 rounded-lg hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1`}
                 >
                   <div className="opacity-40">
                     <NoColorIcon />
@@ -142,7 +142,7 @@ export const SortSelectColor: FC<SelectColorProps> = ({ firstOption, value, onCh
                   onClick={(e) => { e.stopPropagation(); selectOption(option); setIsOpen(true); }} 
                   onMouseEnter={() => setHighlightedIndex(index)} 
                   key={option.value} 
-                  className={`${isOptionSelected(option) && ''} ${index === highlightedIndex && !isOptionSelected(option) && ''} px-2 flex justify-center items-center ${option.value} bg-[${option.value}] p-1 px-2 cursor-pointer shadow-lg h-9 w-9 rounded-lg hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1`}
+                  className={`${isOptionSelected(option) && ''} ${index === highlightedIndex && !isOptionSelected(option) && ''} px-2 flex justify-center items-center ${option.value} bg-[${option.value}] p-1 px-2 cursor-pointer shadow-lg h-6 w-6 rounded-lg hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1`}
                 >
                 </div>
               )

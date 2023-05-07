@@ -11,25 +11,25 @@ import { featchPreviewCategories } from '../../store/categories/category.action'
 const ProductCard = lazy(() => import('../../components/product-card/product-card.component'));
 
 const CategoriesPreview = () => {
-  const { shop } = useParams<keyof ShopCategoryRouteParams>() as ShopCategoryRouteParams;
+  const { shopPara } = useParams<keyof ShopCategoryRouteParams>() as ShopCategoryRouteParams;
   const categoriesPreviewMap = useSelector(selectCategoriesPreview);
   const isLoading = useSelector(selectCategoriesIsLoading);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(featchPreviewCategories(shop));
+    dispatch(featchPreviewCategories(shopPara));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [shopPara]);
 
   function getCategories() {
-    return categoriesPreviewMap.get(shop);
+    return categoriesPreviewMap.get(shopPara);
   }
     
   const categories = getCategories();
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <> 
-      <h2 className="text-4xl mb-6 text-center">{shop.toUpperCase()}</h2>
+      <h2 className="text-4xl mt-36 mb-6 text-center">{shopPara.toUpperCase()}</h2>
       <div className="flex flex-col items-center top-0 z-30">
         <div className="container">
           {

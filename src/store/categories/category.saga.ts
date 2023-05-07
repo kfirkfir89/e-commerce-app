@@ -1,38 +1,33 @@
 // import { all, call, takeLatest, put } from "redux-saga/effects";
 import {
-  all, call, takeLatest, put, 
+  all, call, takeLatest, put, select,
 } from 'typed-redux-saga';
 
 import {
-  getCategory, getPreviewCategoriesAndDocuments, 
+  getPreviewCategoriesAndDocuments, 
 } from '../../utils/firebase/firebase.utils';
 
 import {
-  featchCategoriesFailed, 
-  FeatchSubCategory, 
-  featchSubCategorySucceeded, 
+  featchCategoriesFailed,
   FeatchUpdateCategorySucceeded, 
   featchUpdateCategorySucceeded,
   featchUpdateCategoriesSucceeded,
   FeatchPreviewCategories,
+  featchCategoriesExsist,
 } from './category.action';
 
 import { CATEGORIES_ACTION_TYPES } from './category.types';
+import { selectCategoriesPreview } from './category.selector';
 
 export function* featchPreviewCategoriesAndDocuments({ payload: collectionKey }: FeatchPreviewCategories) {
   try {
-    const categoriesArray = yield* call(getPreviewCategoriesAndDocuments, collectionKey);
-    yield* put(featchUpdateCategoriesSucceeded(categoriesArray));
-  } catch (error) {
-    yield* put(featchCategoriesFailed(error as Error));
-  }
-}
-
-export function* featchCategory({ payload: { collectionKey, docKey, sortOption } } : FeatchSubCategory) {
-  try {
-    const categoriesArray = yield* call(getCategory, collectionKey, docKey, sortOption);
-    // console.log({categoriesArray});
-    yield* put(featchSubCategorySucceeded(categoriesArray, sortOption));
+    const categoriesPreviewSelector = yield* select(selectCategoriesPreview);
+    if (categoriesPreviewSelector.has(collectionKey)) {
+      yield* put(featchCategoriesExsist());
+    } else {
+      const categoriesArray = yield* call(getPreviewCategoriesAndDocuments, collectionKey);
+      yield* put(featchUpdateCategoriesSucceeded(categoriesArray));
+    }
   } catch (error) {
     yield* put(featchCategoriesFailed(error as Error));
   }
@@ -54,10 +49,6 @@ export function* onPreviewFetchCategories() {
   yield* takeLatest(CATEGORIES_ACTION_TYPES.FETCH_PREVIEW_CATEGORIES_START, featchPreviewCategoriesAndDocuments);
 }
 
-export function* onCategoryFetch() {
-  yield* takeLatest(CATEGORIES_ACTION_TYPES.FETCH_SUB_CATEGORY, featchCategory);
-}
-
 export function* onUpdateCategoryFetch() {
   yield* takeLatest(CATEGORIES_ACTION_TYPES.FETCH_UPDATE_CATEGORY, featchUpdateCategory);
 }
@@ -65,7 +56,6 @@ export function* onUpdateCategoryFetch() {
 export function* categoriesSaga() {
   yield* all([
     call(onPreviewFetchCategories), 
-    call(onCategoryFetch),
     call(onUpdateCategoryFetch),
   ]);
 }

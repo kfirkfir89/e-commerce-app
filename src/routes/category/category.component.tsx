@@ -1,30 +1,30 @@
 import {
-  useState, useEffect, Suspense, memo,
+  useState, useEffect, memo, useCallback,
 } from 'react';
-import { Outlet, useLocation, useParams } from 'react-router-dom';
+import {
+  Outlet, useParams, 
+} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import ProductCard from '../../components/product-card/product-card.component';
 import Spinner from '../../components/spinner/spinner.component';
 
-import { PreviewCategory } from '../../store/categories/category.types';
-import { selectCategories, selectCategoriesIsLoading, selectSortOption } from '../../store/categories/category.selector';
+import { selectCategories, selectCategoriesIsLoading } from '../../store/categories/category.selector';
 import {
-  featchNewSort,
-  featchSubCategory, featchUpdateCategory,
+  featchUpdateCategory,
 } from '../../store/categories/category.action';
 import { ItemPreview } from '../../components/add-firebase/add-item.component';
 import {
-  getCategory,
-  getCategoryCount, getSubCategoryDocument, 
+  getCategoryCount,
+  getSubCategoryDocument, 
 } from '../../utils/firebase/firebase.utils';
 import Sort from '../../components/sort/Sort';
 import { SelectOption } from '../../components/select/select.component';
 
 export type CategoryRouteParams = {
-  shop: string;
+  shopPara: string;
   subCategoryPara: string;
-  item: string;
+  itemPara: string;
 };
 
 export type SortOption = {
@@ -33,12 +33,17 @@ export type SortOption = {
   sizes: SelectOption[]
 };
 
+export type PrevPath = {
+  shopPara: string
+  subCategoryPara: string
+};
+
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const Category = () => {
-  let { shop, subCategoryPara } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
-  const categoriesMap = useSelector(selectCategories);
-  const sortOptionSelector = useSelector(selectSortOption);
+  const { shopPara, subCategoryPara } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
+  const categoriesSelector = useSelector(selectCategories);
   const isLoading = useSelector(selectCategoriesIsLoading);
+
   const [products, setProducts] = useState<ItemPreview[]>([]);
   const [isLoadingItems, setIsLoadingItems] = useState(false);
   const [countSortOption, setCountSortOption] = useState(0);
@@ -46,37 +51,33 @@ const Category = () => {
     sort: { label: 'Sort', value: '' }, colors: [], sizes: [], 
   });
   const [prevSortOption, setPrevSortOption] = useState<SortOption>(sortOption);
+  const [pathChanged, setPathChanged] = useState(false);
 
-  const location = useLocation();
   const dispatch = useDispatch();
-  // in case use typing path in broswer search no para and state pass we need to definde them 
-  if (shop === null && subCategoryPara === undefined) {
-    const pathArraySplit = location.pathname.split('/');
-    subCategoryPara = pathArraySplit[pathArraySplit.length - 1];
-    shop = pathArraySplit[pathArraySplit.length - 2];
-  }
 
+  // check for prevSort and current to be able to know the sort order we need to feaatch from server
+  // boolean check so isTheSameSort..
   function equalSortsObjects(sortOption: SortOption, prevSortOption: SortOption): boolean {
-    if (sortOption.sort.label === 'Sort' || JSON.stringify(sortOption) === JSON.stringify(prevSortOption)) {
+    if (JSON.stringify(sortOption.sort) === JSON.stringify(prevSortOption.sort) 
+      && JSON.stringify(sortOption.sizes) === JSON.stringify(prevSortOption.sizes)
+      && JSON.stringify(sortOption.colors) === JSON.stringify(prevSortOption.colors)) {
       return true;
     }
     return false;
   }
-  async function loadData(shop:string, subCategoryPara: string, count: number, sortOption: SortOption, prevSortOption: SortOption) {
-    const res = await getSubCategoryDocument(shop, subCategoryPara, count, sortOption, prevSortOption);
+  
+  // a featch to server to get a slice 
+  async function loadData(shopPara:string, subCategoryPara: string, count: number, sortOption: SortOption, prevSortOption: SortOption) {
+    const res = await getSubCategoryDocument(shopPara, subCategoryPara, count, sortOption, prevSortOption);
     setCountSortOption(res.count);
     const arr = res.sliceItems;
     return arr;
   }
-  // const newArray: ItemPreview[] = products;
-  // res.sliceItems.filter((item) => !products.some((exsistItem) => item.id === exsistItem.id)).forEach((item) => {
-  //   newArray.push(item);
-  // });
+
   function featchDataCategory() {
-    setIsLoadingItems(true);
-    const asyncfunction = loadData(shop, subCategoryPara, products.length, sortOption, prevSortOption)
+    const asyncfunction = loadData(shopPara, subCategoryPara, products.length, sortOption, prevSortOption)
       .then((res) => {
-        dispatch(featchUpdateCategory(shop, subCategoryPara, res));
+        dispatch(featchUpdateCategory(shopPara, subCategoryPara, res));
         const isSameSort = equalSortsObjects(sortOption, prevSortOption);
 
         if (isSameSort) {
@@ -84,7 +85,7 @@ const Category = () => {
           res.filter((item) => !products.some((exsistItem) => item.id === exsistItem.id)).forEach((item) => {
             newArray.push(item);
           });
-          setProducts((prevProducts) => { return [...newArray]; });
+          setProducts([...newArray]);
         }
         if (!isSameSort) {
           if (sortOption?.sort.value) {
@@ -101,66 +102,93 @@ const Category = () => {
               setProducts(() => { return [...res].sort((a, b) => b.price - a.price); }); 
             }
             setProducts(() => { return [...res]; }); 
-          } 
-          if (sortOption.sizes.length > 0) {
+          }
+          if (sortOption.colors.length > 0) {
             setProducts(() => {
               return [...res]
-                .filter((item) => item.sizesSort
-                  .some((size) => sortOption.sizes
-                    .some((stateSort) => size === stateSort.value)))
-                .sort((a, b) => {
-                  let sortResult = 0;
-                  if (sortOption.sort.value === 'recommended') {
-                    sortResult = a.created.toMillis() - b.created.toMillis();
-                  }
-                  if (sortOption.sort.value === 'new') {
-                    sortResult = b.created.toMillis() - a.created.toMillis();
-                  }
-                  if (sortOption.sort.value === 'price-low') {
-                    sortResult = a.price - b.price;
-                  }
-                  if (sortOption.sort.value === 'price-high') {
-                    sortResult = b.price - a.price;
-                  }
-                  return sortResult;
-                }).filter((item) => res.some((newItem) => newItem.id !== item.id)); 
+                .filter((item) => item.colorsSort
+                  .some((color) => sortOption.colors
+                    .some((sortColor) => color === sortColor.label)))
+                .filter((item) => res.some((newItem) => newItem.id === item.id));
             }); 
           }
+          if (sortOption.sizes.length > 0) {
+            if (sortOption.colors.length > 0) {
+              setProducts(() => {
+                return [...res]
+                  .filter((item) => item.sizesSort
+                    .some((size) => sortOption.sizes
+                      .some((stateSort) => size === stateSort.value)))
+                  .filter((item) => res.some((newItem) => newItem.id === item.id))
+                  .filter((item) => item.stock.some((sizeStock) => sizeStock.colors
+                    .some((colorStock) => sortOption.colors
+                      .some((sortColor) => sortColor.label === colorStock.label) && colorStock.count > 0))); 
+              }); 
+            } else {
+              setProducts(() => {
+                return [...res]
+                  .filter((item) => item.sizesSort
+                    .some((size) => sortOption.sizes
+                      .some((stateSort) => size === stateSort.value)))
+                  .filter((item) => res.some((newItem) => newItem.id === item.id)); 
+              }); 
+            }
+          }
         }
-        
-        setPrevSortOption(sortOption);
+        // setPrevSortOption(sortOption);
         setTimeout(() => {
           setIsLoadingItems(false);
         }, 800);
       });
   }
 
-  // filter the sub category items
+  // reset fields before check for new category
   useEffect(() => {
-    const shopCategory = categoriesMap.get(shop);
-    if (shopCategory && typeof shop === 'string') {
-      const filteredProducts: PreviewCategory | undefined = shopCategory.find((c) => c.title === subCategoryPara);
-  
-      if (filteredProducts) {
-        if (filteredProducts.items.length > 20) {
-          setProducts(filteredProducts.items);
-          return;
-        }
-      }
-    }
-    dispatch(featchSubCategory(shop, subCategoryPara));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shop, subCategoryPara]);
+    setProducts([]);
+    setSortOption({
+      sort: { label: 'Sort', value: '' }, colors: [], sizes: [], 
+    });
+    setPathChanged(true);
+  }, [shopPara, subCategoryPara]);
 
+  // first load if category exsist load the items
   useEffect(() => {
-    const initialLoad = featchDataCategory();
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    if (categoriesSelector.has(shopPara)) {
+      const subCategory = categoriesSelector.get(shopPara);
+      if (subCategory?.some((mapDocKey) => mapDocKey.title === subCategoryPara)) {
+        const array = subCategory.find((category) => category.title === subCategoryPara)!;
+        const getCount = async () => {
+          const count = await getCategoryCount(shopPara, subCategoryPara).then((count) => setCountSortOption(count));
+        };
+        setProducts([...array.items.slice(0, 3)]);
+        const featchCount = getCount();
+        setPathChanged(false);
+      } else {
+        const initialLoad = featchDataCategory();
+        setPrevSortOption(sortOption);
+        setPathChanged(false);
+      }
+    } else {
+      const initialLoad = featchDataCategory();
+      setPrevSortOption(sortOption);
+      setPathChanged(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathChanged]);
+  
+  
+  useEffect(() => {
+    if (!(sortOption.sort.label === 'Sort' && sortOption.colors.length === 0 && sortOption.sizes.length === 0)) {
+      const initialLoad = featchDataCategory();
+      setPrevSortOption(sortOption);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortOption]);
-
+  
   const loadMore = () => {
-    const initialLoad = featchDataCategory();
+    const moreData = featchDataCategory();
   };
-
   // set sort option to send it back to sort Select and display the current value also for dispatch the sortOption for future featching of more data
   const onSortChangeHandler = (sort: SelectOption | SelectOption[]) => {
     if ('label' in sort) {
@@ -173,17 +201,11 @@ const Category = () => {
     setSortOption((prevState) => ({ ...prevState, colors: sort }));
   };
 
-  // commit above
-  // useEffect(() => {
-  //   dispatch(featchNewSort(sortOption));
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [sortOption]);
-
   return (
     <>
       <>
         {/* banner */}
-        <div className="flex justify-center mb-4">
+        <div className="flex justify-center mb-4 mt-32">
           <div className="container">
             <div className="p-6 bg-emerald-200 flex justify-center mx-2">
               <div className="flex flex-col gap-5 items-center justify-between">
@@ -200,7 +222,7 @@ const Category = () => {
         </div>
 
         <h2 className="text-2xl mb-6 text-center font-semibold text-gray-600">
-          {`${shop.charAt(0).toUpperCase() + shop.slice(1, shop.length - 1)}'${shop.charAt(shop.length - 1)}`}
+          {`${shopPara.charAt(0).toUpperCase() + shopPara.slice(1, shopPara.length - 1)}'${shopPara.charAt(shopPara.length - 1)}`}
           {' '}
           {subCategoryPara.charAt(0).toUpperCase() + subCategoryPara.slice(1)}
         </h2>
@@ -248,11 +270,6 @@ const Category = () => {
                   >
                     load more
                   </button>
-                  <button
-                    onClick={loadMore}
-                  >
-                    load more
-                  </button>
                 </div>
               </div>
 
@@ -266,4 +283,4 @@ const Category = () => {
 };
 
 
-export default memo(Category);
+export default Category;

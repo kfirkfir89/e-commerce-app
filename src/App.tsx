@@ -36,7 +36,7 @@ const App = () => {
       <Route path="/*" element={<Navigation />}>
         <Route index element={<Home />} />
 
-        <Route path=":shop/*" element={<Outlet />}>
+        <Route path=":shopPara/*" element={<Outlet />}>
           <Route index element={<CategoriesPreview />} errorElement={<NotFound />} />
           <Route path=":subCategoryPara/*" element={<Outlet />}>
             <Route index element={<Category />} />

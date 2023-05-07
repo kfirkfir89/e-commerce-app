@@ -5,13 +5,13 @@ import { NewItemValues } from '../../components/add-firebase/add-item.component'
 import { getItemFromRoute } from '../../utils/firebase/firebase.utils';
 
 const ItemPreview = () => {
-  const { item, subCategoryPara, shop } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
+  const { itemPara, subCategoryPara, shopPara } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
   const location = useLocation();
   const [product, setProduct] = useState<NewItemValues | undefined>(location.state);
 
   const fetchItem = async () => {
     try {
-      const res = await getItemFromRoute(shop, subCategoryPara, item);
+      const res = await getItemFromRoute(shopPara, subCategoryPara, itemPara);
       if (res !== undefined) {
         setProduct(res);
       }
