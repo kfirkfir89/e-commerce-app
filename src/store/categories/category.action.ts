@@ -4,7 +4,7 @@ import {
   createAction, ActionWithPayload, withMatcher, Action, 
 } from '../../utils/reducer/reducer.utils';
 import { ItemPreview } from '../../components/add-firebase/add-item.component';
-import { SortOption } from '../../routes/category/category.component';
+import { SortOption } from '../../routes/category/categoryOLD.component';
 
 export type FeatchPreviewCategories = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_PREVIEW_CATEGORIES_START, string>;
 

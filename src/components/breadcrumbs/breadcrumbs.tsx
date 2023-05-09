@@ -29,7 +29,7 @@ const Breadcrumbs = () => {
                     currentLink += `/${crumb}`;
                     return (
                       <li key={crumb}>
-                        <Link key={crumb} to={currentLink}>{crumb.replace(/%20/g, '-').toLowerCase()}</Link>
+                        <Link className="text-sm tracking-wider hover:text-slate-600 text-gray-400" key={crumb} to={currentLink}>{crumb.replace(/%20/g, '-').toLowerCase()}</Link>
                       </li>
                     );
                   })

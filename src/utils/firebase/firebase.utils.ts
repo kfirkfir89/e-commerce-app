@@ -36,7 +36,7 @@ import { AddFirebaseData } from '../../components/add-firebase/add-firebase.comp
 import {
   AllItemsPreview, ItemPreview, NewItemValues, 
 } from '../../components/add-firebase/add-item.component';
-import { SortOption } from '../../routes/category/category.component';
+import { SortOption } from '../../routes/category/categoryOLD.component';
 
 
 
@@ -535,7 +535,6 @@ export async function getItemFromRoute(collectionKey: string, docKey: string, it
   const collectionRef = collection(db, collectionKey, docKey, 'items');
   const itemQuery = query(collectionRef, where('id', '==', itemId));
   const itemQuerySnapshot = await getDocs(itemQuery);
-
   if (itemQuerySnapshot.docs.length > 0) {
     const CategoryItem = itemQuerySnapshot.docs[0].data() as NewItemValues;
     return CategoryItem;

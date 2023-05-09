@@ -1,23 +1,22 @@
 import {
   useEffect, lazy, Suspense, 
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
-  Route, createBrowserRouter, createRoutesFromElements, RouterProvider, Outlet, 
+  Route, createBrowserRouter, createRoutesFromElements, RouterProvider, 
 } from 'react-router-dom';
 
 import Spinner from './components/spinner/spinner.component';
 import { checkUserSession } from './store/user/user.action';
 import { PaymentSucceeded } from './routes/payment-succeeded/payment-succeeded.component';
 import CategoriesPreview from './routes/categories-preview/categories-preview.componenet';
-import Category from './routes/category/category.component';
 import NotFound from './routes/not-found/not-found.component';
-import { selectCategories } from './store/categories/category.selector';
 import ItemPreview from './routes/item-preview/item-preview.component';
 import AdminDBNav from './routes/admin-dashboard-nav/admin-db-nav.component';
 import Dashboard from './components/dashboard/dashboard.component';
 import AddFirebase from './components/add-firebase/add-firebase.component';
 import Navigation from './routes/navigation/navigation.component';
+import Category from './routes/category/category.component';
 
 const Home = lazy(() => import('./routes/home/home.component'));
 const Authentication = lazy(() => import('./routes/authentication/authentication.component'));
@@ -36,13 +35,9 @@ const App = () => {
       <Route path="/*" element={<Navigation />}>
         <Route index element={<Home />} />
 
-        <Route path=":shopPara/*" element={<Outlet />}>
-          <Route index element={<CategoriesPreview />} errorElement={<NotFound />} />
-          <Route path=":subCategoryPara/*" element={<Outlet />}>
-            <Route index element={<Category />} />
-            <Route path=":item" element={<ItemPreview />} />
-          </Route>
-        </Route>
+        <Route path=":shopPara" element={<CategoriesPreview />} />
+        <Route path=":shopPara/:subCategoryPara" element={<Category />} />
+        <Route path=":shopPara/:subCategoryPara/:item" element={<ItemPreview />} />
         
         <Route path="auth" element={<Authentication />} />
         <Route path="checkout" element={<CheckOut />} />

@@ -1,28 +1,16 @@
-import {
-  useState, useEffect,
-} from 'react';
-import {
-  Outlet, useParams, 
-} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
-import ProductCard from '../../components/product-card/product-card.component';
-import Spinner from '../../components/spinner/spinner.component';
-
-import { selectCategories, selectCategoriesIsLoading } from '../../store/categories/category.selector';
-import {
-  featchUpdateCategory,
-} from '../../store/categories/category.action';
-import { ItemPreview } from '../../components/add-firebase/add-item.component';
-import {
-  getCategoryCount,
-  getSubCategoryDocument, 
-} from '../../utils/firebase/firebase.utils';
-import Sort from '../../components/sort/Sort';
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { SelectOption } from '../../components/select/select.component';
+import { selectCategories, selectCategoriesIsLoading } from '../../store/categories/category.selector';
+import { ItemPreview } from '../../components/add-firebase/add-item.component';
+import { getCategoryCount, getSubCategoryDocument } from '../../utils/firebase/firebase.utils';
+import { featchUpdateCategory } from '../../store/categories/category.action';
+import Spinner from '../../components/spinner/spinner.component';
+import SortFilter from '../../components/sort-filter/sort-filter.component';
+import ProductCard from '../../components/product-card/product-card.component';
 import { ReactComponent as Close } from '../../assets/close_FILL0.svg';
 import { ReactComponent as SortIcon } from '../../assets/sort_FILL0_wght200.svg';
-
 
 export type CategoryRouteParams = {
   shopPara: string;
@@ -41,7 +29,6 @@ export type PrevPath = {
   subCategoryPara: string
 };
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
 const Category = () => {
   const { shopPara, subCategoryPara } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
   const categoriesSelector = useSelector(selectCategories);
@@ -53,6 +40,7 @@ const Category = () => {
   const [sortOption, setSortOption] = useState<SortOption>({
     sort: { label: 'Sort', value: '' }, colors: [], sizes: [], 
   });
+
   const [prevSortOption, setPrevSortOption] = useState<SortOption>(sortOption);
   const [pathChanged, setPathChanged] = useState(false);
   const [isFilterToggled, setIsFilterToggled] = useState(false);
@@ -69,7 +57,7 @@ const Category = () => {
     }
     return false;
   }
-  
+
   // a featch to server to get a slice 
   async function loadData(shopPara:string, subCategoryPara: string, count: number, sortOption: SortOption, prevSortOption: SortOption) {
     const res = await getSubCategoryDocument(shopPara, subCategoryPara, count, sortOption, prevSortOption);
@@ -143,10 +131,11 @@ const Category = () => {
         // setPrevSortOption(sortOption);
         setTimeout(() => {
           setIsLoadingItems(false);
-        }, 800);
+        }, 100);
       });
   }
-
+  
+  
   // reset fields before check for new category
   useEffect(() => {
     setProducts([]);
@@ -176,20 +165,20 @@ const Category = () => {
       }
     } else {
       const initialLoad = featchDataCategory();
-      
+        
       setPrevSortOption(sortOption);
       setPathChanged(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathChanged]);
-  
-  
+    
+    
   useEffect(() => {
     if (!(sortOption.sort.label === 'Sort' && sortOption.colors.length === 0 && sortOption.sizes.length === 0)) {
       const initialLoad = featchDataCategory();
       setPrevSortOption(sortOption);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortOption]);
 
   const loadMore = () => {
@@ -210,125 +199,121 @@ const Category = () => {
   const filterToggleHandler = () => {
     setIsFilterToggled(!isFilterToggled);
   };
-
+    
   return (
     <>
-      <>
-        {/* banner */}
-        <div className="flex justify-center mb-4 ">
+      {/* banner */}
+      <div className="flex justify-center mb-4 ">
+        <div className="container">
+          <div className="p-6 bg-emerald-200 flex justify-center mx-2">
+            <div className="flex flex-col sm:gap-5 items-center justify-between">
+              <h2 className="text-center text-2xl sm:text-5xl tracking-tighter font-bold">
+                Up to 25% Off
+              </h2>
+              <div className="space-x-2 text-center py-2 lg:py-0">
+                <span className="text-sm">Plus free shipping! Use code:</span>
+                <span className="font-bold text-sm sm:text-base">NANA17</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* title */}
+      <h2 className="text-2xl mb-6 text-center font-semibold text-gray-600">
+        {`${shopPara.charAt(0).toUpperCase() + shopPara.slice(1, shopPara.length - 1)}'${shopPara.charAt(shopPara.length - 1)}`}
+        {' '}
+        {subCategoryPara.charAt(0).toUpperCase() + subCategoryPara.slice(1)}
+      </h2>
+      {/* sort option */}
+      <div className="bg-gray-100">
+        {/* small screen button */}
+        <div className="flex justify-end sm:hidden py-3 px-2">
+          <button onClick={filterToggleHandler} className="cursor-pointer container flex flex-shrink items-center border-t-4 border-b-4 border-gray-300 border-double bg-transparent max-w-[10rem] min-h-[2rem] p-2">
+            <span className="flex-grow flex gap-2 flex-wrap font-semibold text-gray-500">
+              Filters
+            </span>
+            <SortIcon className="w-6 h-6" />
+          </button>
+        </div>
+        {/* small screen version */}
+        <div className={`absolute inset-0 w-full h-screen bg-white z-[100] ${isFilterToggled ? 'block' : 'hidden'}`}>
+          <div className="flex justify-center">
+            <div className="flex-col w-full">
+              <div className="flex justify-end p-5">
+                <button onClick={filterToggleHandler}>
+                  <Close className="w-9 h-9" />
+                </button>
+              </div>
+              <h2 className="text-2xl my-6 text-center font-semibold text-gray-600">
+                Filter Options
+              </h2>
+              <SortFilter onChange={onSortChangeHandler} onChangeColor={onSortChangeColorHandler} valueOption={sortOption} />
+              <div className="flex justify-center">
+                <button onClick={filterToggleHandler} className="absolute bottom-24 left- btn btn-primary">
+                  close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* any screen version */}
+        <div className="sm:block hidden">
+          <SortFilter onChange={onSortChangeHandler} onChangeColor={onSortChangeColorHandler} valueOption={sortOption} />
+        </div>
+      </div>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <div className={`flex-col items-center justify-center ${isFilterToggled ? 'hidden' : 'flex'}`}>
           <div className="container">
-            <div className="p-6 bg-emerald-200 flex justify-center mx-2">
-              <div className="flex flex-col sm:gap-5 items-center justify-between">
-                <h2 className="text-center text-2xl sm:text-5xl tracking-tighter font-bold">
-                  Up to 25% Off
-                </h2>
-                <div className="space-x-2 text-center py-2 lg:py-0">
-                  <span className="text-sm">Plus free shipping! Use code:</span>
-                  <span className="font-bold text-sm sm:text-base">NANA17</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* title */}
-        <h2 className="text-2xl mb-6 text-center font-semibold text-gray-600">
-          {`${shopPara.charAt(0).toUpperCase() + shopPara.slice(1, shopPara.length - 1)}'${shopPara.charAt(shopPara.length - 1)}`}
-          {' '}
-          {subCategoryPara.charAt(0).toUpperCase() + subCategoryPara.slice(1)}
-        </h2>
-        {/* sort option */}
-        <div className="bg-gray-100">
-          {/* small screen button */}
-          <div className="flex justify-end sm:hidden py-3 px-2">
-            <button onClick={filterToggleHandler} className="cursor-pointer container flex flex-shrink items-center border-t-4 border-b-4 border-gray-300 border-double bg-transparent max-w-[10rem] min-h-[2rem] p-2">
-              <span className="flex-grow flex gap-2 flex-wrap font-semibold text-gray-500">
-                Filters
-              </span>
-              <SortIcon className="w-6 h-6" />
-            </button>
-          </div>
-          {/* small screen version */}
-          <div className={`absolute inset-0 w-full h-screen bg-white z-[100] ${isFilterToggled ? 'block' : 'hidden'}`}>
-            <div className="flex justify-center">
-              <div className="flex-col w-full">
-                <div className="flex justify-end p-5">
-                  <button onClick={filterToggleHandler}>
-                    <Close className="w-9 h-9" />
-                  </button>
-                </div>
-                <h2 className="text-2xl my-6 text-center font-semibold text-gray-600">
-                  Filter Options
-                </h2>
-                <Sort onChange={onSortChangeHandler} onChangeColor={onSortChangeColorHandler} valueOption={sortOption} />
-                <div className="flex justify-center">
-                  <button onClick={filterToggleHandler} className="absolute bottom-24 left- btn btn-primary">
-                    close
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+            {/* products rendering */}
+            <div className="flex flex-col mb-7 mt-4">
+              <div className="relative grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-2 sm:gap-4 mx-2 sm:gap-y-10 gap-y-4">
 
-          {/* any screen version */}
-          <div className="sm:block hidden">
-            <Sort onChange={onSortChangeHandler} onChangeColor={onSortChangeColorHandler} valueOption={sortOption} />
-          </div>
-        </div>
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          <div className={`flex-col items-center justify-center ${isFilterToggled ? 'hidden' : 'flex'}`}>
-            <div className="container">
-              {/* products rendering */}
-              <div className="flex flex-col mb-7 mt-4">
-                <div className="relative grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 2xl:grid-cols-6 gap-2 sm:gap-4 mx-2 sm:gap-y-10">
-
-                  {isLoadingItems && (
+                {isLoadingItems && (
                   <div className="absolute z-50 h-full w-full bg-gray-400 opacity-50">
                     <Spinner />
                   </div>
-                  )}
-                  {products
+                )}
+                {products
                     && products.map((product, i) => (
                       <div key={product.id}>
                         <ProductCard product={product} />
                       </div>
                     ))}
-                </div>
               </div>
-
-              {/* prodcts counter */}
-              <div className="flex justify-center mt-20">
-                <div className="flex flex-col gap-2 justify-center mt-4 text-sm tracking-widest text-slate-900 font-smoochSans leading-0">
-                  <p>
-                    You&apos;ve viewed
-                    {' '}
-                    {products.length}
-                    {' '}
-                    of
-                    {' '}
-                    {countSortOption}
-                    {' '}
-                    products
-                  </p>
-                  <progress className="progress progress-accent max-w-xs " value={products.length} max={countSortOption}></progress>
-                  <button
-                    onClick={loadMore}
-                    className={`btn btn-ghost btn-sm my-4 hover:btn-accent ${isLoadingItems ? 'loading' : ''} ${countSortOption === products.length ? 'invisible' : ''}`}
-                  >
-                    load more
-                  </button>
-                </div>
-              </div>
-
             </div>
+
+            {/* prodcts counter */}
+            <div className="flex justify-center mt-20">
+              <div className="flex flex-col gap-2 justify-center mt-4 text-sm tracking-widest text-slate-900 font-smoochSans leading-0">
+                <p>
+                  You&apos;ve viewed
+                  {' '}
+                  {products.length}
+                  {' '}
+                  of
+                  {' '}
+                  {countSortOption}
+                  {' '}
+                  products
+                </p>
+                <progress className="progress progress-accent max-w-xs " value={products.length} max={countSortOption}></progress>
+                <button
+                  onClick={loadMore}
+                  className={`btn btn-ghost btn-sm my-4 hover:btn-accent ${isLoadingItems ? 'loading' : ''} ${countSortOption === products.length ? 'invisible' : ''}`}
+                >
+                  load more
+                </button>
+              </div>
+            </div>
+
           </div>
-        )}
-      </>
-      <Outlet />
+        </div>
+      )}
     </>
   );
 };
-
 
 export default Category;

@@ -1,8 +1,7 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ItemPreview } from '../add-firebase/add-item.component';
 import { CategoryRouteParams } from '../../routes/category/category.component';
-import Spinner from '../spinner/spinner.component';
 
 
 // eslint-disable-next-line react/require-default-props
@@ -25,13 +24,13 @@ const ProductCard = ({ product, categoryTitle } : { product: ItemPreview, catego
   }
 
   const onLoad = () => {
-    setTimeout(() => setIsImageLoaded(true), 800);
+    setTimeout(() => setIsImageLoaded(true), 100);
   };
 
   return (
 
     <div className={`max-w-xs ${!isImageLoaded ? 'invisible' : 'visible'}`}>
-      <Link to={`${route}${product.productName}`} state={product}>
+      <Link to={`${route}${product.productName}`} state={product.id}>
         <div className="relative shadow-sm">
           <img onLoad={onLoad} key={imagesUrls[0]} src={imagesUrls[0]} alt={imagesUrls[0]} className="object-cover object-center w-full max-h-full transition-opacity duration-200 ease-in-out" />
           <img onLoad={onLoad} key={imagesUrls[1]} src={imagesUrls[1]} alt={imagesUrls[1]} className="absolute top-0 left-0 object-cover object-center w-full max-h-full opacity-0 hover:opacity-100 transition-opacity duration-200 ease-in-out" />
@@ -39,7 +38,7 @@ const ProductCard = ({ product, categoryTitle } : { product: ItemPreview, catego
       </Link>
       <div className="flex flex-col mt-4">
         <div className="pl-1 font-dosis">
-          <Link to={`${route}${product.productName}`} state={product}> 
+          <Link to={`${route}${product.productName}`} state={product.id}> 
             <h2 className="tracking-widest mb-1 text-sm font-semibold">{productName}</h2>
           </Link>
           <p className="font-semibold text-sm tracking-wide mb-1">
