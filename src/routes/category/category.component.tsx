@@ -30,7 +30,7 @@ export type PrevPath = {
 };
 
 const Category = () => {
-  let { shopPara, subCategoryPara } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
+  const { shopPara, subCategoryPara } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
   const categoriesSelector = useSelector(selectCategories);
   const isLoading = useSelector(selectCategoriesIsLoading);
 
@@ -46,14 +46,7 @@ const Category = () => {
   const [isFilterToggled, setIsFilterToggled] = useState(false);
 
   const dispatch = useDispatch();
-  const location = useLocation();
-  // in case use typing path in broswer search no para and state pass we need to definde them 
-  if (shopPara === null && subCategoryPara === undefined) {
-    const pathArraySplit = location.pathname.split('/');
-    subCategoryPara = pathArraySplit[pathArraySplit.length - 1];
-    shopPara = pathArraySplit[pathArraySplit.length - 2];
-  }
-
+  
   // check for prevSort and current to be able to know the sort order we need to feaatch from server
   // boolean check so isTheSameSort..
   function equalSortsObjects(sortOption: SortOption, prevSortOption: SortOption): boolean {
