@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { SelectOption } from '../../components/select/select.component';
 import { selectCategories, selectCategoriesIsLoading } from '../../store/categories/category.selector';
@@ -30,7 +30,7 @@ export type PrevPath = {
 };
 
 const Category = () => {
-  const { shopPara, subCategoryPara } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
+  let { shopPara, subCategoryPara } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
   const categoriesSelector = useSelector(selectCategories);
   const isLoading = useSelector(selectCategoriesIsLoading);
 
@@ -46,6 +46,13 @@ const Category = () => {
   const [isFilterToggled, setIsFilterToggled] = useState(false);
 
   const dispatch = useDispatch();
+  const location = useLocation();
+  // in case use typing path in broswer search no para and state pass we need to definde them 
+  if (shopPara === null && subCategoryPara === undefined) {
+    const pathArraySplit = location.pathname.split('/');
+    subCategoryPara = pathArraySplit[pathArraySplit.length - 1];
+    shopPara = pathArraySplit[pathArraySplit.length - 2];
+  }
 
   // check for prevSort and current to be able to know the sort order we need to feaatch from server
   // boolean check so isTheSameSort..
