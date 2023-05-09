@@ -78,9 +78,6 @@ module.exports = {
           '100%': { transform: 'rotate(0.0deg)' },
         },
       },
-      animation: {
-        'waving-hand': 'wave 2s linear infinite',
-      },
       backgroundImage: {
         'keyboard-pattern': "url('/src/assets/keyboard.svg')",
         triangle2: "url('/src/assets/triangle2.svg')",

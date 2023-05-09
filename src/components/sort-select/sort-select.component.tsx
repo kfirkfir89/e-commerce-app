@@ -105,13 +105,13 @@ export const SortSelect: FC<SelectProps> = ({ firstOption, multiple, value, onCh
   return (
     <div ref={containerRef} tabIndex={0} onBlur={() => setIsOpen(false)} onClick={() => { setIsOpen(!isOpen); }} className="relative container flex flex-shrink items-center border-t-4 border-b-4 border-gray-300 border-double bg-transparent max-w-[16rem] min-h-[2rem] p-2">
       {/* value */}
-      {Array.isArray(value) && value.length === 0 && <span className="font-semibold text-gray-700">{firstOption?.label}</span>}
+      {Array.isArray(value) && value.length === 0 && <span className="font-semibold text-sm tracking-widest text-slate-600 font-smoochSans leading-0 ">{firstOption?.label}</span>}
       {value !== undefined && 'value' in value && value.label === '' && <span className="font-semibold text-gray-700">{firstOption?.label}</span>}
-      <span className="flex-grow flex gap-2 flex-wrap font-semibold text-gray-500">
+      <span className="flex-grow flex gap-2 flex-wrap font-semibold text-sm tracking-widest text-slate-600 font-smoochSans leading-0">
         {multiple ? value.map((v) => (
-          <button key={v.value} onClick={(e) => { e.stopPropagation(); selectOption(v); }} className="flex h-6 items-center text-xs px-1 border-2 rounded cursor-pointer bg-none hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1">
+          <button key={v.value} onClick={(e) => { e.stopPropagation(); selectOption(v); }} className="flex h-6 items-center text-xs font-semibold tracking-widest text-slate-600 font-smoochSans leading-0 px-1 border-2 rounded cursor-pointer bg-none hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1">
             {v.label}
-            <span className="pl-1 text-lg bg-none border-none outline-none text-gray-400 hover:text-gray-700">&times;</span>
+            <span className="pl-1 font-thin text-lg bg-none border-none outline-none text-gray-400 hover:text-gray-700">&times;</span>
           </button>
         )) : value?.label}
       </span>
@@ -121,7 +121,7 @@ export const SortSelect: FC<SelectProps> = ({ firstOption, multiple, value, onCh
       <div className={`absolute  list-none ${isOpen ? 'block' : 'hidden'} p-1 mt-1 w-full left-0 top-full bg-gray-100 border-4 border-t-0 border-gray-300 border-double z-[100]`}>
         <ul defaultValue="option1">
           {options.map((option, index) => (
-            <li role="presentation" onClick={(e) => { e.stopPropagation(); selectOption(option); multiple ? setIsOpen(true) : setIsOpen(false); }} onMouseEnter={() => setHighlightedIndex(index)} key={option.value} className={`${isOptionSelected(option) && 'bg-gray-300'} ${index === highlightedIndex && !isOptionSelected(option) && 'bg-gray-200'} p-1 px-2 cursor-pointer`}>{option.label}</li>
+            <li role="presentation" onClick={(e) => { e.stopPropagation(); selectOption(option); multiple ? setIsOpen(true) : setIsOpen(false); }} onMouseEnter={() => setHighlightedIndex(index)} key={option.value} className={`${isOptionSelected(option) && 'bg-gray-300'} ${index === highlightedIndex && !isOptionSelected(option) && 'bg-gray-200'} p-1 px-2 cursor-pointer text-sm tracking-wider text-slate-600 font-smoochSans leading-0`}>{option.label}</li>
           ))}
         </ul>
       </div>

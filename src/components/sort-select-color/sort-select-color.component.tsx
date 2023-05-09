@@ -95,7 +95,7 @@ export const SortSelectColor: FC<SelectColorProps> = ({ firstOption, value, onCh
   return (
     <div ref={containerRef} tabIndex={0} onBlur={() => setIsOpen(false)} onClick={() => { setIsOpen(!isOpen); }} className="relative container flex flex-shrink items-center border-t-4 border-b-4 border-gray-300 border-double bg-transparent max-w-[16rem] min-h-[2rem] p-2">
       {/* value */}
-      {Array.isArray(value) && value.length === 0 && <span className="font-semibold text-gray-700">{firstOption?.label}</span>}
+      {Array.isArray(value) && value.length === 0 && <span className="font-semibold text-sm tracking-widest text-slate-600 font-smoochSans leading-0">{firstOption?.label}</span>}
       <span className="flex-grow flex gap-2 flex-wrap">
         
         {value.map((v) => (

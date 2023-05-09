@@ -1,33 +1,95 @@
 
 import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { ReactComponent as Menu } from '../../assets/menu_FILL0.svg';
 import { ReactComponent as Close } from '../../assets/close_FILL0.svg';
 
+type MenuIconProps = {
+  categories: Map<string, string[]>,
+  onChangeToggle: (isToggled: boolean) => void
+};
 
-const MenuIcon = () => {
+const MenuIcon = ({ categories, onChangeToggle } : MenuIconProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const toggleIsMenuOpen = () => setIsMenuOpen(!isMenuOpen);
+  const toggleIsMenuOpen = () => {
+    onChangeToggle(isMenuOpen);
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
-    <div className="flex-none w-full sticky top-0 z-50">
-      <div className="flex">
-        <div className="z-40">
-          <button onClick={toggleIsMenuOpen}>
-            <Menu className="w-8 h-8" />
-          </button>
+    <div className="flex-none w-full top-0 z-[100]">
+      <div className="flex bg-transparent">
+        <div className="z-[100]">
+          <label className="bg-transparent btn-circle swap swap-rotate border-none">
+            <input type="checkbox" checked={isMenuOpen} className="outline-none" readOnly />
+            <Close className="swap-on fill-current w-9 h-9 text-slate-600" onClick={toggleIsMenuOpen} />
+            <Menu className="swap-off fill-current w-9 h-9 text-slate-600" onClick={toggleIsMenuOpen} />
+          </label>
         </div>
-        <div className="">
+        <div>
           {isMenuOpen 
           && (
-          <div className="top-0 left-0 fixed flex flex-col w-full h-5/6 bg-red-500 z-50">
-            <div className="bg-white h-20 w-full">
-              <button className="text-2xl pt-6 pl-2" onClick={toggleIsMenuOpen}>
-                <Close className="w-7 h-7" />
-              </button>
+          <div className="top-[105px] left-0 fixed flex flex-col w-full bg-white z-50">
+            <div className="flex overflow-x-auto border-b-[1px] border-slate-400 border-dashed">
+              {categories !== undefined
+                && Array.from(categories.entries()).map(([key, value]) => {
+                  return ( 
+                    <div className="flex-col border-r-[1px] border-slate-400 border-dashed p-6 pr-12 pb-10" key={key}>
+                      <div key={key}>
+                        <NavLink
+                          to={`${key}`}
+                          className={({ isActive }) => (isActive ? ' text font-semibold z-50 tracking-widest text-slate-900 font-smoochSans leading-0 hover:text-slate-900 underline underline-offset-4' : 'text font-semibold z-50 tracking-widest text-slate-500 font-smoochSans leading-0 hover:text-slate-900')}
+                          onClick={toggleIsMenuOpen}
+                        >
+                          {key.charAt(0).toUpperCase() + key.slice(1, key.length)}       
+                        </NavLink>
+                      </div>
+                      {value.map((subTitle) => (
+                        <div className="mx-2" key={subTitle}>
+                          <NavLink
+                            to={`${key}/${subTitle}`}
+                            className={({ isActive }) => (isActive ? 'p-1 text-sm z-50 tracking-widest text-slate-900 font-smoochSans leading-0 hover:text-slate-900 underline underline-offset-4' : 'p-2 text-sm z-50 tracking-widest text-slate-500 font-smoochSans leading-0 hover:text-slate-900')}
+                            onClick={toggleIsMenuOpen}
+                          >
+                            {subTitle.charAt(0).toUpperCase() + subTitle.slice(1, subTitle.length)}       
+                          </NavLink>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
             </div>
-            <div>
-              RENDERMENU HERE
+
+            {/* banner */}
+            <div className="flex justify-center m-4 ">
+              <div className="container">
+                <div className="p-6 bg-emerald-200 flex justify-center mx-2">
+                  <div className="flex flex-col sm:gap-5 items-center justify-between">
+                    <h2 className="text-center text-2xl sm:text-5xl tracking-tighter font-bold">
+                      Up to 25% Off
+                    </h2>
+                    <div className="space-x-2 text-center py-2 lg:py-0">
+                      <span className="text-sm">Plus free shipping! Use code:</span>
+                      <span className="font-bold text-sm sm:text-base">NANA17</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-center m-4 ">
+              <div className="container">
+                <div className="p-6 bg-emerald-200 flex justify-center mx-2">
+                  <div className="flex flex-col sm:gap-5 items-center justify-between">
+                    <h2 className="text-center text-2xl sm:text-5xl tracking-tighter font-bold">
+                      Up to 25% Off
+                    </h2>
+                    <div className="space-x-2 text-center py-2 lg:py-0">
+                      <span className="text-sm">Plus free shipping! Use code:</span>
+                      <span className="font-bold text-sm sm:text-base">NANA17</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           )}

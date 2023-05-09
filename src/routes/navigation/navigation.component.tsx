@@ -3,7 +3,9 @@ import {
 } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { useEffect, useMemo, useState } from 'react';
+import {
+  memo, useEffect, useMemo, useState, 
+} from 'react';
 import CartDropdown from '../../components/cart-dropdown/cart-dropdown.componenet';
 
 import { selectCurrentUser } from '../../store/user/user.selector';
@@ -31,9 +33,10 @@ const Navigation = () => {
   const cartCount = useSelector(selectCartCount);
 
   const [isHover, setIsHover] = useState(false);
+  const [isMenuIconToggled, setIsMenuIconToggled] = useState(false);
   const [hoverSelected, setHoverSelected] = useState('');
-  const [userCategories, setUserCategories] = useState<Map<string, string[]> | null>(null);
-  const [userCollectionKeys, setUserCollectionKeys] = useState<UserCollectionKeys | null >(null);
+  const [userCategories, setUserCategories] = useState<Map<string, string[]>>();
+  const [userCollectionKeys, setUserCollectionKeys] = useState<UserCollectionKeys>();
 
   const { shopPara } = useParams<keyof ShopCategoryRouteParams>() as ShopCategoryRouteParams;
   // featch only the userKeys(collectionKeys) from the system-data obj
@@ -62,11 +65,13 @@ const Navigation = () => {
     const featch = featchUserCollectionKeys();
   }, []);
 
+  // side menu toggle for small screens
+  const toggleIsMenuOpen = () => setIsMenuIconToggled(!isMenuIconToggled);
+
   // useLocation is used to check if the current path if the admin dashbord to hide the web navbar
   const path = useLocation();
   
   const memorizedCategories = useMemo(() => userCategories?.get(hoverSelected), [hoverSelected, userCategories]);
-
   const signOutUser = () => dispatch(signOutStart());
   return (
     <>
@@ -76,15 +81,22 @@ const Navigation = () => {
           <div className="flex-col p-0 m-0 navbar">
             {/* main navbar */}
             
-            <div className=" flex py-6 navbar justify-center min-h-fit gradient-hard-bg-nav">
-              <div className="flex navbar min-h-fit container bg-transparent">
+            <div className=" flex py-6 navbar justify-center min-h-fit gradient-bg-nav sm:p-4 p-0">
+              <div className="flex navbar min-h-fit container bg-transparent sm:p-4 p-0">
+                {/* LEFT SIDE LOGO MENU */}
                 <div className="flex-1">
                   <div className="flex-none">
-                    <div className="z-40 flex flex-col items-center justify-center pt-2 pl-2 sm:hidden">
-                      <MenuIcon /> 
+                    {
+                      userCategories !== undefined
+                    && (
+                      // side menu for small screens
+                    <div className="z-40 flex flex-col items-center justify-center pt-2 sm:hidden ">
+                      <MenuIcon onChangeToggle={toggleIsMenuOpen} categories={userCategories} /> 
                     </div>
+                    )
+                    }
                   </div>
-                  <div className="sm:flex-none z-50 sm:pl-2">
+                  <div className="sm:flex-none z-50">
                     <Link to="/">
                       <div className="flex ">
                         <img className="w-8/12 pl-2 opacity-90 sm:w-full" src="/src/assets/NANA STYLE.png" alt="gfd" />
@@ -93,8 +105,10 @@ const Navigation = () => {
                   </div>
                 </div>
 
+                {/* RIGTH SIDE NAV BUTTONS */}
                 <div className="flex-none pt-2">
                   <div className="z-40 flex justify-end w-full">
+                    {/* SIGNIN PROFILE ADMINDB */}
                     <div className="pt-1">
                       <Link to="/admin-dashboard">
                         <AdminIcon className="w-8 sm:w-9 hover:animate-pulse" />
@@ -127,6 +141,7 @@ const Navigation = () => {
                         </div>
                       )
                     }
+                    {/* CART */}
                     <div className="z-50 flex-none pr-1 sm:pr-4">
                       <div className="w-full dropdown dropdown-end">
                         <label>
@@ -191,10 +206,12 @@ const Navigation = () => {
           </div>
         </div>
       )}
-      <Breadcrumbs />
-      <Outlet />
+      <div className={`sm:pt-48 pt-28 ${isMenuIconToggled ? 'hidden' : 'block'}`}>
+        <Breadcrumbs />
+        <Outlet />
+      </div>
     </>
   );
 };
 
-export default Navigation;
+export default memo(Navigation);
