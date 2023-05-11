@@ -29,7 +29,7 @@ const CategoriesPreview = () => {
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <> 
-      <h2 className="text-4xl mt-36 mb-6 text-center">{shopPara.toUpperCase()}</h2>
+      <h2 className="text-4xl mt-36 mb-6 text-center uppercase">{shopPara}</h2>
       <div className="flex flex-col items-center top-0 z-30">
         <div className="container">
           {
@@ -38,7 +38,7 @@ const CategoriesPreview = () => {
             return (
               <div key={category.title} className="flex flex-col mb-7">
                 <h2>
-                  <Link className="text-2xl mb-6 cursor-pointer" to={category.title}>{category.title.toUpperCase()}</Link>
+                  <Link className="text-2xl mb-6 cursor-pointer uppercase" to={category.title}>{category.title}</Link>
                 </h2>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 px-2">

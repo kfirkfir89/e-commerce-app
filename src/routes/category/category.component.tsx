@@ -219,10 +219,10 @@ const Category = () => {
         </div>
       </div>
       {/* title */}
-      <h2 className="text-2xl mb-6 text-center font-semibold text-gray-600">
+      <h2 className="text-2xl mb-6 text-center font-semibold text-gray-600 capitalize">
         {`${shopPara.charAt(0).toUpperCase() + shopPara.slice(1, shopPara.length - 1)}'${shopPara.charAt(shopPara.length - 1)}`}
         {' '}
-        {subCategoryPara.charAt(0).toUpperCase() + subCategoryPara.slice(1)}
+        {subCategoryPara}
       </h2>
       {/* sort option */}
       <div className="bg-gray-100">

@@ -148,7 +148,7 @@ const Navigation = () => {
                           <div className="relative sm:pt-[1px] cursor-pointer">
                             <div tabIndex={0} className="relative flex items-center justify-center cursor-pointer hover:animate-pulse">
                               <ShoppingIcon className="w-9 sm:w-full" />
-                              <span className="absolute text-[10px] opacity-70 sm:text-xs font-bold pt-3">{cartCount}</span>
+                              <span className="absolute text-[10px] opacity-70 sm:text-xs font-bold pt-2">{cartCount}</span>
                             </div>
                           </div>
                         </label>
@@ -171,8 +171,8 @@ const Navigation = () => {
                   {userCollectionKeys && userCollectionKeys.keys.map((key) => (
                     <div key={key} className="flex justify-center peer mb-6">
                       <div className="static flex px-3" onMouseEnter={() => { setIsHover(true); setHoverSelected(key); }}>
-                        <NavLink to={key} className="p-1 text-sm tracking-[0.075em] font-smoochSans leading-0 text-slate-700 link-underline link-underline-black">
-                          {key.toUpperCase()}
+                        <NavLink to={key} className="p-1 uppercase text-sm tracking-[0.075em] font-smoochSans leading-0 text-slate-700 link-underline link-underline-black">
+                          {key}
                         </NavLink>
                       </div>
                     </div>
@@ -188,9 +188,9 @@ const Navigation = () => {
                             <div className="static flex px-3 justify-start">
                               <NavLink
                                 to={`${hoverSelected}/${sc}`}
-                                className={({ isActive }) => (isActive ? 'p-1 text-sm z-50 tracking-widest text-slate-900 font-smoochSans leading-0 hover:text-slate-900 underline underline-offset-4' : 'p-1 text-sm z-50 tracking-widest text-slate-500 font-smoochSans leading-0 hover:text-slate-900')}
+                                className={({ isActive }) => (isActive ? 'p-1 capitalize text-sm z-50 tracking-widest text-slate-900 font-smoochSans leading-0 hover:text-slate-900 underline underline-offset-4' : 'p-1 capitalize text-sm z-50 tracking-widest text-slate-500 font-smoochSans leading-0 hover:text-slate-900')}
                               >
-                                {sc.charAt(0).toUpperCase() + sc.slice(1, sc.length)}       
+                                {sc}       
                               </NavLink>
                             </div>
                           </div>

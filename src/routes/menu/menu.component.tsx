@@ -38,20 +38,20 @@ const MenuIcon = ({ categories, onChangeToggle } : MenuIconProps) => {
                       <div key={key}>
                         <NavLink
                           to={`${key}`}
-                          className={({ isActive }) => (isActive ? ' text font-semibold z-50 tracking-widest text-slate-900 font-smoochSans leading-0 hover:text-slate-900 underline underline-offset-4' : 'text font-semibold z-50 tracking-widest text-slate-500 font-smoochSans leading-0 hover:text-slate-900')}
+                          className={({ isActive }) => (isActive ? 'capitalize text font-semibold z-50 tracking-widest text-slate-900 font-smoochSans leading-0 hover:text-slate-900 underline underline-offset-4' : 'text font-semibold z-50 tracking-widest text-slate-500 font-smoochSans leading-0 hover:text-slate-900')}
                           onClick={toggleIsMenuOpen}
                         >
-                          {key.charAt(0).toUpperCase() + key.slice(1, key.length)}       
+                          {key}       
                         </NavLink>
                       </div>
                       {value.map((subTitle) => (
                         <div className="mx-2" key={subTitle}>
                           <NavLink
                             to={`${key}/${subTitle}`}
-                            className={({ isActive }) => (isActive ? 'p-1 text-sm z-50 tracking-widest text-slate-900 font-smoochSans leading-0 hover:text-slate-900 underline underline-offset-4' : 'p-2 text-sm z-50 tracking-widest text-slate-500 font-smoochSans leading-0 hover:text-slate-900')}
+                            className={({ isActive }) => (isActive ? 'p-1 capitalize text-sm z-50 tracking-widest text-slate-900 font-smoochSans leading-0 hover:text-slate-900 underline underline-offset-4' : 'p-2 text-sm z-50 tracking-widest text-slate-500 font-smoochSans leading-0 hover:text-slate-900')}
                             onClick={toggleIsMenuOpen}
                           >
-                            {subTitle.charAt(0).toUpperCase() + subTitle.slice(1, subTitle.length)}       
+                            {subTitle}       
                           </NavLink>
                         </div>
                       ))}
