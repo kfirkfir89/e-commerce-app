@@ -14,10 +14,10 @@ import {
   RemoveButton,
 } from './checkout-item.styles';
 
-import { CartItemQuantity } from '../../store/cart/cart.types';
+import { CartItemPreview } from '../../store/cart/cart.types';
 
 type CheckoutItemsProps = {
-  cartItem: CartItemQuantity;
+  cartItem: CartItemPreview;
 };
 
 const CheckoutItem: FC<CheckoutItemsProps> = ({ cartItem }) => {

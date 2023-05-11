@@ -1,7 +1,7 @@
 import { PaymentIntent } from '@stripe/stripe-js';
 import { UserData } from '../../utils/firebase/firebase.utils';
 
-import { CartItemQuantity } from '../cart/cart.types';
+import { CartItemPreview } from '../cart/cart.types';
 
 export enum ORDER_ACTION_TYPES {
   FETCH_ORDER_START = 'order/FETCH_ORDER_START',
@@ -14,7 +14,7 @@ export type NewOrderDetails = {
   orderId: number
   createAt: Date;
   user: UserData | null;
-  orderItems: CartItemQuantity[];
+  orderItems: CartItemPreview[];
   paymentIntent: PaymentIntent | undefined;
 };
 

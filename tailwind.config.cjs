@@ -66,6 +66,22 @@ module.exports = {
         '22/24': '91.666666%', 
         '23/24': '95.833333%', 
       },
+      height: {
+        '10v': '10vh',
+        '20v': '20vh',
+        '30v': '30vh',
+        '40v': '40vh',
+        '50v': '50vh',
+        '60v': '60vh',
+        '70v': '70vh',
+        '80v': '80vh',
+        '90v': '90vh',
+        '100v': '100vh',
+      },
+      animation: {
+        'spin-slow': 'spin 2s linear infinite',
+        'spin-reverse': 'spin-reverse 1s linear infinite',
+      },
       keyframes: {
         wave: {
           '0%,': { transform: 'rotate(0.0deg)' },
@@ -76,6 +92,10 @@ module.exports = {
           '50%': { transform: 'rotate(10.0deg)' },
           '60%': { transform: 'rotate(0.0deg)' },
           '100%': { transform: 'rotate(0.0deg)' },
+        },
+        'spin-reverse': {
+          '0%,': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(-360deg)' },
         },
       },
       backgroundImage: {

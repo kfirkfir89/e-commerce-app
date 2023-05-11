@@ -11,7 +11,6 @@ import CartDropdown from '../../components/cart-dropdown/cart-dropdown.componene
 import { selectCurrentUser } from '../../store/user/user.selector';
 
 import { ReactComponent as ProfileIcon } from '../../assets/person_FILL0.svg';
-import { ReactComponent as ShoppingIcon } from '../../assets/local_mall.svg';
 import { ReactComponent as AdminIcon } from '../../assets/engineering_FILL0.svg';
 import { signOutStart } from '../../store/user/user.action';
 
@@ -30,7 +29,6 @@ export type ShopCategoryRouteParams = {
 const Navigation = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectCurrentUser);
-  const cartCount = useSelector(selectCartCount);
 
   const [isHover, setIsHover] = useState(false);
   const [isMenuIconToggled, setIsMenuIconToggled] = useState(false);
@@ -142,21 +140,7 @@ const Navigation = () => {
                       )
                     }
                     {/* CART */}
-                    <div className="z-50 flex-none pr-1 sm:pr-4">
-                      <div className="w-full dropdown dropdown-end">
-                        <label>
-                          <div className="relative sm:pt-[1px] cursor-pointer">
-                            <div tabIndex={0} className="relative flex items-center justify-center cursor-pointer hover:animate-pulse">
-                              <ShoppingIcon className="w-9 sm:w-full" />
-                              <span className="absolute text-[10px] opacity-70 sm:text-xs font-bold pt-2">{cartCount}</span>
-                            </div>
-                          </div>
-                        </label>
-                        <div tabIndex={0} className="p-2 dropdown-content drop-shadow-2xl bg-base-100 rounded-box w-80 sm:w-96">
-                          <CartDropdown />
-                        </div>
-                      </div>
-                    </div>
+                    <CartDropdown />
 
                   </div>
                 </div>

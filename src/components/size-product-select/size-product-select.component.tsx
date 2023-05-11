@@ -125,10 +125,9 @@ export const SizeProductSelect: FC<SelectProps> = ({ firstOption, value, onChang
               : (
                 <li
                   role="presentation" 
-                  onClick={(e) => { e.stopPropagation(); selectOption(option); setIsOpen(false); }} 
                   onMouseEnter={() => setHighlightedIndex(index)}
-                  key={option.value} 
-                  className={`p-2 px-6 ${isOptionSelected(option) && 'bg-gray-300'} ${index === highlightedIndex && !isOptionSelected(option) && 'bg-gray-200'} p-1 px-2 cursor-pointer text-sm tracking-wider text-slate-600 font-smoochSans leading-0`}
+                  key={option.value}
+                  className={`p-2 px-6 ${isOptionSelected(option) && 'bg-gray-300'} ${index === highlightedIndex && !isOptionSelected(option) && 'bg-gray-200'} p-1 px-2 cursor-not-allowed text-sm tracking-wider text-slate-600 font-smoochSans leading-0`}
                 >
                   <div className="flex">
                     <span className="flex-1">

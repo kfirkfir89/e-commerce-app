@@ -23,6 +23,7 @@
 }
 
 @layer utilities {
+
   .gradient-bg-nav {
     background: rgb(229,231,235);
     background: linear-gradient(0deg, rgba(229,231,235,1) 28%, rgba(243,244,246,1) 35%, rgba(255,255,255,1) 45%);
