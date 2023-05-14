@@ -70,7 +70,7 @@ const CartDropdown = () => {
 
                           <li key={item.colorId} className="flex flex-col py-6 sm:flex-row sm:justify-between">
                             <div className="flex w-full space-x-2 sm:space-x-4">
-                              <img src={item.previewImage} alt={`${item.productName}`} className="flex-shrink-0 w-1/3 object-cover dark:border-transparent rounded outline-none dark:bg-gray-500" />
+                              <img src={`${item.previewImage}`} alt={`${item.productName}`} className="flex-shrink-0 w-1/3 object-cover dark:border-transparent rounded outline-none dark:bg-gray-500" />
                               <div className="flex flex-col justify-between w-full pb-4">
                                 <div className="flex justify-between w-full pb-2 space-x-2">
                                   <div className="space-y-1">
