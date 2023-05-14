@@ -47,14 +47,14 @@ const PaymentForm = () => {
   };
 
   return (
-    <PaymentFormContainer>
-      <FormContainer onSubmit={paymentHandler}>
+    <div className="flex h-80 flex-col items-center justify-center">
+      <form className="container" onSubmit={paymentHandler}>
         <h2>Credit Card Payment</h2>
         <CardElement />
-        <PaymentButton isLoading={orderIsLoading} buttonType={BUTTON_TYPE_CLASSES.inverted}>Pay Now</PaymentButton>
+        <button className={`btn btn-accent ${orderIsLoading ? 'loading' : ''}`}>Pay Now</button>
         { shouldRedirect && <Navigate to="/payment-succeeded" /> } 
-      </FormContainer>
-    </PaymentFormContainer>
+      </form>
+    </div>
   );
 };
 

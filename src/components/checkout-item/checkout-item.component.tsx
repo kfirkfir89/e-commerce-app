@@ -4,15 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectCartItems } from '../../store/cart/cart.selector';
 import { addItemToCart, clearItemFromCart, removeItemFromCart } from '../../store/cart/cart.action';
 
-import {
-  CheckoutItemContainer,
-  ImageContainer,
-  BaseSpan,
-  Quantity,
-  Arrow,
-  Value,
-  RemoveButton,
-} from './checkout-item.styles';
 
 import { CartItemPreview } from '../../store/cart/cart.types';
 
@@ -22,7 +13,7 @@ type CheckoutItemsProps = {
 
 const CheckoutItem: FC<CheckoutItemsProps> = ({ cartItem }) => {
   const {
-    name, imageUrl, price, quantity, 
+    productName, previewImage, price, quantity, 
   } = cartItem;
   
   const dispatch = useDispatch();
@@ -34,26 +25,30 @@ const CheckoutItem: FC<CheckoutItemsProps> = ({ cartItem }) => {
   const removeItemHandler = () => dispatch(removeItemFromCart(cartItems, cartItem));
 
   return (   
-    <CheckoutItemContainer>
-      <ImageContainer>
-        <img src={imageUrl} alt={`${name}`} />
-      </ImageContainer>
-      <BaseSpan> 
+    <div className="w-full flex h-30v border p-4 text-2xl items-center">
+      <div className="w-1/4 pr-4">
+        <img className="w-full h-full" src={previewImage} alt={`${productName}`} />
+      </div>
+      <span className="w-1/4">
         {' '}
-        {name}
+        {productName}
         {' '}
-      </BaseSpan>
-      <Quantity>
-        <Arrow onClick={removeItemHandler}>&#10094;</Arrow>
-        <Value>{quantity}</Value>
-        <Arrow onClick={addItemHandler}>&#10095;</Arrow>
-      </Quantity>
-      <BaseSpan> 
+      </span>
+      <button onClick={removeItemHandler} className="flex w-1/4 cursor-pointer">
+        &#10094;
+      </button>
+      <span className="m-2">{quantity}</span>
+      <button onClick={addItemHandler} className="flex w-1/4 cursor-pointer">
+        &#10095;
+      </button>
+      <span className="flex w-1/4 cursor-pointer">
         {' '}
         {price}
-      </BaseSpan>
-      <RemoveButton onClick={clearItemHandler}>&#10005;</RemoveButton>
-    </CheckoutItemContainer>
+      </span>
+      <button className="pl-3" onClick={clearItemHandler}>&#10005;</button>
+    </div>
+
+
   );
 };
 

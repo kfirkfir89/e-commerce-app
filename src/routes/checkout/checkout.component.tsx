@@ -6,45 +6,38 @@ import CheckoutItem from '../../components/checkout-item/checkout-item.component
 
 import PaymentForm from '../../components/payment-form/payment-form.component';
 
-import {
-  CheckoutContainer,
-  CheckoutHeader,
-  HeaderBlock,
-  Total,
-} from './checkout.styles';
-
 const CheckOut = () => {
   const cartItems = useSelector(selectCartItems);
   const cartTotal = useSelector(selectCartTotal);
 
   return (
-    <CheckoutContainer>
-      <CheckoutHeader>
-        <HeaderBlock>
+    <div className="h-90v flex flex-col items-center m-auto mr-12">
+      <div className="w-full pr-2 flex justify-between border-b-2">
+        <div className="capitalize w-1/4 last:w-1/12">
           <span>Product</span>
-        </HeaderBlock>
-        <HeaderBlock>
+        </div>
+        <div className="capitalize w-1/4 last:w-1/12">
           <span>Description</span>
-        </HeaderBlock>
-        <HeaderBlock>
+        </div>
+        <div className="capitalize w-1/4 last:w-1/12">
           <span>Quantity</span>
-        </HeaderBlock>
-        <HeaderBlock>
+        </div>
+        <div className="capitalize w-1/4 last:w-1/12">
           <span>Price</span>          
-        </HeaderBlock>
-        <HeaderBlock>
+        </div>
+        <div className="capitalize w-1/4 last:w-1/12">
           <span>Remove</span>
-        </HeaderBlock>
-      </CheckoutHeader>
+        </div>
+      </div>
       {
-        cartItems.map((cartItem) => (<CheckoutItem key={cartItem.id} cartItem={cartItem} />))
+        cartItems.map((cartItem) => (<CheckoutItem key={cartItem.colorId} cartItem={cartItem} />))
       }
-      <Total>
+      <span className="mt-7 ml-auto text-3xl">
         Total: $
         {cartTotal}
-      </Total>
+      </span>
       <PaymentForm />
-    </CheckoutContainer>
+    </div>
   );
 };
 

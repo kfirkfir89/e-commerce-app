@@ -1,4 +1,4 @@
-import { Key } from 'react';
+import { Key, useState } from 'react';
 import Carousel from '../carousel/carousel.component';
 
 import DirectoryItem from '../directory-item/directory-item.component';
@@ -46,7 +46,6 @@ const categories: DirectoryCategory[] = [
 const Directory = () => {
   return (
     <div className="flex pt-48 flex-col items-center">
-      
       <div className="container grid grid-cols-2 md:grid-cols-4">
         {categories.map((category) => (
           <DirectoryItem key={category.id} category={category} />

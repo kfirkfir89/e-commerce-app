@@ -79,8 +79,8 @@ const Navigation = () => {
           <div className="flex-col p-0 m-0 navbar">
             {/* main navbar */}
             
-            <div className=" flex py-6 navbar justify-center min-h-fit gradient-bg-nav sm:p-4 p-0">
-              <div className="flex navbar min-h-fit container bg-transparent sm:p-4 p-0">
+            <div className=" flex navbar justify-center min-h-fit bg-gray-100 m-0 py-2">
+              <div className="flex navbar min-h-fit container bg-transparent m-0 p-0">
                 {/* LEFT SIDE LOGO MENU */}
                 <div className="flex-1">
                   <div className="flex-none">
@@ -97,7 +97,8 @@ const Navigation = () => {
                   <div className="sm:flex-none z-50">
                     <Link to="/">
                       <div className="flex ">
-                        <img className="w-8/12 pl-2 opacity-90 sm:w-full" src="/src/assets/NANA STYLE.png" alt="gfd" />
+                        <span className="uppercase text-xl sm:text-4xl font-dosis">nana style</span>
+                        {/* <img className="w-8/12 pl-2 opacity-90 sm:w-full" src="/src/assets/NANA STYLE.png" alt="gfd" /> */}
                       </div>
                     </Link>
                   </div>
@@ -141,7 +142,6 @@ const Navigation = () => {
                     }
                     {/* CART */}
                     <CartDropdown />
-
                   </div>
                 </div>
               </div>
@@ -149,24 +149,30 @@ const Navigation = () => {
 
             {/* categories navbar */}
             <div className=" items-start justify-center p-0 m-0 navbar min-h-min hidden sm:flex">
-              <div className="z-40 relative flex items-center justify-center group w-fit sm:visible">
+              <div className=" relative flex items-center justify-center group w-fit sm:visible">
 
-                <div className="flex absolute top-0">
-                  {userCollectionKeys && userCollectionKeys.keys.map((key) => (
-                    <div key={key} className="flex justify-center peer mb-6">
-                      <div className="static flex px-3" onMouseEnter={() => { setIsHover(true); setHoverSelected(key); }}>
-                        <NavLink to={key} className="p-1 uppercase text-sm tracking-[0.075em] font-smoochSans leading-0 text-slate-700 link-underline link-underline-black">
-                          {key}
-                        </NavLink>
-                      </div>
+                <div className="relative w-screen flex flex-col justify-center items-center">
+
+                  <div className="container p-2">
+                    <div className="flex justify-center">
+                      {userCollectionKeys && userCollectionKeys.keys.map((key) => (
+                        <button key={key} className="relative flex flex-col justify-center items-center" onClick={() => setIsHover(!isHover)} onMouseEnter={() => setIsHover(true)}>
+                          <div className="flex justify-center">
+                            <div className="static flex px-3" onMouseEnter={() => { setIsHover(true); setHoverSelected(key); }}>
+                              <NavLink to={key} className="p-1 uppercase text-sm tracking-[0.075em] font-smoochSans leading-0 text-slate-700 link-underline link-underline-black">
+                                {key}
+                              </NavLink>
+                            </div>
+                          </div>
+                          
+                        </button>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
 
-                <div onBlur={() => setIsHover(false)} tabIndex={0} onMouseLeave={() => setIsHover(false)} className={`bg-gray-200 pb-2 top-0 grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-out peer-hover:grid-rows-[1fr] ${isHover ? 'grid-rows-[1fr] border-b-[1px] border-slate-400 border-dashed' : ''}  w-screen top-24 sm:top-28`}>
-                  <div className={`overflow-hidden flex justify-center mt-8 pt-2 ${isHover ? 'visible' : 'invisible'} `}>
-                    <div className="flex w-96">
-                      <div className="flex gap-y-1 flex-col items-start mt-2">
+                  <div onBlur={() => setIsHover(false)} tabIndex={0} onMouseLeave={() => setIsHover(false)} className={`bottom-0 w-screen grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isHover ? 'grid-rows-[1fr]' : ''}`}>
+                    <div className="min-h-0">
+                      <div className="w-96 mb-4 px-2">
                         {memorizedCategories?.map((sc) => (
                           <div key={sc} className="flex items-center justify-center">
                             <div className="static flex px-3 justify-start">
@@ -181,7 +187,9 @@ const Navigation = () => {
                         ))}
                       </div>
                     </div>
+                    <div className={`border-dashed border-slate-700 border-b-[1px] transition-all duration-1000 ease-in-out opacity-0 ${isHover ? 'opacity-100' : ''}`}></div>
                   </div>
+
                 </div>
                 
               </div>

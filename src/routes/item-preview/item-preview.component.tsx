@@ -1,5 +1,6 @@
 import { useLocation, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { CategoryRouteParams } from '../category/category.component';
 import { NewItemValues } from '../../components/add-firebase/add-item.component';
 import { getItemFromRoute } from '../../utils/firebase/firebase.utils';
@@ -11,23 +12,32 @@ import { ReactComponent as ShoppingIcon } from '../../assets/local_mall.svg';
 import { SelectOption } from '../../components/sort-select/sort-select.component';
 import SizeProductSelect from '../../components/size-product-select/size-product-select.component';
 import Spinner from '../../components/spinner/spinner.component';
+import { setCartItems } from '../../store/cart/cart.action';
+import { CartItemPreview } from '../../store/cart/cart.types';
+import { selectCartItems } from '../../store/cart/cart.selector';
 
 const ItemPreview = () => {
   const { subCategoryPara, shopPara } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
   
   const [product, setProduct] = useState<NewItemValues | undefined>();
+
   const [selectedColorIndex, setSelectedColorIndex] = useState(0);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [imagesUrlList, setImagesUrlList] = useState<string[]>([]);
-  const [sizeOption, setSizeOption] = useState<SelectOption>({ label: '', value: '' });
+  const [selectedSizeOption, setSelectedSizeOption] = useState<SelectOption>({ label: '', value: '' });
 
-  const [addToBagQuantity, setAddToBagQuantity] = useState(0);
+  const [imagesUrlList, setImagesUrlList] = useState<string[]>([]);
+  const [addToCartQuantity, setAddToCartQuantity] = useState(0);
+
   const [sizeError, setSizeError] = useState(false);
   const [isLoadingPage, setIsLoadingPage] = useState(true);
   
+  const cartItemsSelector = useSelector(selectCartItems);
+
+  const dispatch = useDispatch();
   const location = useLocation();
   const productId = location.state as string;
-  
+
+  // set image array to manipulate the images view
   useEffect(() => {
     if (product) {
       const { colorImagesUrls }: NewItemValues = product;
@@ -38,9 +48,17 @@ const ItemPreview = () => {
   // geting the item by id
   const fetchItem = async () => {
     try {
-      const res = await getItemFromRoute(shopPara, subCategoryPara, productId);
-      if (res !== undefined) {
-        setProduct(res);
+      const resProduct = await getItemFromRoute(shopPara, subCategoryPara, productId);
+      if (resProduct !== undefined) {
+        setProduct(resProduct);
+        
+        // check if item exsist in cart with the chossen color to get quantity
+        if (cartItemsSelector.some((cartItem) => cartItem.id === resProduct.id && cartItem.color === resProduct.colorImagesUrls[selectedColorIndex].color)) {
+          const item = cartItemsSelector.find((cartItem) => cartItem.id === resProduct.id && cartItem.color === resProduct.colorImagesUrls[selectedColorIndex].color);
+          if (item !== undefined) {
+            setAddToCartQuantity(item.quantity);
+          }
+        }
       }
     } catch (error) {
       console.error('Error fetching item:', error);
@@ -58,7 +76,7 @@ const ItemPreview = () => {
   // hidden the error
   useEffect(() => {
     setSizeError(false);
-  }, [sizeOption]);
+  }, [selectedSizeOption]);
 
   // image next/prev image
   const handlePreviousClick = () => {
@@ -71,19 +89,45 @@ const ItemPreview = () => {
   // set the chossen size
   const onChangeSize = (size: SelectOption | undefined) => {
     if (size !== undefined) {
-      setSizeOption(size);
+      setSelectedSizeOption(size);
+    }
+  };
+
+  // set item cart quantity button display
+  const selectColor = (i: number) => {
+    setSelectedColorIndex(i);
+    if (product) {
+      const item = cartItemsSelector.find((cartItem) => cartItem.colorId === (`${product.id + product.colorImagesUrls[selectedColorIndex].color}`));
+      if (item) {
+        setAddToCartQuantity(item.quantity);
+      } else {
+        setAddToCartQuantity(0);
+      }
     }
   };
 
   // button handler add item to bag
-  const addToBagHandler = () => {
-    if (sizeOption.value === '') {
+  const addToCartHandler = () => {
+    if (selectedSizeOption.value === '') {
       setSizeError(true);
       return;
     }
-    setAddToBagQuantity((prev) => prev + 1);
+    setAddToCartQuantity((prev) => prev + 1);
 
-    // dispatch ot bag here
+    if (product) {
+      const newCartItem: CartItemPreview = {
+        id: product.id,
+        colorId: product.id + product.colors[selectedColorIndex].label,
+        productName: product.productName,
+        price: product.price,
+        color: product.colors[selectedColorIndex].label,
+        size: selectedSizeOption.label,
+        previewImage: imagesUrlList[0],
+        quantity: addToCartQuantity + 1,
+      };
+
+      dispatch(setCartItems([newCartItem]));
+    }
   };
 
   return (
@@ -146,7 +190,7 @@ const ItemPreview = () => {
                             <span className="label-text tracking-wider hover:text-slate-600">Colors</span>
                             <div className="flex flex-wrap rounded-lg">
                               {product.colorImagesUrls.map((colorOption, i) => (
-                                <button onClick={() => setSelectedColorIndex(i)} className="mx-1 bg-transparent" key={colorOption.color}>
+                                <button onClick={() => selectColor(i)} className="mx-1 bg-transparent" key={colorOption.color}>
                                   <div>
                                     <div className={`h-32 min-h-max m-1 p-1 ${selectedColorIndex === i ? 'outline-dashed outline-[1px] outline-slate-700' : ''} carousel carousel-vertical rounded-lg shadow-sm ${product.colors.find((color) => color.label === colorOption.color)?.value}`}>
                                       {
@@ -170,7 +214,14 @@ const ItemPreview = () => {
                           {/* select size */}
                           <span className="label-text tracking-wider hover:text-slate-600">Size</span>
                           <div className="mx-2 w-full z-50">
-                            <SizeProductSelect productStock={product.stock} productColor={product.colors[selectedColorIndex]} firstOption={{ label: 'Select Size', value: '' }} options={product.sizes} onChange={(o: SelectOption | undefined) => { onChangeSize(o); }} value={sizeOption} />
+                            <SizeProductSelect 
+                              productStock={product.stock}
+                              productColor={product.colors[selectedColorIndex]}
+                              firstOption={{ label: 'Select Size', value: '' }}
+                              options={product.sizes}
+                              onChange={(o: SelectOption | undefined) => { onChangeSize(o); }}
+                              value={selectedSizeOption}
+                            />
                             {
                               sizeError && <span className="font-smoochSans font-semibold text-xs tracking-widest text-red-500 px-2">size must be selected</span>
                             }
@@ -179,7 +230,7 @@ const ItemPreview = () => {
                           {/* add button */}
                           <div className="m-2 w-full z-40">
                             <button
-                              onClick={addToBagHandler}
+                              onClick={addToCartHandler}
                               className="btn rounded-none w-full shadow-sm "
                             >
                               <div className="w-full flex justify-center items-center ">
@@ -187,7 +238,7 @@ const ItemPreview = () => {
                                   <div className="relative">
                                     <div className="relative flex items-center justify-center">
                                       <ShoppingIcon />
-                                      <span className="absolute text-[10px] sm:text-xs font-bold pt-2">{addToBagQuantity > 0 && addToBagQuantity}</span>
+                                      <span className="absolute text-[10px] sm:text-xs font-bold pt-2">{addToCartQuantity > 0 && addToCartQuantity}</span>
                                     </div>
                                   </div>
                                 </label>
