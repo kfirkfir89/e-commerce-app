@@ -170,21 +170,25 @@ const Navigation = () => {
                     </div>
                   </div>
 
-                  <div onBlur={() => setIsHover(false)} tabIndex={0} onMouseLeave={() => setIsHover(false)} className={`bottom-0 w-screen grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isHover ? 'grid-rows-[1fr]' : ''}`}>
+                  <div tabIndex={0} onMouseLeave={() => setIsHover(false)} className={`bottom-0 w-screen grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isHover ? 'grid-rows-[1fr]' : ''}`}>
                     <div className="min-h-0">
-                      <div className="w-96 mb-4 px-2">
-                        {memorizedCategories?.map((sc) => (
-                          <div key={sc} className="flex items-center justify-center">
-                            <div className="static flex px-3 justify-start">
-                              <NavLink
-                                to={`${hoverSelected}/${sc}`}
-                                className={({ isActive }) => (isActive ? 'p-1 capitalize text-sm z-50 tracking-widest text-slate-900 font-smoochSans leading-0 hover:text-slate-900 underline underline-offset-4' : 'p-1 capitalize text-sm z-50 tracking-widest text-slate-500 font-smoochSans leading-0 hover:text-slate-900')}
-                              >
-                                {sc}       
-                              </NavLink>
-                            </div>
+                      <div className="flex justify-center">
+                        <div className="container">
+                          <div className="w-96 mb-4 px-2">
+                            {memorizedCategories?.map((sc) => (
+                              <div key={sc} className="flex items-center justify-center">
+                                <div className="static flex px-3 justify-start">
+                                  <NavLink
+                                    to={`${hoverSelected}/${sc}`}
+                                    className={({ isActive }) => (isActive ? 'p-1 capitalize text-sm z-50 tracking-widest text-slate-900 font-smoochSans leading-0 hover:text-slate-900 underline underline-offset-4' : 'p-1 capitalize text-sm z-50 tracking-widest text-slate-500 font-smoochSans leading-0 hover:text-slate-900')}
+                                  >
+                                    {sc}       
+                                  </NavLink>
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                        ))}
+                        </div>
                       </div>
                     </div>
                     <div className={`border-dashed border-slate-700 border-b-[1px] transition-all duration-1000 ease-in-out opacity-0 ${isHover ? 'opacity-100' : ''}`}></div>
