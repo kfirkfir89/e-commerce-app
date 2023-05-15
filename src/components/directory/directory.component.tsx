@@ -45,7 +45,7 @@ const categories: DirectoryCategory[] = [
 
 const Directory = () => {
   return (
-    <div className="flex pt-48 flex-col items-center">
+    <div className="flex pt-48 flex-col items-center bg-white">
       <div className="container grid grid-cols-2 md:grid-cols-4">
         {categories.map((category) => (
           <DirectoryItem key={category.id} category={category} />

@@ -97,7 +97,7 @@ const Navigation = () => {
                   <div className="sm:flex-none z-50">
                     <Link to="/">
                       <div className="flex ">
-                        <span className="uppercase text-xl sm:text-4xl font-dosis">nana style</span>
+                        <span className="tracking-tighter font-dosis text-2xl font-bold uppercase text-slate-700">nana style</span>
                         {/* <img className="w-8/12 pl-2 opacity-90 sm:w-full" src="/src/assets/NANA STYLE.png" alt="gfd" /> */}
                       </div>
                     </Link>
@@ -162,7 +162,6 @@ const Navigation = () => {
                           </NavLink>
                         </div>
                       </div>
-                          
                     </button>
                   ))}
                 </div>
@@ -171,8 +170,8 @@ const Navigation = () => {
               <div tabIndex={0} onMouseLeave={() => setIsHover(false)} className={`w-full grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isHover ? 'grid-rows-[1fr]' : ''}`}>
                 <div className="min-h-0">
                   <div className="flex justify-center">
-                    <div className="container">
-                      <div className="w-96 mb-4 px-2">
+                    <div className="container flex justify-center">
+                      <div className="flex w-[448px] mb-4 px-2">
                         {memorizedCategories?.map((sc) => (
                           <div key={sc} className="flex items-center justify-center">
                             <div className="static flex px-3 justify-start">

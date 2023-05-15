@@ -23,7 +23,6 @@
 }
 
 @layer utilities {
-
   .scrollbarStyle::-webkit-scrollbar {
       @apply w-3;
   }
@@ -83,12 +82,27 @@
       max-width: 1780px;
     }
   }
+
+  @media (prefers-color-scheme: light) {
+    body {
+      background: #FFF;
+      color: #333;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body {
+      background: #FFF;
+      color: #333;
+    }
+  }
   
   #inputColor {
     -webkit-appearance: none;
     -moz-appearance: none;
     border: none;
   }
+
   #inputColor::-webkit-color-swatch {
     @apply shadow-lg border-dashed border-slate-500 rounded-lg
     
