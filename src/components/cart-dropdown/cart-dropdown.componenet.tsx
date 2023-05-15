@@ -44,10 +44,10 @@ const CartDropdown = () => {
       <button className="relative flex flex-col justify-center items-center" onClick={() => setIsHover(!isHover)} onMouseEnter={() => setIsHover(true)}>
         <ShoppingIcon className="w-9 sm:w-full mb-1" />
         <span className="absolute text-[10px] opacity-70 sm:text-xs font-bold pt-1">{cartCount}</span>
-        <div className={`absolute bottom-0 border-8 w-4 border-transparent border-dashed border-b-slate-700 border-opacity-70 transition-all duration-200 ease-in-out opacity-0 ${isHover ? 'opacity-100' : ''}`}></div>
+        <div className={`absolute bottom-0 border-8 w-4 border-transparent border-dashed border-b-slate-400 transition-all duration-200 ease-in-out opacity-0 ${isHover ? 'opacity-100' : ''}`}></div>
       </button>
 
-      <div className={`absolute right-1 w-96 grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isHover ? 'grid-rows-[1fr] border border-slate-400 border-b-0' : ''}`}>
+      <div className={`absolute right-1 w-72 sm:w-96 grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isHover ? 'grid-rows-[1fr] border border-slate-400 border-b-0 shadow-md' : ''}`}>
         <div className="min-h-0" onMouseLeave={() => { setTimeout(() => { setIsHover(false); }, 1000); }}>
           <div className="py-4 bg-gray-100">
             <div className="card w-full">
@@ -115,9 +115,13 @@ const CartDropdown = () => {
                 </span>
                 <p className="text-sm text-gray-400">Not including taxes and shipping costs</p>
               </div>
-              <div className="bg-gray-100 p-8 pt-0 border-b-2 tracking-wide font-dosis text-sm uppercase leading-0 text-slate-700">
-                <button className="btn rounded-none btn-sm w-full" onClick={goToCheckOutHandler}>
-                  CHECK OUT
+              <div className="bg-gray-100 p-2 pb-6 pt-0  tracking-wide font-dosis text-sm uppercase leading-0 text-slate-700">
+                <button onClick={goToCheckOutHandler} className="btn rounded-none w-full shadow-sm ">
+                  <div className="w-full flex justify-center items-center ">
+                    <span className="uppercase flex pt-1 font-smoochSans font-semibold text-xs tracking-widest">
+                      CHECK OUT
+                    </span>
+                  </div>
                 </button>
               </div>
             </div>

@@ -29,7 +29,7 @@ const MenuIcon = ({ categories, onChangeToggle } : MenuIconProps) => {
         <div>
           {isMenuOpen 
           && (
-          <div className="top-[105px] left-0 fixed flex flex-col w-full bg-white z-50">
+          <div className="top-[70px] left-0 fixed flex flex-col w-full bg-white z-50 h-screen">
             <div className="flex overflow-x-auto border-b-[1px] border-slate-400 border-dashed">
               {categories !== undefined
                 && Array.from(categories.entries()).map(([key, value]) => {

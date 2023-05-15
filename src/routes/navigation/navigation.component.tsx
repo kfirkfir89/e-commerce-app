@@ -75,7 +75,6 @@ const Navigation = () => {
     <>
       {!(path.pathname === '/admin-dashboard' || path.pathname.match(/^\/admin-dashboard(\/.*)?$/)) && (
         <div className="flex justify-center w-full z-[100] absolute">
-
           <div className="flex-col p-0 m-0 navbar">
             {/* main navbar */}
             
@@ -88,7 +87,7 @@ const Navigation = () => {
                       userCategories !== undefined
                     && (
                       // side menu for small screens
-                    <div className="z-40 flex flex-col items-center justify-center pt-2 sm:hidden ">
+                    <div className="z-40 flex flex-col items-center justify-center pt-2 lg:hidden ">
                       <MenuIcon onChangeToggle={toggleIsMenuOpen} categories={userCategories} /> 
                     </div>
                     )
@@ -149,7 +148,7 @@ const Navigation = () => {
 
             {/* categories navbar */}
 
-            <div className="relative flex-col w-full justify-center items-center hidden sm:flex">
+            <div className="relative flex-col w-full justify-center items-center hidden lg:flex">
 
               <div className="container p-2">
                 <div className="flex justify-center">
