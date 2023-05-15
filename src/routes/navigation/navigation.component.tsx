@@ -74,7 +74,7 @@ const Navigation = () => {
   return (
     <>
       {!(path.pathname === '/admin-dashboard' || path.pathname.match(/^\/admin-dashboard(\/.*)?$/)) && (
-        <div className="flex justify-center w-screen z-[100] absolute">
+        <div className="flex justify-center w-full z-[100] absolute">
 
           <div className="flex-col p-0 m-0 navbar">
             {/* main navbar */}
@@ -148,56 +148,52 @@ const Navigation = () => {
             </div>
 
             {/* categories navbar */}
-            <div className=" items-start justify-center p-0 m-0 navbar min-h-min hidden sm:flex">
-              <div className=" relative flex items-center justify-center group w-fit sm:visible">
 
-                <div className="relative w-screen flex flex-col justify-center items-center">
+            <div className="relative flex-col w-full justify-center items-center hidden sm:flex">
 
-                  <div className="container p-2">
-                    <div className="flex justify-center">
-                      {userCollectionKeys && userCollectionKeys.keys.map((key) => (
-                        <button key={key} className="relative flex flex-col justify-center items-center" onClick={() => setIsHover(!isHover)} onMouseEnter={() => setIsHover(true)}>
-                          <div className="flex justify-center">
-                            <div className="static flex px-3" onMouseEnter={() => { setIsHover(true); setHoverSelected(key); }}>
-                              <NavLink to={key} className="p-1 uppercase text-sm tracking-[0.075em] font-smoochSans leading-0 text-slate-700 link-underline link-underline-black">
-                                {key}
+              <div className="container p-2">
+                <div className="flex justify-center">
+                  {userCollectionKeys && userCollectionKeys.keys.map((key) => (
+                    <button key={key} className="relative flex flex-col justify-center items-center" onClick={() => setIsHover(!isHover)} onMouseEnter={() => setIsHover(true)}>
+                      <div className="flex justify-center">
+                        <div className="static flex px-3" onMouseEnter={() => { setIsHover(true); setHoverSelected(key); }}>
+                          <NavLink to={key} className="p-1 uppercase text-sm tracking-[0.075em] font-smoochSans leading-0 text-slate-700 link-underline link-underline-black">
+                            {key}
+                          </NavLink>
+                        </div>
+                      </div>
+                          
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div tabIndex={0} onMouseLeave={() => setIsHover(false)} className={`w-full grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isHover ? 'grid-rows-[1fr]' : ''}`}>
+                <div className="min-h-0">
+                  <div className="flex justify-center">
+                    <div className="container">
+                      <div className="w-96 mb-4 px-2">
+                        {memorizedCategories?.map((sc) => (
+                          <div key={sc} className="flex items-center justify-center">
+                            <div className="static flex px-3 justify-start">
+                              <NavLink
+                                to={`${hoverSelected}/${sc}`}
+                                className={({ isActive }) => (isActive ? 'p-1 capitalize text-sm z-50 tracking-widest text-slate-900 font-smoochSans leading-0 hover:text-slate-900 underline underline-offset-4' : 'p-1 capitalize text-sm z-50 tracking-widest text-slate-500 font-smoochSans leading-0 hover:text-slate-900')}
+                              >
+                                {sc}       
                               </NavLink>
                             </div>
                           </div>
-                          
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div tabIndex={0} onMouseLeave={() => setIsHover(false)} className={`bottom-0 w-screen grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isHover ? 'grid-rows-[1fr]' : ''}`}>
-                    <div className="min-h-0">
-                      <div className="flex justify-center">
-                        <div className="container">
-                          <div className="w-96 mb-4 px-2">
-                            {memorizedCategories?.map((sc) => (
-                              <div key={sc} className="flex items-center justify-center">
-                                <div className="static flex px-3 justify-start">
-                                  <NavLink
-                                    to={`${hoverSelected}/${sc}`}
-                                    className={({ isActive }) => (isActive ? 'p-1 capitalize text-sm z-50 tracking-widest text-slate-900 font-smoochSans leading-0 hover:text-slate-900 underline underline-offset-4' : 'p-1 capitalize text-sm z-50 tracking-widest text-slate-500 font-smoochSans leading-0 hover:text-slate-900')}
-                                  >
-                                    {sc}       
-                                  </NavLink>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
+                        ))}
                       </div>
                     </div>
-                    <div className={`border-dashed border-slate-700 border-b-[1px] transition-all duration-1000 ease-in-out opacity-0 ${isHover ? 'opacity-100' : ''}`}></div>
                   </div>
-
                 </div>
-                
+                <div className={`border-dashed border-slate-700 border-b-[1px] transition-all duration-1000 ease-in-out opacity-0 ${isHover ? 'opacity-100' : ''}`}></div>
               </div>
+
             </div>
+                
 
           </div>
         </div>

@@ -24,19 +24,15 @@
 
 @layer utilities {
 
-  .scrollbarStyle {
-    &::-webkit-scrollbar {
+  .scrollbarStyle::-webkit-scrollbar {
       @apply w-3;
-    }
-  
-    &::-webkit-scrollbar-track {
-      @apply bg-transparent;
-    }
-  
-    &::-webkit-scrollbar-thumb {
-      @apply bg-gray-200 rounded-sm;
-      @apply border-solid border-2 border-white rounded-lg;
-    }
+  }
+  .scrollbarStyle::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  .scrollbarStyle::-webkit-scrollbar-thumb {
+    @apply bg-gray-200 rounded-sm;
+    @apply border-solid border-2 border-white rounded-lg;
   }
 
   .gradient-bg-nav {
