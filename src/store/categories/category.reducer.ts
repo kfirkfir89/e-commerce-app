@@ -9,7 +9,9 @@ import {
   featchUpdateCategorySucceeded,
   featchUpdateCategoriesSucceeded,
   featchCategoriesExsist,
+  featchSearchPreview,
 } from './category.action';
+import { ItemPreview } from '../../components/add-firebase/add-item.component';
 
 // read only is an additional property you can add so that you force it, 
 // that this state object can never be modified.It can only be read.
@@ -17,6 +19,7 @@ import {
 export type CategoriesState = {
   readonly categories: Map<string, PreviewCategory[]>;
   readonly categoriesPreview: Map<string, PreviewCategory[]>,
+  readonly searchPreview: ItemPreview[],
   readonly isLoading: boolean;
   readonly error: Error | null;
 };
@@ -24,6 +27,7 @@ export type CategoriesState = {
 export const CATEGORIES_INITIAL_STATE : CategoriesState = {
   categories: new Map(),
   categoriesPreview: new Map(),
+  searchPreview: [],
   isLoading: false,
   error: null,
 };
@@ -32,11 +36,14 @@ export const categoriesReducer = (
   state = CATEGORIES_INITIAL_STATE,
   action: AnyAction,
 ): CategoriesState => {
+  if (featchUpdateCategory.match(action)) {
+    return { ...state, isLoading: true };
+  }
   if (featchPreviewCategories.match(action)) {
     return { ...state, isLoading: true };
   }
-  if (featchUpdateCategory.match(action)) {
-    return { ...state, isLoading: true };
+  if (featchSearchPreview.match(action)) {
+    return { ...state, searchPreview: action.payload };
   }
   if (featchUpdateCategorySucceeded.match(action)) {
     const { collectionKey, docKey, newItems } = action.payload;

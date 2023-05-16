@@ -17,7 +17,7 @@ import { CartItemPreview } from '../../store/cart/cart.types';
 import { selectCartItems } from '../../store/cart/cart.selector';
 
 const ItemPreview = () => {
-  const { subCategoryPara, shopPara } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
+  const { subCategoryPara, shopPara, itemPara } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
   
   const [product, setProduct] = useState<NewItemValues | undefined>();
 
@@ -71,7 +71,7 @@ const ItemPreview = () => {
       const res = fetchItem().then(() => setIsLoadingPage(false));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [location.pathname]);
 
   // hidden the error
   useEffect(() => {

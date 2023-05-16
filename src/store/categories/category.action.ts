@@ -4,7 +4,7 @@ import {
   createAction, ActionWithPayload, withMatcher, Action, 
 } from '../../utils/reducer/reducer.utils';
 import { ItemPreview } from '../../components/add-firebase/add-item.component';
-import { SortOption } from '../../routes/category/categoryOLD.component';
+import { SortOption } from '../../routes/category/category.component';
 
 export type FeatchPreviewCategories = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_PREVIEW_CATEGORIES_START, string>;
 
@@ -13,6 +13,8 @@ export type FeatchUpdateCategoriesSucceeded = ActionWithPayload<CATEGORIES_ACTIO
 export type FeatchUpdateCategory = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_UPDATE_CATEGORY, { collectionKey: string, docKey: string, newItems: ItemPreview[], sortOption?: SortOption }>;
 
 export type FeatchUpdateCategorySucceeded = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_UPDATE_CATEGORY_SUCCEEDED, { collectionKey: string, docKey: string, newItems: ItemPreview[], sortOption?: SortOption }>;
+
+export type FeatchSearchPreview = ActionWithPayload<CATEGORIES_ACTION_TYPES.FETCH_SEARCH_PREVIEW, ItemPreview[]>;
 
 export type FeatchCategoriesExsist = Action<CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_EXSIST>;
 
@@ -37,6 +39,10 @@ export const featchUpdateCategorySucceeded = withMatcher(
   (collectionKey: string, docKey: string, newItems: ItemPreview[], sortOption?: SortOption): FeatchUpdateCategorySucceeded => createAction(CATEGORIES_ACTION_TYPES.FETCH_UPDATE_CATEGORY_SUCCEEDED, {
     collectionKey, docKey, newItems, sortOption, 
   }),
+);
+
+export const featchSearchPreview = withMatcher(
+  (searchPreviewItems: ItemPreview[]): FeatchSearchPreview => createAction(CATEGORIES_ACTION_TYPES.FETCH_SEARCH_PREVIEW, searchPreviewItems),
 );
 
 export const featchCategoriesExsist = withMatcher(

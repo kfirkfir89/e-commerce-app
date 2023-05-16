@@ -24,16 +24,18 @@
 
 @layer utilities {
   .scrollbarStyle::-webkit-scrollbar {
-      @apply w-3;
+      @apply w-2;
+
   }
   .scrollbarStyle::-webkit-scrollbar-track {
-    @apply bg-transparent;
+    @apply bg-gray-100;
   }
   .scrollbarStyle::-webkit-scrollbar-thumb {
-    @apply bg-gray-200 rounded-sm;
-    @apply border-solid border-2 border-white rounded-lg;
+    @apply bg-white rounded-sm;
+    @apply border-solid border-2 border-gray-300 rounded-lg;
   }
 
+  
   .gradient-bg-nav {
     background: rgb(229,231,235);
     background: linear-gradient(0deg, rgba(229,231,235,1) 28%, rgba(243,244,246,1) 35%, rgba(255,255,255,1) 45%);

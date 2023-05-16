@@ -34,9 +34,10 @@ import { PreviewCategory } from '../../store/categories/category.types';
 import { NewOrderDetails } from '../../store/orders/order.types';
 import { AddFirebaseData } from '../../components/add-firebase/add-firebase.component';
 import {
-  AllItemsPreview, ItemPreview, NewItemValues, 
+  ItemPreview, NewItemValues, 
 } from '../../components/add-firebase/add-item.component';
-import { SortOption } from '../../routes/category/categoryOLD.component';
+import { SortOption } from '../../routes/category/category.component';
+import { ColorStock, SizeStock } from '../../components/add-firebase/add-item-stock.component';
 
 
 
@@ -138,7 +139,7 @@ export async function getUserCollectionKeys() {
 // add new data (products) to server
 export async function addFirebaseData<T extends AddFirebaseData>(newData: T): Promise<void> {
   const { collectionKey, docKey, items } = newData;
-
+  console.log('collectionKey:', collectionKey, docKey, items);
   const collectionRef = collection(db, 'system-data');
   const querySnapshot = await getDocs(collectionRef);
 
@@ -173,6 +174,14 @@ export async function addFirebaseData<T extends AddFirebaseData>(newData: T): Pr
   // careate a preview for each item 
   items.forEach(async (item) => {
     try {
+      const totalStockInit = item.stock.reduce((total: number, sizeStock: SizeStock) => {
+        sizeStock.colors.forEach((colorStock: ColorStock) => {
+          // eslint-disable-next-line no-param-reassign
+          total += colorStock.count;
+        });
+        return total;
+      }, 0);
+      
       const itemPreview: ItemPreview = {
         id: item.id,
         created: item.created,
@@ -185,30 +194,14 @@ export async function addFirebaseData<T extends AddFirebaseData>(newData: T): Pr
         colorsSort: item.colors.map((color) => (color.label)),
         sizesSort: item.sizes.map((size) => (size.value)),
         stock: item.stock,
+        initTotalStock: totalStockInit,
+        totalStock: totalStockInit,
+        discaount: item.discaount,
         imagesUrls: [item.colorImagesUrls[0].itemUrlList[0], item.colorImagesUrls[0].itemUrlList[1]],
       };
 
       const docRef = await setDoc(doc(db, `${collectionKey}/${docKey}/items-preview`, itemPreview.id), itemPreview);
-    } catch (error) {
-      console.log('error:', error);
-    }
-  });
-
-  // create a search preview for each item
-  items.forEach(async (item) => {
-    try {
-      const itemPreview: AllItemsPreview = {
-        id: item.id,
-        created: item.created,
-        collectionKey,
-        docKey,
-        productName: item.productName,
-        slug: item.slug,
-        price: item.price,
-        imagesUrls: [item.colorImagesUrls[0].itemUrlList[0]],
-      };
-
-      const docRef = await setDoc(doc(db, 'all-items-search', itemPreview.id.toString()), itemPreview);
+      const docRefAll = await setDoc(doc(db, 'all-items-preview', itemPreview.id.toString()), itemPreview);
     } catch (error) {
       console.log('error:', error);
     }
@@ -520,12 +513,12 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
 }
 
 // get all items search
-export async function getItemsSearch(): Promise<AllItemsPreview[]> {
-  const collectionRef = collection(db, 'all-items-search');
+export async function getItemsSearch(): Promise<ItemPreview[]> {
+  const collectionRef = collection(db, 'all-items-preview');
 
   const itemsQuery = query(collectionRef, orderBy('id'));
   const itemsQuerySnapshot = await getDocs(itemsQuery);
-  const result: AllItemsPreview[] = itemsQuerySnapshot.docs.map((doc) => doc.data() as AllItemsPreview);
+  const result: ItemPreview[] = itemsQuerySnapshot.docs.map((doc) => doc.data() as ItemPreview);
 
   return result;
 }

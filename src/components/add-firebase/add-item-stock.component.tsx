@@ -3,7 +3,7 @@ import FormInput from '../input-form/input-form.component';
 import { SelectColorOption } from '../select-color/select-color.component';
 import { SelectOption } from '../select/select.component';
 
-type ColorStock = { label: string, value: string, count: number };
+export type ColorStock = { label: string, value: string, count: number };
 
 export type SizeStock = {
   size: string

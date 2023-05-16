@@ -6,7 +6,7 @@ import { Action, AnyAction } from 'redux';
 import { v4 } from 'uuid';
 import * as slugFunciton from 'slug';
 
-import { FieldValue, Timestamp, serverTimestamp } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { storageFB } from '../../utils/firebase/firebase.utils';
 import { ActionWithPayload, createAction, withMatcher } from '../../utils/reducer/reducer.utils';
 
@@ -175,6 +175,9 @@ export type NewItemValues = ItemValues & {
   colorImagesUrls: ColorImages[]
   imgFileList: ImageColorsFiles[]
   stock: SizeStock[]
+  initTotalStock: number
+  totalStock: number
+  discaount: number
   details: string
 };
 
@@ -185,14 +188,10 @@ export type ItemPreview = ItemValues & {
   colors: SelectColorOption[]
   colorsSort: string[]
   sizesSort: string[]
-  stock: SizeStock[];
-  imagesUrls: string[]
-};
-
-// search preview collection
-export type AllItemsPreview = ItemValues & {
-  collectionKey: string
-  docKey: string
+  stock: SizeStock[]
+  initTotalStock: number
+  totalStock: number
+  discaount: number
   imagesUrls: string[]
 };
 
@@ -218,6 +217,9 @@ const defualtItemValues: NewItemValues = {
   colorImagesUrls: [],
   imgFileList: [],
   stock: [],
+  initTotalStock: 0,
+  totalStock: 0,
+  discaount: 0,
   details: '',
 };
 

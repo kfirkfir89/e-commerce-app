@@ -17,6 +17,7 @@ import Dashboard from './components/dashboard/dashboard.component';
 import AddFirebase from './components/add-firebase/add-firebase.component';
 import Navigation from './routes/navigation/navigation.component';
 import Category from './routes/category/category.component';
+import SearchResults from './routes/search-results/search-results.component';
 
 const Home = lazy(() => import('./routes/home/home.component'));
 const Authentication = lazy(() => import('./routes/authentication/authentication.component'));
@@ -42,6 +43,7 @@ const App = () => {
         <Route path="auth" element={<Authentication />} />
         <Route path="checkout" element={<CheckOut />} />
         <Route path="payment-succeeded" element={<PaymentSucceeded />} />
+        <Route path="search-results" element={<SearchResults />} />
         <Route path="admin-dashboard/*" element={<AdminDBNav />}>
           <Route index element={<Dashboard />} />
           <Route path="addfirebase" element={<AddFirebase />} />

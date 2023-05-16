@@ -1,15 +1,16 @@
 
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { ReactComponent as Menu } from '../../assets/menu_FILL0.svg';
-import { ReactComponent as Close } from '../../assets/close_FILL0.svg';
+import { ReactComponent as MenuIcon } from '../../assets/menu_FILL0.svg';
+import { ReactComponent as CloseIcon } from '../../assets/close_FILL0.svg';
+import Search from '../../components/search/search.component';
 
-type MenuIconProps = {
+type SideMenuProps = {
   categories: Map<string, string[]>,
   onChangeToggle: (isToggled: boolean) => void
 };
 
-const MenuIcon = ({ categories, onChangeToggle } : MenuIconProps) => {
+const SideMenu = ({ categories, onChangeToggle } : SideMenuProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleIsMenuOpen = () => {
     onChangeToggle(isMenuOpen);
@@ -22,14 +23,19 @@ const MenuIcon = ({ categories, onChangeToggle } : MenuIconProps) => {
         <div className="z-[100]">
           <label className="bg-transparent btn-circle swap swap-rotate border-none">
             <input type="checkbox" checked={isMenuOpen} className="outline-none" readOnly />
-            <Close className="swap-on fill-current w-9 h-9 text-slate-600" onClick={toggleIsMenuOpen} />
-            <Menu className="swap-off fill-current w-9 h-9 text-slate-600" onClick={toggleIsMenuOpen} />
+            <CloseIcon className="swap-on fill-current w-9 h-9 text-slate-600" onClick={toggleIsMenuOpen} />
+            <MenuIcon className="swap-off fill-current w-9 h-9 text-slate-600" onClick={toggleIsMenuOpen} />
           </label>
         </div>
         <div>
           {isMenuOpen 
           && (
           <div className="top-[70px] left-0 fixed flex flex-col w-full bg-white z-50 h-screen">
+            
+            <div className="w-full flex justify-center bg-gray-200 p-2">
+              <Search />
+            </div>
+
             <div className="flex overflow-x-auto border-b-[1px] border-slate-400 border-dashed">
               {categories !== undefined
                 && Array.from(categories.entries()).map(([key, value]) => {
@@ -100,4 +106,4 @@ const MenuIcon = ({ categories, onChangeToggle } : MenuIconProps) => {
   );
 };
 
-export default MenuIcon;
+export default SideMenu;

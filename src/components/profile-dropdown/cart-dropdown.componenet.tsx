@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   selectCartCount, selectCartItems, selectCartTotal, selectIsCartOpen, 
 } from '../../store/cart/cart.selector';
-import { ReactComponent as ShoppingIcon } from '../../assets/local_mall.svg';
+import { ReactComponent as ShoppingIcon } from '../../assets/shopping-bag.svg';
 
 
 import { setIsCartOpen } from '../../store/cart/cart.action';
@@ -22,8 +22,6 @@ const CartDropdown = () => {
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [isIconHover, setIsIconHover] = useState(false);
   const [isHover, setIsHover] = useState(false);
 
   const goToCheckOutHandler = useCallback(() => {
@@ -32,31 +30,24 @@ const CartDropdown = () => {
     navigate('/checkout');
   }, []);
 
-    
-  useEffect(() => {
-    if (isHover) {
-      setIsIconHover(true);
-    } else {
-      const timeout = setTimeout(() => {
-        setIsIconHover(false);
+  const test = (leave: string) => {
+    if (leave) {
+      setTimeout(() => {
+        setIsHover(false);
       }, 1000);
-
-      return () => clearTimeout(timeout);
     }
-  }, [isHover]);
-
-
+  };
   return (
     <div className="z-[100] relative">
 
-      <button className="relative flex flex-col justify-center items-center" onClick={() => setIsIconHover(!isIconHover)} onMouseEnter={() => setIsIconHover(true)} onMouseLeave={() => setIsIconHover(false)}>
+      <button className="relative flex flex-col justify-center items-center" onClick={() => setIsHover(!isHover)} onMouseEnter={() => setIsHover(true)}>
         <ShoppingIcon className="w-9 sm:w-full mb-1" />
         <span className="absolute text-[10px] opacity-70 sm:text-xs font-bold pt-1">{cartCount}</span>
-        <div className={`absolute bottom-0 border-8 w-4 border-transparent border-dashed border-b-slate-400 transition-all duration-200 ease-in-out opacity-0 ${isIconHover ? 'opacity-100' : ''}`}></div>
+        <div className={`absolute bottom-0 border-8 w-4 border-transparent border-dashed border-b-slate-400 transition-all duration-200 ease-in-out opacity-0 ${isHover ? 'opacity-100' : ''}`}></div>
       </button>
 
-      <div className={`absolute right-1 w-72 sm:w-96 grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isIconHover ? 'grid-rows-[1fr] border border-slate-400 border-b-0 shadow-md' : ''}`}>
-        <div className="min-h-0" onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
+      <div className={`absolute right-1 w-72 sm:w-96 grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isHover ? 'grid-rows-[1fr] border border-slate-400 border-b-0 shadow-md' : ''}`}>
+        <div className="min-h-0" onMouseLeave={() => { setTimeout(() => { setIsHover(false); }, 1000); }}>
           <div className="py-4 bg-gray-100">
             <div className="card w-full">
               <div className="h-96 p-2 flex flex-col overflow-y-auto scrollbarStyle">

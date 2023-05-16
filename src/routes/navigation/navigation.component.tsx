@@ -10,17 +10,18 @@ import CartDropdown from '../../components/cart-dropdown/cart-dropdown.componene
 
 import { selectCurrentUser } from '../../store/user/user.selector';
 
-import { ReactComponent as ProfileIcon } from '../../assets/person_FILL0.svg';
-import { ReactComponent as AdminIcon } from '../../assets/engineering_FILL0.svg';
+import { ReactComponent as AdminIcon } from '../../assets/manage_accounts.svg';
 import { signOutStart } from '../../store/user/user.action';
 
-import MenuIcon from '../menu/menu.component';
+import SideMenu from '../side-menu/side-menu.component';
 import { selectCartCount } from '../../store/cart/cart.selector';
 import {
   UserCollectionKeys,
   getUserCategories, getUserCollectionKeys,
 } from '../../utils/firebase/firebase.utils';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
+import Search from '../../components/search/search.component';
+import ProfileDropdown from '../../components/profile-dropdown/profile-dropdown.componenet';
 
 export type ShopCategoryRouteParams = {
   shopPara: string
@@ -31,7 +32,7 @@ const Navigation = () => {
   const currentUser = useSelector(selectCurrentUser);
 
   const [isHover, setIsHover] = useState(false);
-  const [isMenuIconToggled, setIsMenuIconToggled] = useState(false);
+  const [isSideMenuToggled, setIsSideMenuToggled] = useState(false);
   const [hoverSelected, setHoverSelected] = useState('');
   const [userCategories, setUserCategories] = useState<Map<string, string[]>>();
   const [userCollectionKeys, setUserCollectionKeys] = useState<UserCollectionKeys>();
@@ -64,7 +65,7 @@ const Navigation = () => {
   }, []);
 
   // side menu toggle for small screens
-  const toggleIsMenuOpen = () => setIsMenuIconToggled(!isMenuIconToggled);
+  const toggleIsMenuOpen = () => setIsSideMenuToggled(!isSideMenuToggled);
 
   // useLocation is used to check if the current path if the admin dashbord to hide the web navbar
   const path = useLocation();
@@ -88,59 +89,40 @@ const Navigation = () => {
                     && (
                       // side menu for small screens
                     <div className="z-40 flex flex-col items-center justify-center pt-2 lg:hidden ">
-                      <MenuIcon onChangeToggle={toggleIsMenuOpen} categories={userCategories} /> 
+                      <SideMenu onChangeToggle={toggleIsMenuOpen} categories={userCategories} /> 
                     </div>
                     )
                     }
                   </div>
                   <div className="sm:flex-none z-50">
                     <Link to="/">
-                      <div className="flex ">
-                        <span className="tracking-tighter font-dosis text-2xl font-bold uppercase text-slate-700">nana style</span>
+                      <div className="flex">
+                        <span className="tracking-tighter font-smoochSans text-2xl font-bold uppercase text-slate-700">nana style</span>
                         {/* <img className="w-8/12 pl-2 opacity-90 sm:w-full" src="/src/assets/NANA STYLE.png" alt="gfd" /> */}
                       </div>
                     </Link>
                   </div>
+                  <div className="w-full mt-1 px-4">
+                    <Search />
+                  </div>
                 </div>
 
                 {/* RIGTH SIDE NAV BUTTONS */}
-                <div className="flex-none pt-2">
-                  <div className="z-40 flex justify-end w-full">
+                <div className="flex-none">
+                  <div className="z-[100] flex justify-end w-full">
                     {/* SIGNIN PROFILE ADMINDB */}
-                    <div className="pt-1">
+
+                    <div className="">
                       <Link to="/admin-dashboard">
-                        <AdminIcon className="w-8 sm:w-9 hover:animate-pulse" />
+                        <AdminIcon className="w-9 sm:w-full" />
                       </Link>
                     </div>
-                    {
-                    currentUser === null
-                      ? (
-                        <div className="flex-1 px-4 pt-3">
-                          <Link to="/auth" className="p-1 tracking-wide font-dosis text-slate-700 link-underline link-underline-black">SIGN IN</Link>
-                        </div>
-                      )
-                      : (
-                        <div className="px-1 dropdown dropdown-end sm:px-2">
-                          <label tabIndex={0}>
-                            <div className="relative cursor-pointer">
-                              <ProfileIcon className="w-10 hover:animate-pulse sm:w-11" />
-                            </div>
-                          </label>
-                          <ul tabIndex={0} className="p-2 mt-3 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
-                            <li>
-                              <Link to="/profile" className="justify-between">
-                                Profile
-                                <span className="badge">New</span>
-                              </Link>
-                            </li>
-                            <li><Link to="/">Settings</Link></li>
-                            <li><Link to="/" onClick={signOutUser}>Logout</Link></li>
-                          </ul>
-                        </div>
-                      )
-                    }
+
+                    <ProfileDropdown />
                     {/* CART */}
-                    <CartDropdown />
+                    <div className="mt-1 pl-1">
+                      <CartDropdown />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -196,7 +178,7 @@ const Navigation = () => {
           </div>
         </div>
       )}
-      <div className={`sm:pt-48 pt-28 ${isMenuIconToggled ? 'hidden' : 'block'}`}>
+      <div className={`sm:pt-48 pt-28 ${isSideMenuToggled ? 'hidden' : 'block'}`}>
         <Breadcrumbs />
         <Outlet />
       </div>
