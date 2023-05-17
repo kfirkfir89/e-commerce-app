@@ -126,7 +126,6 @@ const Search = () => {
     }
   }, [highlightedIndex]);
 
-  useEffect(() => { }, [option]);
 
   function isOptionSelected() {
     return option === searchItems[highlightedIndex].productName;
@@ -153,13 +152,13 @@ const Search = () => {
       
       <div ref={containerRef} tabIndex={0} className={`absolute overflow-y-auto outline-none focus:border-x focus:border-slate-400 z-40 top-6 bg-gray-100 ${searchItems.length > 0 ? 'pt-4' : ''} max-h-72 w-full grid grid-rows-[0fr] transition-all duration-500 ease-in-out  ${searchItems.length > 0 ? 'grid-rows-[1fr]  shadow-md' : ''}`}>
         <div className="min-h-0 overflow-y-auto scrollbarStyle">
-          <ul ref={ulRef} tabIndex={0} className="flex flex-col bg-gray-100 outline-none">
+          <ul ref={ulRef} tabIndex={0} className="flex flex-col bg-gray-100 focus-within:border-[1px] focus-within:border-slate-400 outline-none p-2 px-4 capitalize font-smoochSans tracking-wider ">
             {
             inputField.length > 0
             && searchItems.map((item, index) => (
               // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
               <li key={item.id} onClick={(e) => { e.stopPropagation(); selectOption(option); setIsOpen(false); }} onMouseEnter={() => setHighlightedIndex(index)} className={`${index === highlightedIndex && !isOptionSelected() && 'bg-gray-200'} focus-within:bg-gray-200 p-1 px-2 cursor-pointer`}>
-                <Link className="flex border-none outline-none" to={`${item.collectionKey}/${item.docKey}/${item.slug}`} state={item.id}>
+                <Link className="flex border-none focus-within:bg-gray-300 outline-none" to={`${item.collectionKey}/${item.docKey}/${item.slug}`} state={item.id}>
                   {item.productName}
                 </Link>
               </li>
@@ -170,16 +169,6 @@ const Search = () => {
         <div className={`border-dashed border-slate-700 border-b-[1px] transition-all duration-1000 ease-in-out opacity-0 ${searchItems.length > 0 ? 'opacity-100' : ''}`}></div>
       </div>
     </div>
-
-
-
-
-
-
-
-
-
-
   );
 };
 

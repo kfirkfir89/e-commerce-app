@@ -78,9 +78,9 @@ export function* signUp({
 }: SignUpStart) {
   try {
     const userCredential = yield* call(createAuthUserWithEmailAndPassword, email, password);
-
     if (userCredential) {
       const { user } = userCredential;
+      const { displayName , } = user;
       yield* put(signUpSuccess(user, {
         firstName, lastName, displayName, dateOfBirth, sendNotification, 
       }));

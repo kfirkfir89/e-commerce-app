@@ -1,6 +1,5 @@
 import { AnyAction } from 'redux';
 
-import { AuthEventError } from 'firebase/auth';
 import {
   signInFailed, signUpFailed, signOutFailed, signOutSuccess, signInSuccess, 
 } from './user.action';
@@ -9,7 +8,7 @@ import { UserData } from '../../utils/firebase/firebase.utils';
 export type UserState = {
   readonly currentUser: UserData | null;
   readonly isLoading: boolean;
-  readonly error: Error | AuthEventError | null;
+  readonly error: Error | null;
 };
 
 const INITIAL_STATE: UserState = {

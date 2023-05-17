@@ -27,6 +27,7 @@ import {
   getCountFromServer,
   Query,
   DocumentData,
+  Timestamp,
 } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
@@ -544,30 +545,32 @@ export async function getCategoryCount(collectionKey: string, docKey: string): P
 // USER AUTH FUNCTIONLITY
 
 export type UserData = {
-  createdAt: Date;
-  displayName: string;
-  email: string;
+  createdAt: Timestamp
+  displayName: string
+  email: string
+} & AddittionalInformation;
+
+
+export type AddittionalInformation = {
+  firstName: string
+  lastName: string
+  dateOfBirth: Timestamp
+  sendNotification: boolean
+  addresses: Address[]
+  orders: string[]
+  favoriteProducts: string[]
+  isAdmin: boolean
 };
 
 export type Address = {
-  firstName: string;
-  lastName: string;
-  mobile: number;
-  country: string;
-  address: string;
-  city: string;
-  state?: string;
-  postcode: number;
-};
-
-export type AddittionalInformation = {
-  firstName: string;
-  lastName: string;
-  displayName?: string;
-  dateOfBirth: Date | null;
-  sendNotification: boolean;
-  userAddresses?: Address[];
-  userOrders?: number[];
+  firstName: string
+  lastName: string
+  mobile: number
+  country: string
+  address: string
+  city: string
+  state?: string
+  postcode: number
 };
 
 export const createUserDocumentFromAuth = async (
@@ -583,7 +586,7 @@ export const createUserDocumentFromAuth = async (
   // create/set the document with the data from userAuth in my collection
   if (!userSnapshot.exists()) {
     const { displayName, email } = userAuth;
-    const createAt = new Date();
+    const createAt = Timestamp.fromDate(new Date());
 
     try {
       await setDoc(userDocRef, {

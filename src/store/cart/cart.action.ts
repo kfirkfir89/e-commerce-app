@@ -70,7 +70,9 @@ export const removeItemFromCart = (cartItems: CartItemPreview[], cartItemToRemov
 };
 
 export const clearItemFromCart = (cartItems: CartItemPreview[], cartItemToClear: CartItemPreview) => {
+  console.log('cartItems:', cartItems, cartItemToClear)
   const newCartItems = clearCartItem(cartItems, cartItemToClear);
+  console.log('newCartItems:', newCartItems)
   return updateCartItems(newCartItems);
 };
 

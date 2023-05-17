@@ -4,17 +4,27 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthError, AuthErrorCodes } from 'firebase/auth';
 
-import { DateRangeType, DateValueType } from 'react-tailwindcss-datepicker/dist/types';
-import Datepicker from 'react-tailwindcss-datepicker';
+import { Timestamp } from 'firebase/firestore';
 import { selectUserError } from '../../store/user/user.selector';
 import FormInput from '../input-form/input-form.component';
 import { signUpStart } from '../../store/user/user.action';
-import { FormFields } from '../../store/user/user.types';
+
+
+export type FormFields = {
+  firstName: string,
+  lastName: string,
+  dateOfBirth: Timestamp,
+  displayName?: string,
+  email: string,
+  password: string,
+  confirmPassword: string,
+  sendNotification: boolean,
+};
 
 const defaultFormFields: FormFields = {
   firstName: '',
   lastName: '',
-  dateOfBirth: '',
+  dateOfBirth: Timestamp.fromDate(new Date()),
   displayName: '',
   email: '',
   password: '',
@@ -52,16 +62,15 @@ const SignUpForm = () => {
     }
   }; 
 
-  const handleDateValueChange = (newDatePicker: DateValueType) => {
-    if (newDatePicker) {
-      const date: DateRangeType = {
-        startDate: newDatePicker.startDate, 
-        endDate: newDatePicker.endDate,
-      };
-      setValues({ ...values, dateOfBirth: date });
-    }
-  }; 
-
+  const handleDateValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const date = e.target.value; // Get the date from the input field
+  
+    // Convert the date to a Timestamp
+    const timestamp = Timestamp.fromDate(new Date(date));
+  
+    setValues({ ...values, dateOfBirth: timestamp });
+  };
+  console.log('values:', values);
   return (
     <div className="flex flex-col md:w-5/12 pt-28 px-5 items-center">
       {userError && <div>{ userError.message }</div>}
@@ -71,7 +80,7 @@ const SignUpForm = () => {
         <FormInput type="text" name="firstName" placeholder="First Name" label="First Name" pattern="^[A-Za-z0-9]{3,16}$" onChange={onChange} required errorMessage="First name should be 3-16 characters and shouldn't include any special character!" />
         <FormInput type="text" name="lastName" placeholder="Last Name" label="Last Name" pattern="^[A-Za-z0-9]{3,16}$" onChange={onChange} required errorMessage="Last name should be 3-16 characters and shouldn't include any special character!" />
         <FormInput type="email" name="email" placeholder="Email" label="Email" onChange={onChange} required errorMessage="It should be a valid email address!" />
-        <Datepicker useRange={false} asSingle value={values.dateOfBirth} onChange={handleDateValueChange} /> 
+        <input type="date" onChange={handleDateValueChange}></input>
         <FormInput type="password" name="password" placeholder="Password" label="Password" pattern="^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$" onChange={onChange} required errorMessage="Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!" />
         <FormInput type="password" name="confirmPassword" placeholder="Confirm Password" label="Confirm Password" pattern={values.password} onChange={onChange} required errorMessage="Passwords don't match!" />
         <label className="cursor-pointer label">

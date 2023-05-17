@@ -75,14 +75,14 @@ const Navigation = () => {
   return (
     <>
       {!(path.pathname === '/admin-dashboard' || path.pathname.match(/^\/admin-dashboard(\/.*)?$/)) && (
-        <div className="flex justify-center w-full z-[100] absolute">
+        <div className="flex justify-center w-screen z-[100] absolute">
           <div className="flex-col p-0 m-0 navbar">
             {/* main navbar */}
             
-            <div className=" flex navbar justify-center min-h-fit bg-gray-100 m-0 py-2">
+            <div className=" flex w-full justify-center min-h-fit bg-gray-100 m-0 p-2">
               <div className="flex navbar min-h-fit container bg-transparent m-0 p-0">
                 {/* LEFT SIDE LOGO MENU */}
-                <div className="flex-1">
+                <div className="flex-1 ">
                   <div className="flex-none">
                     {
                       userCategories !== undefined
@@ -96,25 +96,25 @@ const Navigation = () => {
                   </div>
                   <div className="sm:flex-none z-50">
                     <Link to="/">
-                      <div className="flex">
-                        <span className="tracking-tighter font-smoochSans text-2xl font-bold uppercase text-slate-700">nana style</span>
+                      <div className="flex mt-2">
+                        <span className="tracking-tighter whitespace-nowrap font-smoochSans sm:text-xl text-lg font-bold uppercase text-slate-700">nana style</span>
                         {/* <img className="w-8/12 pl-2 opacity-90 sm:w-full" src="/src/assets/NANA STYLE.png" alt="gfd" /> */}
                       </div>
                     </Link>
                   </div>
-                  <div className="w-full mt-1 px-4">
+                  <div className="w-full mt-2 px-6 lg:flex hidden">
                     <Search />
                   </div>
                 </div>
 
                 {/* RIGTH SIDE NAV BUTTONS */}
-                <div className="flex-none">
+                <div className="flex">
                   <div className="z-[100] flex justify-end w-full">
                     {/* SIGNIN PROFILE ADMINDB */}
 
-                    <div className="">
+                    <div className="flex">
                       <Link to="/admin-dashboard">
-                        <AdminIcon className="w-9 sm:w-full" />
+                        <AdminIcon className="w-[38px] sm:w-10 mt-[1px]" />
                       </Link>
                     </div>
 
@@ -151,10 +151,10 @@ const Navigation = () => {
               <div tabIndex={0} onMouseLeave={() => setIsHover(false)} className={`w-full grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isHover ? 'grid-rows-[1fr]' : ''}`}>
                 <div className="min-h-0">
                   <div className="flex justify-center">
-                    <div className="container flex justify-center">
-                      <div className="flex w-[448px] mb-4 px-2">
+                    <div className="container flex justify-center bg-white">
+                      <div className="flex flex-col w-[448px] mb-4 px-2">
                         {memorizedCategories?.map((sc) => (
-                          <div key={sc} className="flex items-center justify-center">
+                          <div key={sc} className="flex">
                             <div className="static flex px-3 justify-start">
                               <NavLink
                                 to={`${hoverSelected}/${sc}`}

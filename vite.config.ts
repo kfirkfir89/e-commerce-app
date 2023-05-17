@@ -15,10 +15,5 @@ export default defineConfig(({ command, mode }) => {
       react(),
       svgr(),
     ],
-    build: {
-      rollupOptions: {
-        external: ['dayjs'],
-      },
-    },
   };
 });

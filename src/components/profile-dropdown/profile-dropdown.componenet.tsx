@@ -23,7 +23,7 @@ const ProfileDropdown = () => {
     } else {
       const timeout = setTimeout(() => {
         setIsIconHover(false);
-      }, 1000);
+      }, 500);
 
       return () => clearTimeout(timeout);
     }
@@ -35,7 +35,7 @@ const ProfileDropdown = () => {
     <div className="z-[100] relative">
 
       <button className="relative flex flex-col justify-center items-center" onClick={() => setIsIconHover(!isIconHover)} onMouseEnter={() => setIsIconHover(true)} onMouseLeave={() => setIsIconHover(false)}>
-        <ProfileIcon className="w-9 sm:w-full mb-1" />
+        <ProfileIcon className="w-10 sm:w-[42px] mt-1" />
         <div className={`absolute bottom-0 border-8 w-4 border-transparent border-dashed border-b-slate-400 transition-all duration-200 ease-in-out opacity-0 ${isIconHover ? 'opacity-100' : ''}`}></div>
       </button>
 

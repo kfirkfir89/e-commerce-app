@@ -37,14 +37,7 @@ const ItemPreview = () => {
   const location = useLocation();
   const productId = location.state as string;
 
-  // set image array to manipulate the images view
-  useEffect(() => {
-    if (product) {
-      const { colorImagesUrls }: NewItemValues = product;
-      setImagesUrlList(colorImagesUrls[selectedColorIndex].itemUrlList);
-    }
-  }, [product, selectedColorIndex]);
-
+  
   // geting the item by id
   const fetchItem = async () => {
     try {
@@ -72,7 +65,32 @@ const ItemPreview = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
+  
+  // set button counter of each product that exsist in cart 
+  useEffect(() => {
+    const counter = () => {
+      let count = 0;
+      cartItemsSelector.forEach((cartItem) => {
+        if (cartItem.id === product?.id && cartItem.color === product.colors[selectedColorIndex].label) {
+          count += cartItem.quantity;
+        }
+      });
+      return count;
+    };
+    const num = counter();
+    setAddToCartQuantity(num);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cartItemsSelector, selectedColorIndex]);
 
+
+  // set image array to manipulate the images view
+  useEffect(() => {
+    if (product) {
+      const { colorImagesUrls }: NewItemValues = product;
+      setImagesUrlList(colorImagesUrls[selectedColorIndex].itemUrlList);
+    }
+  }, [product, selectedColorIndex]);
+  
   // hidden the error
   useEffect(() => {
     setSizeError(false);
@@ -112,18 +130,18 @@ const ItemPreview = () => {
       setSizeError(true);
       return;
     }
-    setAddToCartQuantity((prev) => prev + 1);
+    // setAddToCartQuantity((prev) => prev + 1);
 
     if (product) {
       const newCartItem: CartItemPreview = {
         id: product.id,
-        colorId: product.id + product.colors[selectedColorIndex].label,
+        colorId: product.id + product.colors[selectedColorIndex].label + selectedSizeOption.label,
         productName: product.productName,
         price: product.price,
         color: product.colors[selectedColorIndex].label,
         size: selectedSizeOption.label,
         previewImage: imagesUrlList[0],
-        quantity: addToCartQuantity + 1,
+        quantity: 1,
       };
 
       dispatch(setCartItems([newCartItem]));
