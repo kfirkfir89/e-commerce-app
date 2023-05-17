@@ -29,8 +29,6 @@ const ProfileDropdown = () => {
     }
   }, [isHover]);
 
-
-
   return (
     <div className="z-[100] relative">
 
@@ -41,6 +39,22 @@ const ProfileDropdown = () => {
 
       <div className={`absolute right-1 w-48 grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isIconHover ? 'grid-rows-[1fr] border border-slate-400 border-b-0 shadow-md' : ''}`}>
         <div className="min-h-0" onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
+          {
+            currentUser
+          && (
+          <div className="flex flex-col p-2 max-w-3xl bg-gray-200 tracking-wide font-dosis text-xs font-normal uppercase leading-0 text-slate-700">
+            <h2>
+              Welcome,
+              {' '}
+              <span className="font-semibold text-base capitalize pl-1">
+                {currentUser.displayName}
+              </span>
+            </h2>
+
+
+          </div>
+          )
+          }
           <div className="bg-gray-100">
             <ul className="flex flex-col">
               {

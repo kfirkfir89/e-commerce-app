@@ -35,7 +35,8 @@ const defaultFormFields: FormFields = {
 const SignUpForm = () => {
   const dispatch = useDispatch();
   const userError = useSelector(selectUserError);
-  const [values, setValues] = useState<FormFields & { confirmPassword: string, }>(defaultFormFields);
+  const [values, setValues] = useState<FormFields>(defaultFormFields);
+  
   const resetFormFields = () => {
     setValues(defaultFormFields);
   };
@@ -70,17 +71,15 @@ const SignUpForm = () => {
   
     setValues({ ...values, dateOfBirth: timestamp });
   };
-  console.log('values:', values);
   return (
-    <div className="flex flex-col md:w-5/12 pt-28 px-5 items-center">
+    <div className="flex flex-col w-full max-w-md shadow-lg m-4 p-10 py-8 bg-gray-100 font-dosis tracking-wide text-slate-700">
       {userError && <div>{ userError.message }</div>}
-      <h2 className="text-4xl">Don&apos;t have an account?</h2>
-      <span className="pb-6">Sign up with your email and password</span>
-      <form className="grid grid-cols-1 w-full" onSubmit={handleSubmit}>
+      <span className="mb-6 text-lg">Sign up with your email and password</span>
+      <form className="flex flex-col gap-y-4 px-4" onSubmit={handleSubmit}>
         <FormInput type="text" name="firstName" placeholder="First Name" label="First Name" pattern="^[A-Za-z0-9]{3,16}$" onChange={onChange} required errorMessage="First name should be 3-16 characters and shouldn't include any special character!" />
         <FormInput type="text" name="lastName" placeholder="Last Name" label="Last Name" pattern="^[A-Za-z0-9]{3,16}$" onChange={onChange} required errorMessage="Last name should be 3-16 characters and shouldn't include any special character!" />
         <FormInput type="email" name="email" placeholder="Email" label="Email" onChange={onChange} required errorMessage="It should be a valid email address!" />
-        <input type="date" onChange={handleDateValueChange}></input>
+        <input required type="date" onChange={handleDateValueChange} className="flex flex-shrink items-center text-gray-400 bg-white w-full min-h-[2.8em]  outline-none focus:border-dashed focus:border-[1px] focus:border-slate-400 p-2"></input>
         <FormInput type="password" name="password" placeholder="Password" label="Password" pattern="^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$" onChange={onChange} required errorMessage="Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!" />
         <FormInput type="password" name="confirmPassword" placeholder="Confirm Password" label="Confirm Password" pattern={values.password} onChange={onChange} required errorMessage="Passwords don't match!" />
         <label className="cursor-pointer label">
@@ -92,9 +91,16 @@ const SignUpForm = () => {
           (userError !== null && 'code' in userError) && <div>userError.code</div>
         }
         
-        <button type="submit" className="btn btn-secondary">Sign Up</button>
+        <button type="submit" className="btn rounded-none w-full shadow-sm mt-4">
+          <div className="w-full flex justify-center items-center ">
+            <span className="flex pt-1 font-semibold text-xs tracking-widest font-smoochSans uppercase leading-0">
+              Sign Up
+            </span>
+          </div>
+        </button>
       </form>
     </div>
+
   );
 };
 

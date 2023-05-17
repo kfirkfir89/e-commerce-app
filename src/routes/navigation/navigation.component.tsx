@@ -130,7 +130,7 @@ const Navigation = () => {
 
             {/* categories navbar */}
 
-            <div className="relative flex-col w-full justify-center items-center hidden lg:flex">
+            <div className="relative flex-col w-full justify-center items-center hidden bg-white lg:flex">
 
               <div className="container p-2">
                 <div className="flex justify-center">
@@ -178,7 +178,7 @@ const Navigation = () => {
           </div>
         </div>
       )}
-      <div className={`sm:pt-48 pt-28 ${isSideMenuToggled ? 'hidden' : 'block'}`}>
+      <div className={`pt-20 ${isSideMenuToggled ? 'hidden' : 'block'}`}>
         <Breadcrumbs />
         <Outlet />
       </div>

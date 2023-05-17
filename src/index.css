@@ -23,6 +23,7 @@
 }
 
 @layer utilities {
+
   .scrollbarStyle::-webkit-scrollbar {
       @apply w-2;
 
@@ -35,6 +36,12 @@
     @apply border-solid border-2 border-gray-300 rounded-lg;
   }
 
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 30%;
+    width: 24px;
+    height: 24px;
+  }
   
   .gradient-bg-nav {
     background: rgb(229,231,235);

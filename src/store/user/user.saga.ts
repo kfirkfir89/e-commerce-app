@@ -25,15 +25,16 @@ import {
   createAuthUserWithEmailAndPassword,
   signOutUser,
   AddittionalInformation,
+  UserData,
 } from '../../utils/firebase/firebase.utils';
 
-
-export function* getSnapshotFromUserAuth(userAuth: User, additionalDetails?: AddittionalInformation) {
+// getting the user auth to connect
+export function* getSnapshotFromUserAuth(userAuth: User, additionalDetails: AddittionalInformation) {
   try {
     const userSnapshot = yield* call(createUserDocumentFromAuth, userAuth, additionalDetails);
     
     if (userSnapshot) {
-      yield* put(signInSuccess({ id: userSnapshot.id, ...userSnapshot.data() }));
+      yield* put(signInSuccess(userSnapshot.data() as UserData));
     }
   } catch (error) {
     yield* put(signInFailed(error as Error));
@@ -71,23 +72,29 @@ export function* isUserAuthenticated() {
   }
 }
 
+// signup a new user with email and password
 export function* signUp({
   payload: {
-    email, password, displayName, dateOfBirth, firstName, lastName, sendNotification,
+    email, password, dateOfBirth, firstName, lastName, sendNotification,
   }, 
 }: SignUpStart) {
   try {
     const userCredential = yield* call(createAuthUserWithEmailAndPassword, email, password);
     if (userCredential) {
       const { user } = userCredential;
-      const { displayName , } = user;
-      yield* put(signUpSuccess(user, {
-        firstName, lastName, displayName, dateOfBirth, sendNotification, 
-      }));
+      const addittionalInfo: AddittionalInformation = {
+        firstName,
+        lastName,
+        dateOfBirth,
+        addresses: [],
+        favoriteProducts: [],
+        orders: [],
+        isAdmin: false,
+        sendNotification,
+      };
+      yield* put(signUpSuccess(user, addittionalInfo));
     } 
   } catch (error) {
-    console.log('ERRORRRRRRRRRRRRRRRRRR', error);
-
     yield* put(signUpFailed(error as Error));
   }
 }

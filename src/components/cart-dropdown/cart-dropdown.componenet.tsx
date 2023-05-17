@@ -152,10 +152,10 @@ const CartDropdown = () => {
                 <p className="text-sm text-gray-400">Not including taxes and shipping costs</p>
               </div>
 
-              <div className="bg-gray-100 p-2 pb-6 pt-0  tracking-wide font-dosis text-sm uppercase leading-0 text-slate-700">
-                <button onClick={goToCheckOutHandler} className="btn rounded-none w-full shadow-sm ">
+              <div className="bg-gray-100 p-2 pb-6 pt-0">
+                <button onClick={goToCheckOutHandler} className="btn rounded-none w-full shadow-sm">
                   <div className="w-full flex justify-center items-center ">
-                    <span className="uppercase flex pt-1 font-smoochSans font-semibold text-xs tracking-widest">
+                    <span className="flex pt-1 font-semibold text-xs tracking-widest font-smoochSans uppercase leading-0">
                       CHECK OUT
                     </span>
                   </div>

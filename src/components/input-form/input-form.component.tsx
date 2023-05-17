@@ -1,17 +1,16 @@
 import {
-  useState, FC, ChangeEvent, InputHTMLAttributes, forwardRef, 
+  useState, FC, ChangeEvent, InputHTMLAttributes,
 } from 'react';
 
 export type Inputs = {
   errorMessage?: string;
   label: string;
   focused?: string;
-  ref?: React.Ref<HTMLInputElement | undefined>;
 };
 
 export type InputProps = InputHTMLAttributes<HTMLInputElement> & Inputs;
 
-const FormInput: FC<InputProps> = forwardRef((props: InputProps, ref) => {
+const FormInput: FC<InputProps> = (props: InputProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const {
     label, errorMessage, onChange, id, className, focused, ...inputProps
@@ -21,21 +20,20 @@ const FormInput: FC<InputProps> = forwardRef((props: InputProps, ref) => {
     setIsFocused(true);
   };
   return (
-    <div className="flex flex-col justify-center items-center ">
+    <div className="flex flex-col justify-center items-center">
       <input
         {...inputProps}
-        ref={ref}
-        className="flex flex-shrink items-center rounded-lg bg-white w-full min-h-[2.8em] border focus:outline focus:outline-offset-2 focus:outline-2 focus:outline-gray-400 p-2 peer"
+        className="flex flex-shrink items-center bg-white w-full min-h-[2.8em]  outline-none focus:border-dashed focus:border-[1px] focus:border-slate-400 p-2 shadow-sm peer"
         onChange={onChange}
         onBlur={handleFocus}
         onFocus={() => inputProps.name === 'confirmPassword' && setIsFocused(true)}
         focused={isFocused.toString()}
         placeholder={label}
       />
-      <span className="text-xs self-start p-1 text-red-600 hidden peer-invalid:peer-[[focused=true]]:block">{errorMessage}</span>
+      <span className="text-sm self-start p-1 px-2 text-red-600 hidden peer-invalid:peer-[[focused=true]]:block">{errorMessage}</span>
     </div>
     
   );
-});
+};
 
 export default FormInput;
