@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import {
   loadStripe, PaymentIntentResult, Stripe, StripeCardElement, 
 } from '@stripe/stripe-js';

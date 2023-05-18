@@ -64,7 +64,7 @@ googleProvider.setCustomParameters({
 });
 
 export const auth = getAuth();
-export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
+export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider).catch((error) => alert(error.message));
 export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider);
 
 export const db = getFirestore();
@@ -595,7 +595,8 @@ export const createUserDocumentFromAuth = async (
         ...addittionalInformation,
       });
     } catch (error) {
-      console.log('error creating the user', error);
+      // eslint-disable-next-line no-alert
+      alert('error creating the user', error);
     }
   }
   // if user data exists
