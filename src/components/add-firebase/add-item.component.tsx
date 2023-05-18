@@ -4,7 +4,7 @@ import {
 } from 'react';
 import { Action, AnyAction } from 'redux';
 import { v4 } from 'uuid';
-import * as slugFunciton from 'slug';
+// import * as slugFunciton from 'slug';
 
 import { Timestamp } from 'firebase/firestore';
 import { storageFB } from '../../utils/firebase/firebase.utils';
@@ -345,8 +345,8 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
 
   
   const addItemHandler = () => {
-    const slug = slugFunciton(addItemValues.productName);
-    setAddItemValues((prevState) => ({ ...prevState, slug }));
+    // const slug = slugFunciton.defaults(addItemValues.productName);
+    setAddItemValues((prevState) => ({ ...prevState, slug: productName }));
     setAddItemValues((prevState) => ({ ...prevState, id: `${prevState.slug + v4()}` }));
     if (mounted === false) {
       dispatch(featchMounted(true));
