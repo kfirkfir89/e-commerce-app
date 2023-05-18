@@ -34,15 +34,15 @@ const ProfileDropdown = () => {
 
       <button className="relative flex flex-col justify-center items-center" onClick={() => setIsIconHover(!isIconHover)} onMouseEnter={() => setIsIconHover(true)} onMouseLeave={() => setIsIconHover(false)}>
         <ProfileIcon className="w-10 sm:w-[42px] mt-1" />
-        <div className={`absolute bottom-0 border-8 w-4 border-transparent border-dashed border-b-slate-400 transition-all duration-200 ease-in-out opacity-0 ${isIconHover ? 'opacity-100' : ''}`}></div>
+        <div className={`absolute bottom-0 border-8 w-4 border-transparent border-dashed border-b-slate-300 transition-all duration-200 ease-in-out opacity-0 ${isIconHover ? 'opacity-100' : ''}`}></div>
       </button>
 
-      <div className={`absolute right-1 w-48 grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isIconHover ? 'grid-rows-[1fr] border border-slate-400 border-b-0 shadow-md' : ''}`}>
+      <div className={`absolute right-1 w-48 grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isIconHover ? 'grid-rows-[1fr] border border-slate-300 border-b-0 shadow-md' : ''}`}>
         <div className="min-h-0" onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
           {
             currentUser
           && (
-          <div className="flex flex-col p-2 max-w-3xl bg-gray-200 tracking-wide font-dosis text-xs font-normal uppercase leading-0 text-slate-700">
+          <div className="flex flex-col p-2 max-w-3xl bg-slate-300 tracking-wide font-dosis text-xs font-normal uppercase leading-0 text-slate-700">
             <h2>
               Welcome,
               {' '}
@@ -50,8 +50,6 @@ const ProfileDropdown = () => {
                 {currentUser.displayName}
               </span>
             </h2>
-
-
           </div>
           )
           }
@@ -59,7 +57,7 @@ const ProfileDropdown = () => {
             <ul className="flex flex-col">
               {
                 currentUser === null ? (
-                  <li className="hover:bg-gray-300"><Link to="/auth" className="flex p-2 tracking-wider font-smoochSans text-slate-700">Sign In</Link></li>
+                  <li className="hover:bg-gray-300"><Link to="/authentication" className="flex p-2 tracking-wider font-smoochSans text-slate-700">Sign In</Link></li>
                 )
                   : (
                     <>
@@ -71,7 +69,7 @@ const ProfileDropdown = () => {
               }
             </ul>
           </div>
-          <div className={`border-dashed border-slate-700 border-b-[1px] transition-all duration-1000 ease-in-out opacity-0 ${isHover ? 'opacity-100' : ''}`}></div>
+          <div className="border-dashed border-slate-700 border-b-[1px]"></div>
         </div>
       </div>
 

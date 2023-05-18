@@ -23,7 +23,12 @@
 }
 
 @layer utilities {
-
+  html, body, #root{
+    @apply h-full w-full
+  }
+  .testy {
+    height: 100dvi;
+  }
   .scrollbarStyle::-webkit-scrollbar {
       @apply w-2;
 

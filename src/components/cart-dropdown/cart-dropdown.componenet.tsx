@@ -56,24 +56,27 @@ const CartDropdown = () => {
       <button className="relative flex flex-col justify-center items-center" onClick={() => setIsIconHover(!isIconHover)} onMouseEnter={() => setIsIconHover(true)} onMouseLeave={() => setIsIconHover(false)}>
         <ShoppingIcon className="w-9 mb-1" />
         <span className="absolute text-[10px] opacity-70 sm:text-xs font-bold pt-1">{cartCount}</span>
-        <div className={`absolute bottom-0 border-8 w-4 border-transparent border-dashed border-b-slate-400 transition-all duration-200 ease-in-out opacity-0 ${isIconHover ? 'opacity-100' : ''}`}></div>
+        <div className={`absolute bottom-0 border-8 w-4 border-transparent border-dashed border-b-slate-300 transition-all duration-200 ease-in-out opacity-0 ${isIconHover ? 'opacity-100' : ''}`}></div>
       </button>
 
-      <div className={`absolute right-1 w-72 sm:w-96 grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isIconHover ? 'grid-rows-[1fr] border border-slate-400 border-b-0 shadow-md' : ''}`}>
+      <div className={`absolute right-1 w-72 sm:w-96 grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isIconHover ? 'grid-rows-[1fr] border border-slate-300 border-b-0 shadow-md' : ''}`}>
         <div className="min-h-0" onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
+          <div className="flex flex-col p-2 max-w-3xl bg-slate-300 tracking-wide font-dosis text-xs font-normal uppercase leading-0 text-slate-700">
+            <h2>
+              My Bag,
+              {' '}
+              <span className="font-semibold text-base capitalize pl-1">
+                {cartCount}
+                {' '}
+                items
+              </span>
+            </h2>
+          </div>
           <div className="py-4 bg-gray-100">
             <div className="card w-full">
               <div className="max-h-96 p-2 flex flex-col overflow-y-auto scrollbarStyle">
                 <div className="flex flex-col max-w-3xl tracking-wide font-dosis text-sm font-semibold uppercase leading-0 text-slate-700">
-                  <h2>
-                    My Bag,
-                    {' '}
-                    <span className="font-normal">
-                      {cartCount}
-                      {' '}
-                      items
-                    </span>
-                  </h2>
+
 
                   {/* cart items */}
                   <ul className="flex flex-col divide-y divide-gray-700">
@@ -136,7 +139,6 @@ const CartDropdown = () => {
 
                 </div>
               </div>
-
               {/* cart total */}
               <div className="my-8 py-4 p-2 bg-white px-4 border-y-2 tracking-wide font-dosis text-sm uppercase leading-0 text-slate-700">
                 <span className="flex text-lg  font-semibold">
@@ -165,7 +167,7 @@ const CartDropdown = () => {
             {' '}
                 
           </div>
-          <div className={`border-dashed border-slate-700 border-b-[1px] transition-all duration-1000 ease-in-out opacity-0 ${isHover ? 'opacity-100' : ''}`}></div>
+          <div className="border-dashed border-slate-700 border-b-[1px]"></div>
         </div>
       </div>
 

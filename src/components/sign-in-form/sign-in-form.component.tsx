@@ -1,13 +1,14 @@
 import { useState, FormEvent, ChangeEvent } from 'react';
 import { AuthError, AuthErrorCodes } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { ReactComponent as GoogleIcon } from '../../assets/icons8-google.svg';
 
 
 import { googleSignInStart, emailSignInStart } from '../../store/user/user.action';
 import FormInput from '../input-form/input-form.component';
+import { selectUserError } from '../../store/user/user.selector';
 
 const defaultFormFields = {
   displayName: '',
@@ -20,6 +21,9 @@ const SignInForm = () => {
   const dispatch = useDispatch();
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { email, password } = formFields; 
+
+  const userErrorSelector = useSelector(selectUserError);
+
   const navigate = useNavigate();
 
   const resetFormFields = () => {
@@ -33,13 +37,12 @@ const SignInForm = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
-    try {
-      dispatch(emailSignInStart(email, password));
-      navigate('/');
-      resetFormFields();
-    } catch (error) {
-      switch ((error as AuthError).code) {
+    dispatch(emailSignInStart(email, password));
+    if (userErrorSelector) {
+      switch ((userErrorSelector as AuthError).code) {
+        case AuthErrorCodes.INVALID_EMAIL:
+          alert('incorrect email');
+          break;
         case AuthErrorCodes.INVALID_PASSWORD:
           alert('incorrect password for email');
           break;
@@ -47,20 +50,23 @@ const SignInForm = () => {
           alert('no user associated with this email');
           break;
         default:
-          console.log(error);
+          console.log(userErrorSelector);
       }
+    } else {
+      navigate('/');
+      resetFormFields();
     }
   };
-
+  
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormFields({ ...formFields, [name]: value });
   };
 
   return (
-    <div className="flex flex-col w-full max-w-md shadow-lg m-4 p-10 py-8 bg-gray-100 font-dosis tracking-wide text-slate-700">
-      <span className="mb-6 text-lg">Sign in with your email and password</span>
-      <form className="flex flex-col gap-y-4 px-4" onSubmit={handleSubmit}>
+    <div className="flex flex-col w-full max-w-md shadow-lg p-6 sm:p-10 py-8 bg-gray-100 font-dosis tracking-wide text-slate-700">
+      <span className="mb-6 sm:text-lg whitespace-nowrap">Sign in with your email and password</span>
+      <form className="flex flex-col gap-y-4 sm:px-4" onSubmit={handleSubmit}>
 
         <FormInput 
           label="Email"
@@ -78,7 +84,6 @@ const SignInForm = () => {
           type="password" 
           onChange={handleChange} 
           value={password} 
-          pattern="^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$" 
           errorMessage="Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!"
           required
         />
@@ -94,9 +99,9 @@ const SignInForm = () => {
       </form>
       <div className="relative flex flex-col justify-center items-center my-3">
         <div className="divider mx-4" />
-        <span className="absolute text-center mb-1 mx-10 w-2/6 bg-gray-100">or sign in with</span>
+        <span className="absolute text-center mb-1 mx-10 w-2/6 bg-gray-100 whitespace-nowrap">or sign in with</span>
       </div>
-      <div className="px-2 mb-4">
+      <div className="px-4 mb-4">
         <button onClick={signInWithGoogle} className="btn rounded-none w-full shadow-sm bg-gray-100 text-slate-700 hover:text-white border-dashed">
           <div className="w-full flex gap-x-2 justify-center items-center ">
             <GoogleIcon className="w-8" />

@@ -111,12 +111,16 @@ const Navigation = () => {
                 <div className="flex">
                   <div className="z-[100] flex justify-end w-full">
                     {/* SIGNIN PROFILE ADMINDB */}
-
+                    {
+                      currentUser && currentUser.isAdmin
+                    && (
                     <div className="flex">
                       <Link to="/admin-dashboard">
                         <AdminIcon className="w-[38px] sm:w-10 mt-[1px]" />
                       </Link>
                     </div>
+                    )
+                    }
 
                     <ProfileDropdown />
                     {/* CART */}

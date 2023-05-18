@@ -72,10 +72,10 @@ const SignUpForm = () => {
     setValues({ ...values, dateOfBirth: timestamp });
   };
   return (
-    <div className="flex flex-col w-full max-w-md shadow-lg m-4 p-10 py-8 bg-gray-100 font-dosis tracking-wide text-slate-700">
+    <div className="flex flex-col w-full max-w-md shadow-lg m-4 p-6 sm:p-10 py-8 bg-gray-100 font-dosis tracking-wide text-slate-700">
       {userError && <div>{ userError.message }</div>}
-      <span className="mb-6 text-lg">Sign up with your email and password</span>
-      <form className="flex flex-col gap-y-4 px-4" onSubmit={handleSubmit}>
+      <span className="mb-6 sm:text-lg whitespace-nowrap">Sign up with your email and password</span>
+      <form className="flex flex-col gap-y-4 sm:px-4" onSubmit={handleSubmit}>
         <FormInput type="text" name="firstName" placeholder="First Name" label="First Name" pattern="^[A-Za-z0-9]{3,16}$" onChange={onChange} required errorMessage="First name should be 3-16 characters and shouldn't include any special character!" />
         <FormInput type="text" name="lastName" placeholder="Last Name" label="Last Name" pattern="^[A-Za-z0-9]{3,16}$" onChange={onChange} required errorMessage="Last name should be 3-16 characters and shouldn't include any special character!" />
         <FormInput type="email" name="email" placeholder="Email" label="Email" onChange={onChange} required errorMessage="It should be a valid email address!" />

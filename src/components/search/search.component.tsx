@@ -141,7 +141,7 @@ const Search = () => {
           <SearchIcon className="w-7 h-7 text-slate-700 opacity-60" />
         </div>
         <input type="text" onChange={(e) => { setInputField(e.target.value); }} className="input h-10 rounded-full pl-12 pr-16 w-full" /> 
-        <div className="flex absolute right-2 shadow-sm rounded-r-full">
+        <div className="flex absolute right-2 shadow-sm rounded-full">
           <button onClick={onClickButtonHandler} className="rounded-full active:bg-black bg-gray-100 h-7 flex justify-center items-center w-full focus:border-[1px] focus:border-slate-400 outline-none opacity-70 focus:opacity-100 shadow-sm hover:bg-gray-200">
             <span className="uppercase flex font-smoochSans font-semibold text-[9px] leading-5 px-2 text-slate-400">
               search

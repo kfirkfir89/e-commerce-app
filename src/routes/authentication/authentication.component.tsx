@@ -6,11 +6,11 @@ const Authentication = () => {
   const [isNewUser, setIsNewUser] = useState(false);
 
   return (
-    <div className="flex flex-col justify-center items-center text-slate-700">
+    <div className="flex flex-col sm:mt-40 justify-center items-center text-slate-700 px-2">
 
       {
         isNewUser ? (
-          <div className="flex flex-col w-full h-60v justify-center items-center">
+          <div className="flex flex-col w-full justify-center items-center">
             <SignUpForm />
             <div>
               <span>Already have an account?&ensp;</span>
@@ -22,7 +22,7 @@ const Authentication = () => {
             </div>    
           </div>
         ) : (
-          <div className="flex flex-col w-full h-60v justify-center items-center">
+          <div className="flex flex-col w-full justify-center items-center">
             <SignInForm />
             <div>
               <span>Don&apos;t have an account?&ensp;</span>

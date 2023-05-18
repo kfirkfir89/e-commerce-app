@@ -40,7 +40,7 @@ const App = () => {
         <Route path=":shopPara/:subCategoryPara" element={<Category />} />
         <Route path=":shopPara/:subCategoryPara/:item" element={<ItemPreview />} />
         
-        <Route path="auth" element={<Authentication />} />
+        <Route path="authentication" element={<Authentication />} />
         <Route path="checkout" element={<CheckOut />} />
         <Route path="payment-succeeded" element={<PaymentSucceeded />} />
         <Route path="search-results" element={<SearchResults />} />

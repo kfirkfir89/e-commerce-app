@@ -13,7 +13,7 @@ const Breadcrumbs = () => {
       <>
         <div className="flex justify-center">
           <div className="container">
-            <div className="text-sm breadcrumbs mx-4">
+            <div className="text-sm breadcrumbs mx-4 p-0">
               <ul>
                 <li className="pb-[2px]">
                   <Link to="/">
@@ -38,7 +38,7 @@ const Breadcrumbs = () => {
             </div>
           </div>
         </div>
-        <div className="divider m-1 mb-4"></div>
+        <div className="divider m-1 mb-3"></div>
       </>
       )}
     </>

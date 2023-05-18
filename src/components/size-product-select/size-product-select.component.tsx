@@ -99,7 +99,7 @@ export const SizeProductSelect: FC<SelectProps> = ({ firstOption, value, onChang
   };
   
   return (
-    <div ref={containerRef} tabIndex={0} onBlur={() => setIsOpen(false)} onClick={() => { setIsOpen(!isOpen); }} className="relative bg-gray-100 container flex flex-shrink items-center min-h-[2rem] p-4">
+    <div ref={containerRef} tabIndex={0} onBlur={() => setIsOpen(false)} onClick={() => { setIsOpen(!isOpen); }} className="relative bg-gray-100 container flex flex-shrink items-center min-h-[2rem] p-4 shadow-sm">
       {/* value */}
       <span className="flex-grow flex gap-2 flex-wrap font-semibold text-xs tracking-widest text-slate-600 font-smoochSans bg-transparent leading-0">
         {value?.label}
