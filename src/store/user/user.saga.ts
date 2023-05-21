@@ -3,6 +3,7 @@ import {
 } from 'typed-redux-saga';
 import { User } from 'firebase/auth';
 
+import { QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';
 import { USER_ACTION_TYPES } from './user.types';
 
 import { 
@@ -32,7 +33,7 @@ import {
 export function* getSnapshotFromUserAuth(userAuth: User, additionalDetails?: AddittionalInformation) {
   try {
     const userSnapshot = yield* call(createUserDocumentFromAuth, userAuth, additionalDetails);
-    
+
     if (userSnapshot) {
       yield* put(signInSuccess(userSnapshot.data() as UserData));
     }
@@ -43,8 +44,21 @@ export function* getSnapshotFromUserAuth(userAuth: User, additionalDetails?: Add
 
 export function* signInWithGoogle() {
   try {
-    const { user } = yield* call(signInWithGooglePopup);
-    yield* call(getSnapshotFromUserAuth, user);
+    const res = yield* call(signInWithGooglePopup);
+    // if (res) {
+    //   const googleAdditionalDetails: AddittionalInformation = {
+    //     firstName: '',
+    //     lastName: '',
+    //     dateOfBirth: Timestamp.fromDate(new Date()),
+    //     sendNotification: true,
+    //     addresses: [],
+    //     orders: [],
+    //     favoriteProducts: [],
+    //     isAdmin: false,
+    //   }; 
+    // }
+    console.log('res:', res)
+    yield* call(getSnapshotFromUserAuth, res.user);
   } catch (error) {
     yield* put(signInFailed(error as Error));
   }

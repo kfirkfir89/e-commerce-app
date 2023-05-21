@@ -346,7 +346,6 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
 
   
   const addItemHandler = () => {
-    // const slug = slugFunciton.defaults(addItemValues.productName);
     setAddItemValues((prevState) => ({ ...prevState, slug: slug(productName) }));
     setAddItemValues((prevState) => ({ ...prevState, id: `${prevState.slug + v4()}` }));
     if (mounted === false) {

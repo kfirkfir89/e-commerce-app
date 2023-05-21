@@ -28,6 +28,7 @@ import {
   Query,
   DocumentData,
   Timestamp,
+  updateDoc,
 } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
@@ -64,8 +65,6 @@ googleProvider.setCustomParameters({
 });
 
 export const auth = getAuth();
-export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider).catch((error) => alert(error.message));
-export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider);
 
 export const db = getFirestore();
 
@@ -140,7 +139,6 @@ export async function getUserCollectionKeys() {
 // add new data (products) to server
 export async function addFirebaseData<T extends AddFirebaseData>(newData: T): Promise<void> {
   const { collectionKey, docKey, items } = newData;
-  console.log('collectionKey:', collectionKey, docKey, items);
   const collectionRef = collection(db, 'system-data');
   const querySnapshot = await getDocs(collectionRef);
 
@@ -573,6 +571,11 @@ export type Address = {
   postcode: number
 };
 
+
+export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
+
+export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider);
+
 export const createUserDocumentFromAuth = async (
   userAuth: User,
   addittionalInformation = {} as AddittionalInformation,
@@ -581,7 +584,7 @@ export const createUserDocumentFromAuth = async (
   
   const userDocRef = doc(db, 'users', userAuth.uid);
   const userSnapshot = await getDoc(userDocRef);
-  
+
   // if user data does not exists
   // create/set the document with the data from userAuth in my collection
   if (!userSnapshot.exists()) {
@@ -596,11 +599,14 @@ export const createUserDocumentFromAuth = async (
       });
     } catch (error) {
       // eslint-disable-next-line no-alert
-      alert('error creating the user', error);
+      console.log('error creating the user', error);
     }
+
+    const newUserSnapshot = await getDoc(userDocRef);
+
+    return newUserSnapshot as QueryDocumentSnapshot<UserData>;
   }
-  // if user data exists
-  // return userDocRef
+  
   return userSnapshot as QueryDocumentSnapshot<UserData>;
 };
 

@@ -1,4 +1,6 @@
-import { useState, FormEvent, ChangeEvent } from 'react';
+import {
+  useState, FormEvent, ChangeEvent, useEffect, useRef, 
+} from 'react';
 import { AuthError, AuthErrorCodes } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,6 +22,9 @@ const defaultFormFields = {
 const SignInForm = () => {
   const dispatch = useDispatch();
   const [formFields, setFormFields] = useState(defaultFormFields);
+  const [error, setError] = useState('initial');
+  const [shouldNavigate, setShouldNavigate] = useState(false);
+
   const { email, password } = formFields; 
 
   const userErrorSelector = useSelector(selectUserError);
@@ -32,32 +37,42 @@ const SignInForm = () => {
 
   const signInWithGoogle = async () => {
     dispatch(googleSignInStart());
-    navigate('/');
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     dispatch(emailSignInStart(email, password));
-    if (userErrorSelector) {
-      switch ((userErrorSelector as AuthError).code) {
-        case AuthErrorCodes.INVALID_EMAIL:
-          alert('incorrect email');
-          break;
-        case AuthErrorCodes.INVALID_PASSWORD:
-          alert('incorrect password for email');
-          break;
-        case AuthErrorCodes.USER_DELETED:
-          alert('no user associated with this email');
-          break;
-        default:
-          console.log(userErrorSelector);
-      }
-    } else {
-      navigate('/');
-      resetFormFields();
-    }
   };
   
+  // error handling 
+  useEffect(() => {
+    const isError = () => {
+      if (userErrorSelector) {
+        setError((userErrorSelector as AuthError).code.replace('auth/', '').replace(/-/g, ' '));
+      }
+
+      if (userErrorSelector === null) {
+        setError('');
+      }
+      
+      if (error === '') {
+        resetFormFields();
+        return true; // will trigger navigation
+      }
+      return false; // will not trigger navigation
+    };
+    
+    setShouldNavigate(isError());
+  }, [userErrorSelector]);
+  
+  useEffect(() => {
+    if (shouldNavigate) {
+      setError('initial');
+      navigate('/');
+      setShouldNavigate(false);
+    }
+  }, [error]);
+
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormFields({ ...formFields, [name]: value });
@@ -65,6 +80,15 @@ const SignInForm = () => {
 
   return (
     <div className="flex flex-col w-full max-w-md shadow-lg p-6 sm:p-10 py-8 bg-gray-100 font-dosis tracking-wide text-slate-700">
+      {error && error !== 'initial'
+      && (
+      <div className="alert alert-error shadow-sm flex flex-col my-4">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+          <span>{error}</span>
+        </div>
+      </div>
+      )}
       <span className="mb-6 sm:text-lg whitespace-nowrap">Sign in with your email and password</span>
       <form className="flex flex-col gap-y-4 sm:px-4" onSubmit={handleSubmit}>
 
