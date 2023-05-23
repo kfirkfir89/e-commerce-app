@@ -11,6 +11,7 @@ import {
   User,
   NextOrObserver,
   sendEmailVerification,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import {
   getFirestore, 
@@ -547,7 +548,7 @@ export type UserData = {
   createdAt: Timestamp
   displayName: string
   email: string
-  emailVerified: boolean
+  uid: string
 } & AddittionalInformation;
 
 
@@ -578,27 +579,49 @@ export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider)
 
 export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider);
 
+// create user account all types of creation also connect with provider
 export const createUserDocumentFromAuth = async (
   userAuth: User,
   addittionalInformation = {} as AddittionalInformation,
 ): Promise<void | QueryDocumentSnapshot<UserData>> => {
   if (!userAuth) return;
-  
+
   const userDocRef = doc(db, 'users', userAuth.uid);
   const userSnapshot = await getDoc(userDocRef);
 
   // if user data does not exists
   // create/set the document with the data from userAuth in my collection
   if (!userSnapshot.exists()) {
-    const { displayName, email, emailVerified } = userAuth;
+    const {
+      displayName, email, uid, 
+    } = userAuth;
     const createAt = Timestamp.fromDate(new Date());
+    let userAdditionalDetails: AddittionalInformation;
+
+    if (addittionalInformation && Object.keys(addittionalInformation).length === 0) {
+      const googleAdditionalDetails: AddittionalInformation = {
+        firstName: '',
+        lastName: '',
+        dateOfBirth: Timestamp.fromDate(new Date()),
+        sendNotification: true,
+        addresses: [],
+        orders: [],
+        favoriteProducts: [],
+        isAdmin: false,
+      };
+      userAdditionalDetails = googleAdditionalDetails;
+    } else {
+      userAdditionalDetails = addittionalInformation;
+    }
+
+
     try {
       await setDoc(userDocRef, {
-        displayName: displayName || `${addittionalInformation.firstName} ${addittionalInformation.lastName}`,
+        displayName: displayName || `${userAdditionalDetails.firstName} ${userAdditionalDetails.lastName}`,
+        uid,
         email,
-        emailVerified,
         createAt,
-        ...addittionalInformation,
+        ...userAdditionalDetails,
       });
     } catch (error) {
       // eslint-disable-next-line no-alert
@@ -609,16 +632,31 @@ export const createUserDocumentFromAuth = async (
 
     return newUserSnapshot as QueryDocumentSnapshot<UserData>;
   }
-  
+
   return userSnapshot as QueryDocumentSnapshot<UserData>;
 };
+// email verefication
+export const sendEmailVerificationFirebaseAuth = async (user: User) => {
+  await sendEmailVerification(user);
+};
+// reset password
+export const sendPasswordResetEmailFireBase = async (email: string) => {
+  try {
+    const actionCodeSettings = {
+      url: 'http://localhost:5173/',
+      handleCodeInApp: true,
+    };
+    await sendPasswordResetEmail(auth, email, actionCodeSettings);
+  } catch (error) {
+    console.error('Error sending password reset email:', error);
+  }
+};
 
-// create user with email and password
+// create user with email and password also sending verification
 export const createAuthUserWithEmailAndPassword = async (email: string, password: string) => {
   if (!email || !password) return;
   const userCredentialres = await createUserWithEmailAndPassword(auth, email, password);
-  await sendEmailVerification(userCredentialres.user);
-
+  await sendEmailVerificationFirebaseAuth(userCredentialres.user);
   return userCredentialres;
 };
 
@@ -646,11 +684,6 @@ export const getCurrentUser = (): Promise<User | null> => {
     );
   });
 };
-
-
-
-
-
 
 // NEED TO TYPE THIS ORDER CREATING
 export const createNewOrderDocument = async (newOrderDetails: NewOrderDetails) => {

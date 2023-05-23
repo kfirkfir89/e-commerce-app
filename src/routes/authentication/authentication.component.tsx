@@ -1,9 +1,24 @@
-import { useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import SignInForm from '../../components/sign-in-form/sign-in-form.component';
 import SignUpForm from '../../components/sign-up-form/sign-up-form.component';
+import { sendPasswordResetEmailFireBase } from '../../utils/firebase/firebase.utils';
+import FormInput from '../../components/input-form/input-form.component';
 
 const Authentication = () => {
   const [isNewUser, setIsNewUser] = useState(false);
+  const [forgetPasswordEmail, setForgetPasswordEmail] = useState('');
+
+
+  const modalRef = useRef<HTMLInputElement>(null);
+
+
+  const forgetPasswordHandler = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const res = sendPasswordResetEmailFireBase(forgetPasswordEmail);
+    if (modalRef.current) {
+      modalRef.current.checked = false;
+    }
+  };
 
   return (
     <div className="flex flex-col sm:mt-40 justify-center items-center text-slate-700 px-2">
@@ -31,7 +46,51 @@ const Authentication = () => {
                   Sign up
                 </span>
               </button>    
-            </div>    
+            </div> 
+
+            {/* forget password modal */}
+            <div className="mt-2">
+
+              <label htmlFor="my-modal-4" className="font-semibold hover:text-blue-400 cursor-pointer">
+                <span>
+                  Forget password
+                </span>
+              </label>
+
+              <input ref={modalRef} type="checkbox" id="my-modal-4" className="modal-toggle" />
+              <label htmlFor="my-modal-4" className="modal cursor-pointer">
+                <label className="modal-box relative" htmlFor="">
+                  <h3 className="font-bold text-lg tracking-wider">Forgot password?</h3>
+                  <p className="p-4">Please enter the email address you used to create your account, and we&#39;ll send you a link to reset your password.</p>
+                  <form onSubmit={forgetPasswordHandler}>
+                    <div className="shadow-md">
+                      <FormInput 
+                        label="Email"
+                        name="email" 
+                        type="email" 
+                        onChange={(e) => setForgetPasswordEmail(e.target.value)} 
+                        value={forgetPasswordEmail} 
+                        errorMessage="It should be a valid email address!"
+                        required
+                      />
+                    </div>
+
+                    <div className="modal-action">
+                      <button className="btn rounded-none w-full shadow-sm bg-gray-100 text-slate-700 hover:text-white border-dashed">
+                        <div className="w-full flex gap-x-2 justify-center items-center ">
+                          <span className="flex pt-1 font-semibold text-xs tracking-widest font-smoochSans uppercase leading-0">
+                            Submit
+                          </span>
+                        </div>
+                      </button>
+                    </div>
+                  </form>
+                </label>
+              </label>
+
+            </div> 
+
+
           </div>
         )
       }

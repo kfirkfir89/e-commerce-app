@@ -90,7 +90,7 @@ const SignInForm = () => {
         <FormInput 
           label="Email"
           name="email" 
-          type="text" 
+          type="email" 
           onChange={handleChange} 
           value={email} 
           errorMessage="It should be a valid email address!"
@@ -120,7 +120,7 @@ const SignInForm = () => {
         <div className="divider mx-4" />
         <span className="absolute text-center mb-1 mx-10 w-2/6 bg-gray-100 whitespace-nowrap">or sign in with</span>
       </div>
-      <div className="px-4 mb-4">
+      <div className="px-2 md:px-4 mb-4">
         <button onClick={signInWithGoogle} className="btn rounded-none w-full shadow-sm bg-gray-100 text-slate-700 hover:text-white border-dashed">
           <div className="w-full flex gap-x-2 justify-center items-center ">
             <GoogleIcon className="w-8" />

@@ -41,11 +41,11 @@ const Navigation = () => {
   const [hoverSelected, setHoverSelected] = useState('');
   const [userCategories, setUserCategories] = useState<Map<string, string[]>>();
   const [userCollectionKeys, setUserCollectionKeys] = useState<UserCollectionKeys>();
-
+  
   // popup message timer
   useEffect(() => {
     if (popUpMessage.message !== '') {
-      setTimeout(() => setPopUpMessage({ message: '' }), 3000);
+      setTimeout(() => setPopUpMessage({ message: '' }), 2000);
     }
   }, [popUpMessage]);
 
@@ -80,8 +80,9 @@ const Navigation = () => {
 
   // useLocation is used to check if the current path if the admin dashbord to hide the web navbar
   const path = useLocation();
-  
+
   const memorizedCategories = useMemo(() => userCategories?.get(hoverSelected), [hoverSelected, userCategories]);
+
   return (
     <>
       {!(path.pathname === '/admin-dashboard' || path.pathname.match(/^\/admin-dashboard(\/.*)?$/)) && (
