@@ -29,7 +29,7 @@ import {
   UserData,
 } from '../../utils/firebase/firebase.utils';
 
-// getting the user auth to connect
+// getting the user auth to connect or create
 export function* getSnapshotFromUserAuth(userAuth: User, additionalDetails?: AddittionalInformation) {
   try {
     const userSnapshot = yield* call(createUserDocumentFromAuth, userAuth, additionalDetails);
@@ -41,29 +41,17 @@ export function* getSnapshotFromUserAuth(userAuth: User, additionalDetails?: Add
     yield* put(signInFailed(error as Error));
   }
 }
-
+// google signin check for exsist and unexsist
 export function* signInWithGoogle() {
   try {
     const res = yield* call(signInWithGooglePopup);
-    // if (res) {
-    //   const googleAdditionalDetails: AddittionalInformation = {
-    //     firstName: '',
-    //     lastName: '',
-    //     dateOfBirth: Timestamp.fromDate(new Date()),
-    //     sendNotification: true,
-    //     addresses: [],
-    //     orders: [],
-    //     favoriteProducts: [],
-    //     isAdmin: false,
-    //   }; 
-    // }
-    console.log('res:', res)
     yield* call(getSnapshotFromUserAuth, res.user);
   } catch (error) {
     yield* put(signInFailed(error as Error));
   }
 }
 
+// email and password login
 export function* signInWithEmail({ payload: { email, password } }: EmailSignInStart) {
   try {
     const userCredential = yield* (call(signInAuthUserWithEmailAndPassword, email, password));
@@ -76,6 +64,7 @@ export function* signInWithEmail({ payload: { email, password } }: EmailSignInSt
   }
 }
 
+// check for cuttent user
 export function* isUserAuthenticated() {
   try {
     const userAuth = yield* call(getCurrentUser);

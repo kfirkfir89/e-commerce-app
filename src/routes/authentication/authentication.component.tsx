@@ -24,7 +24,7 @@ const Authentication = () => {
         ) : (
           <div className="flex flex-col w-full justify-center items-center">
             <SignInForm />
-            <div>
+            <div className="mt-4">
               <span>Don&apos;t have an account?&ensp;</span>
               <button onClick={() => setIsNewUser(true)} className="font-semibold hover:text-blue-400">
                 <span>

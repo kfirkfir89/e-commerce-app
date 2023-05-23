@@ -1,7 +1,7 @@
 import {
-  useState, FormEvent, ChangeEvent, useEffect, useRef, 
+  useState, FormEvent, ChangeEvent, useEffect,
 } from 'react';
-import { AuthError, AuthErrorCodes } from 'firebase/auth';
+import { AuthError } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -10,7 +10,7 @@ import { ReactComponent as GoogleIcon } from '../../assets/icons8-google.svg';
 
 import { googleSignInStart, emailSignInStart } from '../../store/user/user.action';
 import FormInput from '../input-form/input-form.component';
-import { selectUserError } from '../../store/user/user.selector';
+import { selectCurrentUser, selectUserError } from '../../store/user/user.selector';
 
 const defaultFormFields = {
   displayName: '',
@@ -20,20 +20,19 @@ const defaultFormFields = {
 };
 
 const SignInForm = () => {
-  const dispatch = useDispatch();
   const [formFields, setFormFields] = useState(defaultFormFields);
-  const [error, setError] = useState('initial');
+  const [error, setError] = useState('');
   const [shouldNavigate, setShouldNavigate] = useState(false);
 
-  const { email, password } = formFields; 
-
+  const currentUser = useSelector(selectCurrentUser);
   const userErrorSelector = useSelector(selectUserError);
 
+  
+  const { email, password } = formFields; 
+  
+  
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const resetFormFields = () => {
-    setFormFields(defaultFormFields);
-  };
 
   const signInWithGoogle = async () => {
     dispatch(googleSignInStart());
@@ -46,32 +45,28 @@ const SignInForm = () => {
   
   // error handling 
   useEffect(() => {
-    const isError = () => {
-      if (userErrorSelector) {
-        setError((userErrorSelector as AuthError).code.replace('auth/', '').replace(/-/g, ' '));
-      }
+    // check for error
+    if (userErrorSelector) {
+      setError((userErrorSelector as AuthError).code.replace('auth/', '').replace(/-/g, ' '));
+    }
+    // navigate after user signin
+    if (userErrorSelector === null && currentUser) {
+      setShouldNavigate(true);
+    }
+    // navigate when use fixed the erros
+    if (userErrorSelector === null && error !== '') {
+      setShouldNavigate(true);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userErrorSelector, currentUser]);
 
-      if (userErrorSelector === null) {
-        setError('');
-      }
-      
-      if (error === '') {
-        resetFormFields();
-        return true; // will trigger navigation
-      }
-      return false; // will not trigger navigation
-    };
-    
-    setShouldNavigate(isError());
-  }, [userErrorSelector]);
-  
+  // navigate to to home page
   useEffect(() => {
     if (shouldNavigate) {
-      setError('initial');
       navigate('/');
       setShouldNavigate(false);
     }
-  }, [error]);
+  }, [navigate, shouldNavigate]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;

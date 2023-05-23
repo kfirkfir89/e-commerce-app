@@ -10,6 +10,7 @@ import {
   onAuthStateChanged,
   User,
   NextOrObserver,
+  sendEmailVerification,
 } from 'firebase/auth';
 import {
   getFirestore, 
@@ -546,6 +547,7 @@ export type UserData = {
   createdAt: Timestamp
   displayName: string
   email: string
+  emailVerified: boolean
 } & AddittionalInformation;
 
 
@@ -588,12 +590,13 @@ export const createUserDocumentFromAuth = async (
   // if user data does not exists
   // create/set the document with the data from userAuth in my collection
   if (!userSnapshot.exists()) {
-    const { displayName, email } = userAuth;
+    const { displayName, email, emailVerified } = userAuth;
     const createAt = Timestamp.fromDate(new Date());
     try {
       await setDoc(userDocRef, {
         displayName: displayName || `${addittionalInformation.firstName} ${addittionalInformation.lastName}`,
         email,
+        emailVerified,
         createAt,
         ...addittionalInformation,
       });
@@ -610,12 +613,16 @@ export const createUserDocumentFromAuth = async (
   return userSnapshot as QueryDocumentSnapshot<UserData>;
 };
 
+// create user with email and password
 export const createAuthUserWithEmailAndPassword = async (email: string, password: string) => {
   if (!email || !password) return;
+  const userCredentialres = await createUserWithEmailAndPassword(auth, email, password);
+  await sendEmailVerification(userCredentialres.user);
 
-  return await createUserWithEmailAndPassword(auth, email, password);
+  return userCredentialres;
 };
 
+// signin an exsist user
 export const signInAuthUserWithEmailAndPassword = async (email: string, password: string) => {
   if (!email || !password) return;
 
@@ -624,6 +631,7 @@ export const signInAuthUserWithEmailAndPassword = async (email: string, password
 
 export const signOutUser = async () => signOut(auth);
 
+// auth listener firebase
 export const onAuthStateChangedListener = (callback: NextOrObserver<User>) => onAuthStateChanged(auth, callback);
 
 export const getCurrentUser = (): Promise<User | null> => {
@@ -638,6 +646,10 @@ export const getCurrentUser = (): Promise<User | null> => {
     );
   });
 };
+
+
+
+
 
 
 // NEED TO TYPE THIS ORDER CREATING

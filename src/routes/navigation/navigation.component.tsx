@@ -1,9 +1,11 @@
+/* eslint-disable react/jsx-no-constructed-context-values */
 import {
-  Outlet, Link, useLocation, useParams, NavLink,
+  Outlet, Link, useLocation, NavLink,
 } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import {
+  createContext,
   memo, useEffect, useMemo, useState, 
 } from 'react';
 import CartDropdown from '../../components/cart-dropdown/cart-dropdown.componenet';
@@ -11,10 +13,8 @@ import CartDropdown from '../../components/cart-dropdown/cart-dropdown.componene
 import { selectCurrentUser } from '../../store/user/user.selector';
 
 import { ReactComponent as AdminIcon } from '../../assets/manage_accounts.svg';
-import { signOutStart } from '../../store/user/user.action';
 
 import SideMenu from '../side-menu/side-menu.component';
-import { selectCartCount } from '../../store/cart/cart.selector';
 import {
   UserCollectionKeys,
   getUserCategories, getUserCollectionKeys,
@@ -27,17 +27,28 @@ export type ShopCategoryRouteParams = {
   shopPara: string
 };
 
+export const popUpMessageContext = createContext({
+  message: '', 
+  setMessage: (value: { message: string }) => {},
+});
+
 const Navigation = () => {
-  const dispatch = useDispatch();
   const currentUser = useSelector(selectCurrentUser);
 
+  const [popUpMessage, setPopUpMessage] = useState({ message: '' });
   const [isHover, setIsHover] = useState(false);
   const [isSideMenuToggled, setIsSideMenuToggled] = useState(false);
   const [hoverSelected, setHoverSelected] = useState('');
   const [userCategories, setUserCategories] = useState<Map<string, string[]>>();
   const [userCollectionKeys, setUserCollectionKeys] = useState<UserCollectionKeys>();
 
-  const { shopPara } = useParams<keyof ShopCategoryRouteParams>() as ShopCategoryRouteParams;
+  // popup message timer
+  useEffect(() => {
+    if (popUpMessage.message !== '') {
+      setTimeout(() => setPopUpMessage({ message: '' }), 3000);
+    }
+  }, [popUpMessage]);
+
   // featch only the userKeys(collectionKeys) from the system-data obj
   useEffect(() => {
     const featchUserCollectionKeys = async () => {
@@ -71,7 +82,6 @@ const Navigation = () => {
   const path = useLocation();
   
   const memorizedCategories = useMemo(() => userCategories?.get(hoverSelected), [hoverSelected, userCategories]);
-  const signOutUser = () => dispatch(signOutStart());
   return (
     <>
       {!(path.pathname === '/admin-dashboard' || path.pathname.match(/^\/admin-dashboard(\/.*)?$/)) && (
@@ -184,7 +194,17 @@ const Navigation = () => {
       )}
       <div className={`pt-20 ${isSideMenuToggled ? 'hidden' : 'block'}`}>
         <Breadcrumbs />
-        <Outlet />
+
+        <div className={`absolute z-[100] ${popUpMessage.message !== '' ? 'opacity-100' : ''} transition-all duration-300 ease-in-out opacity-0  alert alert-success shadow-lg flex flex-col my-2`}>
+          <div className={`${popUpMessage.message !== '' ? 'visible' : 'invisible'}`}>
+            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            <span>{popUpMessage.message}</span>
+          </div>
+        </div>
+
+        <popUpMessageContext.Provider value={{ message: popUpMessage.message, setMessage: setPopUpMessage }}>
+          <Outlet />
+        </popUpMessageContext.Provider>
       </div>
     </>
   );
