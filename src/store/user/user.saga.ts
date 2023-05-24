@@ -1,17 +1,15 @@
-import {
-  takeLatest, put, all, call, 
-} from 'typed-redux-saga';
+import { takeLatest, put, all, call } from 'typed-redux-saga';
 import { User } from 'firebase/auth';
 
 import { QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';
 import { USER_ACTION_TYPES } from './user.types';
 
-import { 
-  signInSuccess, 
-  signInFailed, 
-  signUpSuccess, 
-  signUpFailed, 
-  signOutSuccess, 
+import {
+  signInSuccess,
+  signInFailed,
+  signUpSuccess,
+  signUpFailed,
+  signOutSuccess,
   signOutFailed,
   EmailSignInStart,
   SignUpStart,
@@ -30,9 +28,16 @@ import {
 } from '../../utils/firebase/firebase.utils';
 
 // getting the user auth to connect or create
-export function* getSnapshotFromUserAuth(userAuth: User, additionalDetails?: AddittionalInformation) {
+export function* getSnapshotFromUserAuth(
+  userAuth: User,
+  additionalDetails?: AddittionalInformation
+) {
   try {
-    const userSnapshot = yield* call(createUserDocumentFromAuth, userAuth, additionalDetails);
+    const userSnapshot = yield* call(
+      createUserDocumentFromAuth,
+      userAuth,
+      additionalDetails
+    );
 
     if (userSnapshot) {
       yield* put(signInSuccess(userSnapshot.data() as UserData));
@@ -52,9 +57,15 @@ export function* signInWithGoogle() {
 }
 
 // email and password login
-export function* signInWithEmail({ payload: { email, password } }: EmailSignInStart) {
+export function* signInWithEmail({
+  payload: { email, password },
+}: EmailSignInStart) {
   try {
-    const userCredential = yield* (call(signInAuthUserWithEmailAndPassword, email, password));
+    const userCredential = yield* call(
+      signInAuthUserWithEmailAndPassword,
+      email,
+      password
+    );
     if (userCredential) {
       const { user } = userCredential;
       yield* call(getSnapshotFromUserAuth, user);
@@ -78,11 +89,20 @@ export function* isUserAuthenticated() {
 // signup a new user with email and password
 export function* signUp({
   payload: {
-    email, password, dateOfBirth, firstName, lastName, sendNotification,
-  }, 
+    email,
+    password,
+    dateOfBirth,
+    firstName,
+    lastName,
+    sendNotification,
+  },
 }: SignUpStart) {
   try {
-    const userCredential = yield* call(createAuthUserWithEmailAndPassword, email, password);
+    const userCredential = yield* call(
+      createAuthUserWithEmailAndPassword,
+      email,
+      password
+    );
     if (userCredential) {
       const { user } = userCredential;
       const addittionalInfo: AddittionalInformation = {
@@ -96,7 +116,7 @@ export function* signUp({
         sendNotification,
       };
       yield* put(signUpSuccess(user, addittionalInfo));
-    } 
+    }
   } catch (error) {
     yield* put(signUpFailed(error as Error));
   }
@@ -111,7 +131,9 @@ export function* signOut() {
   }
 }
 
-export function* signInAfterSignUp({ payload: { user, additionalDetails } }: SignUpSuccess) {
+export function* signInAfterSignUp({
+  payload: { user, additionalDetails },
+}: SignUpSuccess) {
   yield* call(getSnapshotFromUserAuth, user, additionalDetails);
 }
 
@@ -138,8 +160,6 @@ export function* onSignUpSuccess() {
 export function* onSignOutStart() {
   yield* takeLatest(USER_ACTION_TYPES.SIGN_OUT_START, signOut);
 }
-
-
 
 export function* userSagas() {
   yield* all([
