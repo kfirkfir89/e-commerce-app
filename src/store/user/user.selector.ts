@@ -8,10 +8,10 @@ export const selectUserReducer = (state: RootState): UserState => state.user;
 
 export const selectCurrentUser = createSelector(
   selectUserReducer,
-  (user) => user.currentUser,
+  (user) => user.currentUser
 );
 
 export const selectUserError = createSelector(
   selectUserReducer,
-  (user) => user.error,
+  (user) => user.error
 );

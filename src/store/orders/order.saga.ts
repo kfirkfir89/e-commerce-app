@@ -1,17 +1,18 @@
-import {
-  all, call, takeLatest, put, select, 
-} from 'typed-redux-saga';
+import { all, call, takeLatest, put, select } from 'typed-redux-saga';
 
-import { CreateOrderStart, orderSuccesded, orderFailed } from './order.action'; 
+import { CreateOrderStart, orderSuccesded, orderFailed } from './order.action';
 import { resetCartItemsState } from '../cart/cart.action';
 
 import { ORDER_ACTION_TYPES, NewOrderDetails } from './order.types';
 
-
 // eslint-disable-next-line import/no-cycle
 import * as cartSelectors from '../cart/cart.selector';
 
-import { stripePaymentIntent, stripePaymentConfirm, StripeFormFieldCSecret } from '../../utils/stripe/stripe.utils';
+import {
+  stripePaymentIntent,
+  stripePaymentConfirm,
+  StripeFormFieldCSecret,
+} from '../../utils/stripe/stripe.utils';
 import { createNewOrderDocument } from '../../utils/firebase/firebase.utils';
 
 export function* getCartItemsSAGA() {
@@ -24,21 +25,30 @@ export function* resetCartItems() {
 }
 
 export function* confirmStripePayment({
-  card, currentUser, stripe, client_secret, 
+  card,
+  currentUser,
+  stripe,
+  client_secret,
 }: StripeFormFieldCSecret) {
-  const { paymentIntent, error } = yield* call(stripePaymentConfirm, card, currentUser, stripe, client_secret);  
+  const { paymentIntent, error } = yield* call(
+    stripePaymentConfirm,
+    card,
+    currentUser,
+    stripe,
+    client_secret
+  );
 
   if (paymentIntent !== undefined && paymentIntent.status === 'succeeded') {
     const date = new Date();
-    const orderItems = yield* call(getCartItemsSAGA); 
+    const orderItems = yield* call(getCartItemsSAGA);
     const newOrderDetails: NewOrderDetails = {
       orderId: paymentIntent.created,
-      createAt: date,
+      createDate: date,
       user: currentUser,
       orderItems,
       paymentIntent,
-    };  
-    
+    };
+
     yield* call(createNewOrderDocument, newOrderDetails);
     yield* put(orderSuccesded(newOrderDetails));
   } else {
@@ -48,15 +58,16 @@ export function* confirmStripePayment({
 }
 
 export function* paymentIntentInit({
-  payload: {
-    amount, card, currentUser, stripe, 
-  }, 
+  payload: { amount, card, currentUser, stripe },
 }: CreateOrderStart) {
   const { paymentIntent, error } = yield* call(stripePaymentIntent, amount);
   if (paymentIntent !== undefined && paymentIntent.client_secret !== null) {
     const { client_secret } = paymentIntent;
     yield* call(confirmStripePayment, {
-      card, currentUser, stripe, client_secret, 
+      card,
+      currentUser,
+      stripe,
+      client_secret,
     });
   } else {
     alert(error?.message);
@@ -73,8 +84,5 @@ export function* onCreateOrderStart() {
 }
 
 export function* orderSaga() {
-  yield* all([
-    call(onCreateOrderStart),
-    call(onNewOrderSuccess),
-  ]);
+  yield* all([call(onCreateOrderStart), call(onNewOrderSuccess)]);
 }

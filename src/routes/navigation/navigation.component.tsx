@@ -15,7 +15,7 @@ import {
   getUserCategories,
   getUserCollectionKeys,
 } from '../../utils/firebase/firebase.utils';
-import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
+import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs.component';
 import Search from '../../components/search/search.component';
 import ProfileDropdown from '../../components/profile-dropdown/profile-dropdown.componenet';
 
@@ -92,7 +92,6 @@ const Navigation = () => {
         <div className="absolute z-[100] flex w-screen justify-center">
           <div className="navbar m-0 flex-col p-0">
             {/* main navbar */}
-
             <div className=" m-0 flex min-h-fit w-full justify-center bg-gray-100 p-2">
               <div className="container navbar m-0 flex min-h-fit bg-transparent p-0">
                 {/* LEFT SIDE LOGO MENU */}
@@ -146,7 +145,6 @@ const Navigation = () => {
             </div>
 
             {/* categories navbar */}
-
             <div className="relative hidden w-full flex-col items-center justify-center bg-white lg:flex">
               <div className="container p-2">
                 <div className="flex justify-center">
@@ -220,9 +218,13 @@ const Navigation = () => {
           </div>
         </div>
       )}
-      <div className={`pt-20 ${isSideMenuToggled ? 'hidden' : 'block'}`}>
+      <div
+        className={`absolute flex h-full w-full flex-col pt-20 lg:pt-28 ${
+          isSideMenuToggled ? 'hidden' : 'block'
+        }`}
+      >
         <Breadcrumbs />
-
+        {/* message pop up */}
         <div
           className={`absolute z-[100] ${
             popUpMessage.message !== '' ? 'opacity-100' : 'hidden'

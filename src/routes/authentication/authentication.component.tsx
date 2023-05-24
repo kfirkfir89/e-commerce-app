@@ -8,9 +8,7 @@ const Authentication = () => {
   const [isNewUser, setIsNewUser] = useState(false);
   const [forgetPasswordEmail, setForgetPasswordEmail] = useState('');
 
-
   const modalRef = useRef<HTMLInputElement>(null);
-
 
   const forgetPasswordHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -21,79 +19,85 @@ const Authentication = () => {
   };
 
   return (
-    <div className="flex flex-col sm:mt-40 justify-center items-center text-slate-700 px-2">
-
-      {
-        isNewUser ? (
-          <div className="flex flex-col w-full justify-center items-center">
-            <SignUpForm />
-            <div>
-              <span>Already have an account?&ensp;</span>
-              <button onClick={() => setIsNewUser(false)} className="font-semibold hover:text-blue-400">
-                <span>
-                  Sign in
-                </span>
-              </button>    
-            </div>    
+    <div className="flex flex-col items-center justify-center px-2 text-slate-700 sm:mt-40 ">
+      {isNewUser ? (
+        <div className="flex w-full flex-col items-center justify-center">
+          <SignUpForm />
+          <div>
+            <span>Already have an account?&ensp;</span>
+            <button
+              onClick={() => setIsNewUser(false)}
+              className="font-semibold hover:text-blue-400"
+            >
+              <span>Sign in</span>
+            </button>
           </div>
-        ) : (
-          <div className="flex flex-col w-full justify-center items-center">
-            <SignInForm />
-            <div className="mt-4">
-              <span>Don&apos;t have an account?&ensp;</span>
-              <button onClick={() => setIsNewUser(true)} className="font-semibold hover:text-blue-400">
-                <span>
-                  Sign up
-                </span>
-              </button>    
-            </div> 
-
-            {/* forget password modal */}
-            <div className="mt-2">
-
-              <label htmlFor="my-modal-4" className="font-semibold hover:text-blue-400 cursor-pointer">
-                <span>
-                  Forget password
-                </span>
-              </label>
-
-              <input ref={modalRef} type="checkbox" id="my-modal-4" className="modal-toggle" />
-              <label htmlFor="my-modal-4" className="modal cursor-pointer">
-                <label className="modal-box relative" htmlFor="">
-                  <h3 className="font-bold text-lg tracking-wider">Forgot password?</h3>
-                  <p className="p-4">Please enter the email address you used to create your account, and we&#39;ll send you a link to reset your password.</p>
-                  <form onSubmit={forgetPasswordHandler}>
-                    <div className="shadow-md">
-                      <FormInput 
-                        label="Email"
-                        name="email" 
-                        type="email" 
-                        onChange={(e) => setForgetPasswordEmail(e.target.value)} 
-                        value={forgetPasswordEmail} 
-                        errorMessage="It should be a valid email address!"
-                        required
-                      />
-                    </div>
-
-                    <div className="modal-action">
-                      <button className="btn rounded-none w-full shadow-sm bg-gray-100 text-slate-700 hover:text-white border-dashed">
-                        <div className="w-full flex gap-x-2 justify-center items-center ">
-                          <span className="flex pt-1 font-semibold text-xs tracking-widest font-smoochSans uppercase leading-0">
-                            Submit
-                          </span>
-                        </div>
-                      </button>
-                    </div>
-                  </form>
-                </label>
-              </label>
-
-            </div> 
-
-
+        </div>
+      ) : (
+        <div className="flex w-full flex-col items-center justify-center">
+          <SignInForm />
+          <div className="mt-4">
+            <span>Don&apos;t have an account?&ensp;</span>
+            <button
+              onClick={() => setIsNewUser(true)}
+              className="font-semibold hover:text-blue-400"
+            >
+              <span>Sign up</span>
+            </button>
           </div>
-        )
-      }
+
+          {/* forget password modal */}
+          <div className="mt-2">
+            <label
+              htmlFor="my-modal-4"
+              className="cursor-pointer font-semibold hover:text-blue-400"
+            >
+              <span>Forget password</span>
+            </label>
+
+            <input
+              ref={modalRef}
+              type="checkbox"
+              id="my-modal-4"
+              className="modal-toggle"
+            />
+            <label htmlFor="my-modal-4" className="modal cursor-pointer">
+              <label className="modal-box relative" htmlFor="">
+                <h3 className="text-lg font-bold tracking-wider">
+                  Forgot password?
+                </h3>
+                <p className="p-4">
+                  Please enter the email address you used to create your
+                  account, and we&#39;ll send you a link to reset your password.
+                </p>
+                <form onSubmit={forgetPasswordHandler}>
+                  <div className="shadow-md">
+                    <FormInput
+                      label="Email"
+                      name="email"
+                      type="email"
+                      onChange={(e) => setForgetPasswordEmail(e.target.value)}
+                      value={forgetPasswordEmail}
+                      errorMessage="It should be a valid email address!"
+                      required
+                    />
+                  </div>
+
+                  <div className="modal-action">
+                    <button className="btn w-full rounded-none border-dashed bg-gray-100 text-slate-700 shadow-sm hover:text-white">
+                      <div className="flex w-full items-center justify-center gap-x-2 ">
+                        <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
+                          Submit
+                        </span>
+                      </div>
+                    </button>
+                  </div>
+                </form>
+              </label>
+            </label>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

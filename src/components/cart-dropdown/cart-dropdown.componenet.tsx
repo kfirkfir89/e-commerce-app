@@ -3,26 +3,25 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-
 import {
-  selectCartCount, selectCartItems, selectCartTotal, selectIsCartOpen, 
+  selectCartCount,
+  selectCartItems,
+  selectCartTotal,
+  selectIsCartOpen,
 } from '../../store/cart/cart.selector';
 import { ReactComponent as ShoppingIcon } from '../../assets/local_mall.svg';
 import { ReactComponent as DeleteIcon } from '../../assets/delete.svg';
 
-
-
 import { clearItemFromCart, setIsCartOpen } from '../../store/cart/cart.action';
-import { resetOrderState } from '../../store/orders/order.action'; 
+import { resetOrderState } from '../../store/orders/order.action';
 import { CartItemPreview } from '../../store/cart/cart.types';
-
 
 const CartDropdown = () => {
   const cartItems = useSelector(selectCartItems);
   const isCartOpen = useSelector(selectIsCartOpen);
   const cartTotal = useSelector(selectCartTotal);
   const cartCount = useSelector(selectCartCount);
-  
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -35,77 +34,99 @@ const CartDropdown = () => {
     navigate('/checkout');
   }, []);
 
-    
   useEffect(() => {
     if (isHover) {
       setIsIconHover(true);
     } else {
       const timeout = setTimeout(() => {
         setIsIconHover(false);
-      }, 500);
+      }, 700);
 
       return () => clearTimeout(timeout);
     }
   }, [isHover]);
 
-  const clearItemHandler = (item: CartItemPreview) => dispatch(clearItemFromCart(cartItems, item));
-  
-  return (
-    <div className="z-[100] relative">
+  const clearItemHandler = (item: CartItemPreview) =>
+    dispatch(clearItemFromCart(cartItems, item));
 
-      <button className="relative flex flex-col justify-center items-center" onClick={() => setIsIconHover(!isIconHover)} onMouseEnter={() => setIsIconHover(true)} onMouseLeave={() => setIsIconHover(false)}>
-        <ShoppingIcon className="w-9 mb-1" />
-        <span className="absolute text-[10px] opacity-70 sm:text-xs font-bold pt-1">{cartCount}</span>
-        <div className={`absolute bottom-0 border-8 w-4 border-transparent border-dashed border-b-slate-300 transition-all duration-200 ease-in-out opacity-0 ${isIconHover ? 'opacity-100' : ''}`}></div>
+  return (
+    <div className="relative z-[100]">
+      <button
+        className="relative flex flex-col items-center justify-center"
+        onClick={() => setIsIconHover(!isIconHover)}
+        onMouseEnter={() => setIsIconHover(true)}
+        onMouseLeave={() => setIsIconHover(false)}
+      >
+        <ShoppingIcon className="mb-1 w-9" />
+        <span className="absolute pt-1 text-[10px] font-bold opacity-70 sm:text-xs">
+          {cartCount}
+        </span>
+        <div
+          className={`absolute bottom-0 w-4 border-8 border-dashed border-transparent border-b-slate-300 opacity-0 transition-all duration-200 ease-in-out ${
+            isIconHover ? 'opacity-100' : ''
+          }`}
+        ></div>
       </button>
 
-      <div className={`absolute right-1 w-72 sm:w-96 grid grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${isIconHover ? 'grid-rows-[1fr] border border-slate-300 border-b-0 shadow-md' : ''}`}>
-        <div className="min-h-0" onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
-          <div className="flex flex-col p-2 max-w-3xl bg-slate-300 tracking-wide font-dosis text-xs font-normal uppercase leading-0 text-slate-700">
+      <div
+        className={`absolute right-1 grid w-72 grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out sm:w-96 ${
+          isIconHover
+            ? 'grid-rows-[1fr] border border-b-0 border-slate-300 shadow-md'
+            : ''
+        }`}
+      >
+        <div
+          className="min-h-0"
+          onMouseEnter={() => setIsHover(true)}
+          onMouseLeave={() => setIsHover(false)}
+        >
+          <div className="leading-0 flex max-w-3xl flex-col bg-slate-300 p-2 font-dosis text-xs font-normal uppercase tracking-wide text-slate-700">
             <h2>
-              My Bag,
-              {' '}
-              <span className="font-semibold text-base capitalize pl-1">
-                {cartCount}
-                {' '}
-                items
+              My Bag,{' '}
+              <span className="pl-1 text-base font-semibold capitalize">
+                {cartCount} items
               </span>
             </h2>
           </div>
-          <div className="py-4 bg-gray-100">
+          <div className="bg-gray-100 py-4">
             <div className="card w-full">
-              <div className="max-h-96 p-2 flex flex-col overflow-y-auto scrollbarStyle">
-                <div className="flex flex-col max-w-3xl tracking-wide font-dosis text-sm font-semibold uppercase leading-0 text-slate-700">
-
-
+              <div className="scrollbarStyle flex max-h-96 flex-col overflow-y-auto p-2">
+                <div className="leading-0 flex max-w-3xl flex-col font-dosis text-sm font-semibold uppercase tracking-wide text-slate-700">
                   {/* cart items */}
                   <ul className="flex flex-col divide-y divide-gray-700">
-                    {
-                      cartItems.length ? cartItems.map((item) => (
-
-                        <li key={item.colorId} className="flex flex-col py-2 sm:flex-row sm:justify-between">
+                    {cartItems.length ? (
+                      cartItems.map((item) => (
+                        <li
+                          key={item.colorId}
+                          className="flex flex-col py-2 sm:flex-row sm:justify-between"
+                        >
                           <div className="flex w-full space-x-2 sm:space-x-4">
-                            <img src={`${item.previewImage}`} alt={`${item.productName}`} className="flex-shrink-0 w-1/4 object-cover dark:border-transparent rounded outline-none dark:bg-gray-500" />
-                            <div className="flex flex-col gap-y-2 w-full px-2 capitalize">
-
-                              <div className="flex text-base w-full">
+                            <img
+                              src={`${item.previewImage}`}
+                              alt={`${item.productName}`}
+                              className="w-1/4 flex-shrink-0 rounded object-cover outline-none dark:border-transparent dark:bg-gray-500"
+                            />
+                            <div className="flex w-full flex-col gap-y-2 px-2 capitalize">
+                              <div className="flex w-full text-base">
                                 <div className="flex-1">
                                   <h3>{item.productName}</h3>
                                   <p className="font-semibold">
-                                    $
-                                    {' '}
-                                    {item.price}
-                                  </p>                              
+                                    $ {item.price}
+                                  </p>
                                 </div>
                                 <div className="flex">
-                                  <button onClick={() => clearItemHandler(item)} type="button" className="flex w-7">
+                                  <button
+                                    onClick={() => clearItemHandler(item)}
+                                    type="button"
+                                    className="flex w-7"
+                                  >
                                     <DeleteIcon />
                                   </button>
                                 </div>
                               </div>
 
                               <div className="grid grid-cols-4 font-normal">
-                                <div className="flex flex-col col-span-1">                                  
+                                <div className="col-span-1 flex flex-col">
                                   <span className="text-sm dark:text-gray-400">
                                     Quantity:
                                   </span>
@@ -116,7 +137,7 @@ const CartDropdown = () => {
                                     Size:
                                   </span>
                                 </div>
-                                <div className="flex flex-col col-span-3">                                  
+                                <div className="col-span-3 flex flex-col">
                                   <span className="text-sm dark:text-gray-400">
                                     {item.quantity}
                                   </span>
@@ -128,53 +149,47 @@ const CartDropdown = () => {
                                   </span>
                                 </div>
                               </div>
-
                             </div>
                           </div>
                         </li>
                       ))
-                        : (<span className="font-medium m-auto my-4">Your cart is empty</span>)
-                    }
+                    ) : (
+                      <span className="m-auto my-4 font-medium">
+                        Your cart is empty
+                      </span>
+                    )}
                   </ul>
-
                 </div>
               </div>
               {/* cart total */}
-              <div className="my-8 py-4 p-2 bg-white px-4 border-y-2 tracking-wide font-dosis text-sm uppercase leading-0 text-slate-700">
+              <div className="leading-0 my-8 border-y-2 bg-white p-2 py-4 px-4 font-dosis text-sm uppercase tracking-wide text-slate-700">
                 <span className="flex text-lg  font-semibold">
-                  <span className="flex-1">
-                    Total amount:
-                    {' '}
-                  </span>
-                  <span className="flex-none">
-                    $ 
-                    {cartTotal}
-                  </span>
+                  <span className="flex-1">Total amount: </span>
+                  <span className="flex-none">${cartTotal}</span>
                 </span>
-                <p className="text-sm text-gray-400">Not including taxes and shipping costs</p>
+                <p className="text-sm text-gray-400">
+                  Not including taxes and shipping costs
+                </p>
               </div>
 
               <div className="bg-gray-100 p-2 pb-6 pt-0">
-                <button onClick={goToCheckOutHandler} className="btn rounded-none w-full shadow-sm">
-                  <div className="w-full flex justify-center items-center ">
-                    <span className="flex pt-1 font-semibold text-xs tracking-widest font-smoochSans uppercase leading-0">
+                <button
+                  onClick={goToCheckOutHandler}
+                  className="btn w-full rounded-none shadow-sm"
+                >
+                  <div className="flex w-full items-center justify-center ">
+                    <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
                       CHECK OUT
                     </span>
                   </div>
                 </button>
               </div>
-            </div>
-            {' '}
-                
+            </div>{' '}
           </div>
-          <div className="border-dashed border-slate-700 border-b-[1px]"></div>
+          <div className="border-b-[1px] border-dashed border-slate-700"></div>
         </div>
       </div>
-
-
     </div>
-  
-
   );
 };
 

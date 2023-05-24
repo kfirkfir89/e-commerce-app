@@ -11,10 +11,9 @@ export enum ORDER_ACTION_TYPES {
 }
 
 export type NewOrderDetails = {
-  orderId: number
-  createAt: Date;
+  orderId: number;
+  createDate: Date;
   user: UserData | null;
   orderItems: CartItemPreview[];
   paymentIntent: PaymentIntent | undefined;
 };
-

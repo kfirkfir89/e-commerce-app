@@ -1,9 +1,9 @@
 import { initializeApp } from 'firebase/app';
 import {
-  getAuth, 
-  signInWithRedirect, 
-  signInWithPopup, 
-  GoogleAuthProvider, 
+  getAuth,
+  signInWithRedirect,
+  signInWithPopup,
+  GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
@@ -14,11 +14,11 @@ import {
   sendPasswordResetEmail,
 } from 'firebase/auth';
 import {
-  getFirestore, 
-  doc, 
-  getDoc, 
-  setDoc, 
-  collection, 
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
   query,
   getDocs,
   QueryDocumentSnapshot,
@@ -34,16 +34,18 @@ import {
 } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
-import { PreviewCategory } from '../../store/categories/category.types';    
+import { PreviewCategory } from '../../store/categories/category.types';
 import { NewOrderDetails } from '../../store/orders/order.types';
 import { AddFirebaseData } from '../../components/add-firebase/add-firebase.component';
 import {
-  ItemPreview, NewItemValues, 
+  ItemPreview,
+  NewItemValues,
 } from '../../components/add-firebase/add-item.component';
 import { SortOption } from '../../routes/category/category.component';
-import { ColorStock, SizeStock } from '../../components/add-firebase/add-item-stock.component';
-
-
+import {
+  ColorStock,
+  SizeStock,
+} from '../../components/add-firebase/add-item-stock.component';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -70,9 +72,8 @@ export const auth = getAuth();
 
 export const db = getFirestore();
 
-
 export type UserCollectionKeys = {
-  keys: string[]
+  keys: string[];
 };
 
 // get the user custom subcategories (doc title) by using user custom collectionKeys
@@ -97,14 +98,14 @@ export async function getUserCategories() {
 
   const res = querySnapshot.docs.map((docSnapshot) => {
     return docSnapshot.data() as UserCollectionKeys;
-  });  
+  });
 
   res[0].keys.map(async (k) => {
     const res2 = await getUserKeysDocs(k);
     data.set(k, res2);
-  });  
+  });
   return data;
-}  
+}
 
 // set user custom collection-keys (categories) if not exsist
 export async function setUserCollectionKeys(collectionKey: string) {
@@ -117,7 +118,10 @@ export async function setUserCollectionKeys(collectionKey: string) {
     const isExsist = keysData.keys.some((key) => key === collectionKey);
 
     if (!isExsist) {
-      const updatedKeys = { ...keysData, keys: [...keysData.keys, collectionKey] };
+      const updatedKeys = {
+        ...keysData,
+        keys: [...keysData.keys, collectionKey],
+      };
       await setDoc(docRef, updatedKeys);
     }
   } else {
@@ -139,7 +143,9 @@ export async function getUserCollectionKeys() {
 }
 
 // add new data (products) to server
-export async function addFirebaseData<T extends AddFirebaseData>(newData: T): Promise<void> {
+export async function addFirebaseData<T extends AddFirebaseData>(
+  newData: T
+): Promise<void> {
   const { collectionKey, docKey, items } = newData;
   const collectionRef = collection(db, 'system-data');
   const querySnapshot = await getDocs(collectionRef);
@@ -157,7 +163,10 @@ export async function addFirebaseData<T extends AddFirebaseData>(newData: T): Pr
 
   if (!docSnapshot.exists()) {
     try {
-      const docRef = await setDoc(doc(db, collectionKey, docKey), { collectionKey, docKey });
+      const docRef = await setDoc(doc(db, collectionKey, docKey), {
+        collectionKey,
+        docKey,
+      });
     } catch (error) {
       console.log('error:', error);
     }
@@ -166,23 +175,29 @@ export async function addFirebaseData<T extends AddFirebaseData>(newData: T): Pr
   // create each item with full data
   items.forEach(async (item) => {
     try {
-      const docRef = await setDoc(doc(db, collectionKey, docKey, 'items', item.id.toString()), item);
+      const docRef = await setDoc(
+        doc(db, collectionKey, docKey, 'items', item.id.toString()),
+        item
+      );
     } catch (error) {
       console.log('error:', error);
     }
   });
-  
-  // careate a preview for each item 
+
+  // careate a preview for each item
   items.forEach(async (item) => {
     try {
-      const totalStockInit = item.stock.reduce((total: number, sizeStock: SizeStock) => {
-        sizeStock.colors.forEach((colorStock: ColorStock) => {
-          // eslint-disable-next-line no-param-reassign
-          total += colorStock.count;
-        });
-        return total;
-      }, 0);
-      
+      const totalStockInit = item.stock.reduce(
+        (total: number, sizeStock: SizeStock) => {
+          sizeStock.colors.forEach((colorStock: ColorStock) => {
+            // eslint-disable-next-line no-param-reassign
+            total += colorStock.count;
+          });
+          return total;
+        },
+        0
+      );
+
       const itemPreview: ItemPreview = {
         id: item.id,
         created: item.created,
@@ -192,17 +207,26 @@ export async function addFirebaseData<T extends AddFirebaseData>(newData: T): Pr
         slug: item.slug,
         price: item.price,
         colors: item.colors,
-        colorsSort: item.colors.map((color) => (color.label)),
-        sizesSort: item.sizes.map((size) => (size.value)),
+        colorsSort: item.colors.map((color) => color.label),
+        sizesSort: item.sizes.map((size) => size.value),
         stock: item.stock,
         initTotalStock: totalStockInit,
         totalStock: totalStockInit,
         discaount: item.discaount,
-        imagesUrls: [item.colorImagesUrls[0].itemUrlList[0], item.colorImagesUrls[0].itemUrlList[1]],
+        imagesUrls: [
+          item.colorImagesUrls[0].itemUrlList[0],
+          item.colorImagesUrls[0].itemUrlList[1],
+        ],
       };
 
-      const docRef = await setDoc(doc(db, `${collectionKey}/${docKey}/items-preview`, itemPreview.id), itemPreview);
-      const docRefAll = await setDoc(doc(db, 'all-items-preview', itemPreview.id.toString()), itemPreview);
+      const docRef = await setDoc(
+        doc(db, `${collectionKey}/${docKey}/items-preview`, itemPreview.id),
+        itemPreview
+      );
+      const docRefAll = await setDoc(
+        doc(db, 'all-items-preview', itemPreview.id.toString()),
+        itemPreview
+      );
     } catch (error) {
       console.log('error:', error);
     }
@@ -213,10 +237,9 @@ export async function addFirebaseData<T extends AddFirebaseData>(newData: T): Pr
 export async function deleteImageUrls(urlList: string[]) {
   urlList.forEach((url) => {
     const imageRef = ref(storageFB, url);
-    deleteObject(imageRef)
-      .catch((error) => {
-        console.log('Failed to delete image: ', error);
-      });
+    deleteObject(imageRef).catch((error) => {
+      console.log('Failed to delete image: ', error);
+    });
   });
 }
 
@@ -225,29 +248,38 @@ export async function getPreviewCategoriesAndDocuments(collectionKey: string) {
   const userDocsKeys = await getUserKeysDocs(collectionKey);
   const previewArray: PreviewCategory[] = [];
   const data = new Map<string, PreviewCategory[]>();
-  
+
   const fetchCategoryData = async (docKey: string) => {
-    const collectionRef = collection(db, collectionKey, docKey, 'items-preview');
-    const q = query(
-      collectionRef,
-      limit(4),
+    const collectionRef = collection(
+      db,
+      collectionKey,
+      docKey,
+      'items-preview'
     );
-    
+    const q = query(collectionRef, limit(4));
+
     const querySnapshot = await getDocs(q);
 
-    const previewCategoryItems: ItemPreview[] = querySnapshot.docs.map((docSnapshot) => {
-      return docSnapshot.data() as ItemPreview;
-    });
+    const previewCategoryItems: ItemPreview[] = querySnapshot.docs.map(
+      (docSnapshot) => {
+        return docSnapshot.data() as ItemPreview;
+      }
+    );
 
-    const newCategory:PreviewCategory = { title: docKey, items: previewCategoryItems };
+    const newCategory: PreviewCategory = {
+      title: docKey,
+      items: previewCategoryItems,
+    };
 
     return newCategory;
   };
 
-  await Promise.all(userDocsKeys.map(async (docKey) => {
-    const newCategory = await fetchCategoryData(docKey);
-    previewArray.push(newCategory);
-  }));
+  await Promise.all(
+    userDocsKeys.map(async (docKey) => {
+      const newCategory = await fetchCategoryData(docKey);
+      previewArray.push(newCategory);
+    })
+  );
 
   if (previewArray.length > 0) {
     data.set(collectionKey, previewArray);
@@ -255,21 +287,34 @@ export async function getPreviewCategoriesAndDocuments(collectionKey: string) {
   return data;
 }
 
-// 
+//
 export type CategoryDataSlice = {
-  collectionMapKey: string,
-  title: string,
-  sliceItems: ItemPreview[]
-  count: number
+  collectionMapKey: string;
+  title: string;
+  sliceItems: ItemPreview[];
+  count: number;
 };
 
 // loading more data to category
-export async function getSubCategoryDocument(collectionKey: string, docKey: string, itemsCounter: number, sortOption: SortOption, prevSortOption: SortOption): Promise<CategoryDataSlice> {
+export async function getSubCategoryDocument(
+  collectionKey: string,
+  docKey: string,
+  itemsCounter: number,
+  sortOption: SortOption,
+  prevSortOption: SortOption
+): Promise<CategoryDataSlice> {
   const collectionRef = collection(db, collectionKey, docKey, 'items-preview');
-  function equalSortsObjects(sortOption: SortOption, prevSortOption: SortOption): boolean {
-    if (JSON.stringify(sortOption.sort) === JSON.stringify(prevSortOption.sort) 
-      && JSON.stringify(sortOption.sizes) === JSON.stringify(prevSortOption.sizes)
-      && JSON.stringify(sortOption.colors) === JSON.stringify(prevSortOption.colors)) {
+  function equalSortsObjects(
+    sortOption: SortOption,
+    prevSortOption: SortOption
+  ): boolean {
+    if (
+      JSON.stringify(sortOption.sort) === JSON.stringify(prevSortOption.sort) &&
+      JSON.stringify(sortOption.sizes) ===
+        JSON.stringify(prevSortOption.sizes) &&
+      JSON.stringify(sortOption.colors) ===
+        JSON.stringify(prevSortOption.colors)
+    ) {
       return true;
     }
     return false;
@@ -281,23 +326,31 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
   } else {
     skipItemsCounter = itemsCounter;
   }
-  
-  
+
   // options of sizes selected
   if (sortOption && sortOption.sizes.length > 0) {
-    const sortOptionsSizes = sortOption.sizes.map((size) => (size.value));
-    
-    const itemsQuery = query(collectionRef, where('sizesSort', 'array-contains-any', sortOptionsSizes));
+    const sortOptionsSizes = sortOption.sizes.map((size) => size.value);
+
+    const itemsQuery = query(
+      collectionRef,
+      where('sizesSort', 'array-contains-any', sortOptionsSizes)
+    );
     const itemsSnapshot = await getDocs(itemsQuery);
-    const itemsSortBySizes = itemsSnapshot.docs.map((doc) => doc.data() as ItemPreview);
+    const itemsSortBySizes = itemsSnapshot.docs.map(
+      (doc) => doc.data() as ItemPreview
+    );
     let sortCount = itemsSortBySizes.length;
 
     if (sortOption?.sort.value) {
       if (sortOption.sort.value === 'recommended') {
-        itemsSortBySizes.sort((a, b) => a.created.toMillis() - b.created.toMillis());
+        itemsSortBySizes.sort(
+          (a, b) => a.created.toMillis() - b.created.toMillis()
+        );
       }
       if (sortOption.sort.value === 'new') {
-        itemsSortBySizes.sort((a, b) => b.created.toMillis() - a.created.toMillis());
+        itemsSortBySizes.sort(
+          (a, b) => b.created.toMillis() - a.created.toMillis()
+        );
       }
       if (sortOption.sort.value === 'price-low') {
         itemsSortBySizes.sort((a, b) => a.price - b.price);
@@ -309,14 +362,22 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
 
     // when colors selected filter after the sizes
     if (sortOption.colors.length > 0) {
-      const filteredByColors = itemsSortBySizes
-        .filter((item) => item.stock
-          .some((sizeStock) => sizeStock.colors
-            .some((colorStock) => sortOption.colors
-              .some((sortColor) => sortColor.label === colorStock.label) && colorStock.count > 0)));
-      
+      const filteredByColors = itemsSortBySizes.filter((item) =>
+        item.stock.some((sizeStock) =>
+          sizeStock.colors.some(
+            (colorStock) =>
+              sortOption.colors.some(
+                (sortColor) => sortColor.label === colorStock.label
+              ) && colorStock.count > 0
+          )
+        )
+      );
+
       sortCount = filteredByColors.length;
-      const slice = filteredByColors.slice(skipItemsCounter, skipItemsCounter + 3);
+      const slice = filteredByColors.slice(
+        skipItemsCounter,
+        skipItemsCounter + 3
+      );
 
       const categoryData: CategoryDataSlice = {
         collectionMapKey: collectionKey,
@@ -327,7 +388,10 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
       return categoryData;
     }
 
-    const slice = itemsSortBySizes.slice(skipItemsCounter, skipItemsCounter + 3);
+    const slice = itemsSortBySizes.slice(
+      skipItemsCounter,
+      skipItemsCounter + 3
+    );
     const categoryData: CategoryDataSlice = {
       collectionMapKey: collectionKey,
       title: docKey,
@@ -336,22 +400,31 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
     };
     return categoryData;
   }
-  
+
   // options of colors selected
   if (sortOption && sortOption.colors.length > 0) {
-    const sortOptionsColor = sortOption.colors.map((color) => (color.label));
+    const sortOptionsColor = sortOption.colors.map((color) => color.label);
 
-    const itemsQuery = query(collectionRef, where('colorsSort', 'array-contains-any', sortOptionsColor));
+    const itemsQuery = query(
+      collectionRef,
+      where('colorsSort', 'array-contains-any', sortOptionsColor)
+    );
     const itemsSnapshot = await getDocs(itemsQuery);
-    const itemsSortByColors = itemsSnapshot.docs.map((doc) => doc.data() as ItemPreview);
+    const itemsSortByColors = itemsSnapshot.docs.map(
+      (doc) => doc.data() as ItemPreview
+    );
     const sortCount = itemsSortByColors.length;
 
     if (sortOption?.sort.value) {
       if (sortOption.sort.value === 'recommended') {
-        itemsSortByColors.sort((a, b) => a.created.toMillis() - b.created.toMillis());
+        itemsSortByColors.sort(
+          (a, b) => a.created.toMillis() - b.created.toMillis()
+        );
       }
       if (sortOption.sort.value === 'new') {
-        itemsSortByColors.sort((a, b) => b.created.toMillis() - a.created.toMillis());
+        itemsSortByColors.sort(
+          (a, b) => b.created.toMillis() - a.created.toMillis()
+        );
       }
       if (sortOption.sort.value === 'price-low') {
         itemsSortByColors.sort((a, b) => a.price - b.price);
@@ -364,7 +437,10 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
     const categoryData: CategoryDataSlice = {
       collectionMapKey: collectionKey,
       title: docKey,
-      sliceItems: itemsSortByColors.slice(skipItemsCounter, skipItemsCounter + 3),
+      sliceItems: itemsSortByColors.slice(
+        skipItemsCounter,
+        skipItemsCounter + 3
+      ),
       count: sortCount,
     };
 
@@ -373,34 +449,22 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
 
   // same sort mean load more check for main sort desc/asc
   if (isSameSort) {
-    let itemsQuery:Query<DocumentData> = query(collectionRef);
+    let itemsQuery: Query<DocumentData> = query(collectionRef);
     if (sortOption?.sort.value) {
       if (sortOption.sort.value === 'recommended') {
-        itemsQuery = query(
-          collectionRef,
-          orderBy('created', 'asc'),
-        );
+        itemsQuery = query(collectionRef, orderBy('created', 'asc'));
       }
       if (sortOption.sort.value === 'new') {
-        itemsQuery = query(
-          collectionRef,
-          orderBy('created', 'desc'),
-        );
+        itemsQuery = query(collectionRef, orderBy('created', 'desc'));
       }
       if (sortOption.sort.value === 'price-low') {
-        itemsQuery = query(
-          collectionRef,
-          orderBy('price', 'asc'),
-        );
+        itemsQuery = query(collectionRef, orderBy('price', 'asc'));
       }
       if (sortOption.sort.value === 'price-high') {
-        itemsQuery = query(
-          collectionRef,
-          orderBy('price', 'desc'),
-        );
+        itemsQuery = query(collectionRef, orderBy('price', 'desc'));
       }
-    } 
-    let next:Query<DocumentData>;
+    }
+    let next: Query<DocumentData>;
     const itemsSnapshot = await getDocs(itemsQuery);
     const sortCount = (await getCountFromServer(itemsQuery)).data().count;
     const lastVisible = itemsSnapshot.docs[skipItemsCounter];
@@ -408,16 +472,16 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
     next = query(
       collection(db, collectionKey, docKey, 'items-preview'),
       startAt(lastVisible),
-      limit(3),
+      limit(3)
     );
-    
+
     if (sortOption?.sort.value) {
       if (sortOption.sort.value === 'recommended') {
         next = query(
           collection(db, collectionKey, docKey, 'items-preview'),
           orderBy('created', 'asc'),
           startAt(lastVisible),
-          limit(3),
+          limit(3)
         );
       }
       if (sortOption.sort.value === 'new') {
@@ -425,7 +489,7 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
           collection(db, collectionKey, docKey, 'items-preview'),
           orderBy('created', 'desc'),
           startAt(lastVisible),
-          limit(3),
+          limit(3)
         );
       }
       if (sortOption.sort.value === 'price-low') {
@@ -433,7 +497,7 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
           collection(db, collectionKey, docKey, 'items-preview'),
           orderBy('price', 'asc'),
           startAt(lastVisible),
-          limit(3),
+          limit(3)
         );
       }
       if (sortOption.sort.value === 'price-high') {
@@ -441,18 +505,19 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
           collection(db, collectionKey, docKey, 'items-preview'),
           orderBy('price', 'desc'),
           startAt(lastVisible),
-          limit(3),
+          limit(3)
         );
       }
     }
 
-
     const itemQuerySnapshot = await getDocs(next);
-  
-    const sliceItemsArray: ItemPreview[] = itemQuerySnapshot.docs.map((docSnapshot) => {
-      const item = docSnapshot.data() as ItemPreview;
-      return item;
-    });
+
+    const sliceItemsArray: ItemPreview[] = itemQuerySnapshot.docs.map(
+      (docSnapshot) => {
+        const item = docSnapshot.data() as ItemPreview;
+        return item;
+      }
+    );
 
     const categoryData: CategoryDataSlice = {
       collectionMapKey: collectionKey,
@@ -464,46 +529,32 @@ export async function getSubCategoryDocument(collectionKey: string, docKey: stri
   }
 
   // in case of changing sort without sort option of colors or sizes
-  let itemsQuery:Query<DocumentData> = query(collectionRef);
-    
+  let itemsQuery: Query<DocumentData> = query(collectionRef);
+
   if (sortOption?.sort.value) {
     if (sortOption.sort.value === 'recommended') {
-      itemsQuery = query(
-        collectionRef,
-        orderBy('created', 'asc'),
-        limit(3),
-      );
+      itemsQuery = query(collectionRef, orderBy('created', 'asc'), limit(3));
     }
     if (sortOption.sort.value === 'new') {
-      itemsQuery = query(
-        collectionRef,
-        orderBy('created', 'desc'),
-        limit(3),
-      );
+      itemsQuery = query(collectionRef, orderBy('created', 'desc'), limit(3));
     }
     if (sortOption.sort.value === 'price-low') {
-      itemsQuery = query(
-        collectionRef,
-        orderBy('price', 'asc'),
-        limit(3),
-      );
+      itemsQuery = query(collectionRef, orderBy('price', 'asc'), limit(3));
     }
     if (sortOption.sort.value === 'price-high') {
-      itemsQuery = query(
-        collectionRef,
-        orderBy('price', 'desc'),
-        limit(3),
-      );
+      itemsQuery = query(collectionRef, orderBy('price', 'desc'), limit(3));
     }
   }
 
   const itemsSnapshot = await getDocs(itemsQuery);
   const sortCount = (await getCountFromServer(collectionRef)).data().count;
-  const sliceItemsArray: ItemPreview[] = itemsSnapshot.docs.map((docSnapshot) => {
-    const item = docSnapshot.data() as ItemPreview;
-    return item;
-  });
-  
+  const sliceItemsArray: ItemPreview[] = itemsSnapshot.docs.map(
+    (docSnapshot) => {
+      const item = docSnapshot.data() as ItemPreview;
+      return item;
+    }
+  );
+
   const categoryData: CategoryDataSlice = {
     collectionMapKey: collectionKey,
     title: docKey,
@@ -519,13 +570,19 @@ export async function getItemsSearch(): Promise<ItemPreview[]> {
 
   const itemsQuery = query(collectionRef, orderBy('id'));
   const itemsQuerySnapshot = await getDocs(itemsQuery);
-  const result: ItemPreview[] = itemsQuerySnapshot.docs.map((doc) => doc.data() as ItemPreview);
+  const result: ItemPreview[] = itemsQuerySnapshot.docs.map(
+    (doc) => doc.data() as ItemPreview
+  );
 
   return result;
 }
 
 // featch item when using click direct link or typing path in broswer search (singel item)
-export async function getItemFromRoute(collectionKey: string, docKey: string, itemId: string): Promise<NewItemValues | undefined> {
+export async function getItemFromRoute(
+  collectionKey: string,
+  docKey: string,
+  itemId: string
+): Promise<NewItemValues | undefined> {
   const collectionRef = collection(db, collectionKey, docKey, 'items');
   const itemQuery = query(collectionRef, where('id', '==', itemId));
   const itemQuerySnapshot = await getDocs(itemQuery);
@@ -535,8 +592,16 @@ export async function getItemFromRoute(collectionKey: string, docKey: string, it
   }
 }
 
-export async function getCategoryCount(collectionKey: string, docKey: string): Promise<number> {
-  const subCollectionRef = collection(db, collectionKey, docKey, 'items-preview');
+export async function getCategoryCount(
+  collectionKey: string,
+  docKey: string
+): Promise<number> {
+  const subCollectionRef = collection(
+    db,
+    collectionKey,
+    docKey,
+    'items-preview'
+  );
   const snapshot = await getCountFromServer(subCollectionRef);
 
   return snapshot.data().count;
@@ -545,44 +610,44 @@ export async function getCategoryCount(collectionKey: string, docKey: string): P
 // USER AUTH FUNCTIONLITY
 
 export type UserData = {
-  createdAt: Timestamp
-  displayName: string
-  email: string
-  uid: string
+  createDate: Timestamp;
+  displayName: string;
+  email: string;
+  uid: string;
 } & AddittionalInformation;
 
-
 export type AddittionalInformation = {
-  firstName: string
-  lastName: string
-  dateOfBirth: Timestamp
-  sendNotification: boolean
-  addresses: Address[]
-  orders: string[]
-  favoriteProducts: string[]
-  isAdmin: boolean
+  firstName: string;
+  lastName: string;
+  dateOfBirth: Timestamp;
+  sendNotification: boolean;
+  addresses: Address[];
+  orders: string[];
+  favoriteProducts: string[];
+  isAdmin: boolean;
 };
 
 export type Address = {
-  firstName: string
-  lastName: string
-  mobile: number
-  country: string
-  address: string
-  city: string
-  state?: string
-  postcode: number
+  firstName: string;
+  lastName: string;
+  mobile: number;
+  country: string;
+  address: string;
+  city: string;
+  state?: string;
+  postcode: number;
 };
 
+export const signInWithGooglePopup = () =>
+  signInWithPopup(auth, googleProvider);
 
-export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
-
-export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider);
+export const signInWithGoogleRedirect = () =>
+  signInWithRedirect(auth, googleProvider);
 
 // create user account all types of creation also connect with provider
 export const createUserDocumentFromAuth = async (
   userAuth: User,
-  addittionalInformation = {} as AddittionalInformation,
+  addittionalInformation = {} as AddittionalInformation
 ): Promise<void | QueryDocumentSnapshot<UserData>> => {
   if (!userAuth) return;
 
@@ -592,13 +657,14 @@ export const createUserDocumentFromAuth = async (
   // if user data does not exists
   // create/set the document with the data from userAuth in my collection
   if (!userSnapshot.exists()) {
-    const {
-      displayName, email, uid, 
-    } = userAuth;
-    const createAt = Timestamp.fromDate(new Date());
+    const { displayName, email, uid } = userAuth;
+    const createDate = Timestamp.fromDate(new Date());
     let userAdditionalDetails: AddittionalInformation;
 
-    if (addittionalInformation && Object.keys(addittionalInformation).length === 0) {
+    if (
+      addittionalInformation &&
+      Object.keys(addittionalInformation).length === 0
+    ) {
       const googleAdditionalDetails: AddittionalInformation = {
         firstName: '',
         lastName: '',
@@ -614,13 +680,14 @@ export const createUserDocumentFromAuth = async (
       userAdditionalDetails = addittionalInformation;
     }
 
-
     try {
       await setDoc(userDocRef, {
-        displayName: displayName || `${userAdditionalDetails.firstName} ${userAdditionalDetails.lastName}`,
+        displayName:
+          displayName ||
+          `${userAdditionalDetails.firstName} ${userAdditionalDetails.lastName}`,
         uid,
         email,
-        createAt,
+        createDate,
         ...userAdditionalDetails,
       });
     } catch (error) {
@@ -653,15 +720,25 @@ export const sendPasswordResetEmailFireBase = async (email: string) => {
 };
 
 // create user with email and password also sending verification
-export const createAuthUserWithEmailAndPassword = async (email: string, password: string) => {
+export const createAuthUserWithEmailAndPassword = async (
+  email: string,
+  password: string
+) => {
   if (!email || !password) return;
-  const userCredentialres = await createUserWithEmailAndPassword(auth, email, password);
+  const userCredentialres = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
   await sendEmailVerificationFirebaseAuth(userCredentialres.user);
   return userCredentialres;
 };
 
 // signin an exsist user
-export const signInAuthUserWithEmailAndPassword = async (email: string, password: string) => {
+export const signInAuthUserWithEmailAndPassword = async (
+  email: string,
+  password: string
+) => {
   if (!email || !password) return;
 
   return await signInWithEmailAndPassword(auth, email, password);
@@ -670,7 +747,8 @@ export const signInAuthUserWithEmailAndPassword = async (email: string, password
 export const signOutUser = async () => signOut(auth);
 
 // auth listener firebase
-export const onAuthStateChangedListener = (callback: NextOrObserver<User>) => onAuthStateChanged(auth, callback);
+export const onAuthStateChangedListener = (callback: NextOrObserver<User>) =>
+  onAuthStateChanged(auth, callback);
 
 export const getCurrentUser = (): Promise<User | null> => {
   return new Promise((resolve, reject) => {
@@ -680,15 +758,20 @@ export const getCurrentUser = (): Promise<User | null> => {
         unsubscribe();
         resolve(userAuth);
       },
-      reject,
+      reject
     );
   });
 };
 
 // NEED TO TYPE THIS ORDER CREATING
-export const createNewOrderDocument = async (newOrderDetails: NewOrderDetails) => {
+export const createNewOrderDocument = async (
+  newOrderDetails: NewOrderDetails
+) => {
   if (!newOrderDetails) return;
-  
-  await setDoc(doc(db, 'orders', newOrderDetails.orderId.toString()), newOrderDetails);
+
+  await setDoc(
+    doc(db, 'orders', newOrderDetails.orderId.toString()),
+    newOrderDetails
+  );
   console.log('done');
 };
