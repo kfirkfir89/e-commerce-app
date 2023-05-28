@@ -24,7 +24,7 @@
 
 @layer utilities {
   html, body, #root{
-    @apply h-full w-full
+    @apply h-full w-full bg-whtie
   }
   .testy {
     height: 100dvi;
@@ -99,6 +99,7 @@
 
   @media (prefers-color-scheme: light) {
     body {
+      background-color: #FFF;
       background: #FFF;
       color: #333;
     }
@@ -106,6 +107,7 @@
 
   @media (prefers-color-scheme: dark) {
     body {
+      background-color: #FFF;
       background: #FFF;
       color: #333;
     }

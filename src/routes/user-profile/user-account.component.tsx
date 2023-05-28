@@ -36,9 +36,7 @@ const UserAccount = () => {
                 leroy.jenkins@company.com
               </span>
             </span>
-            <span className="flex items-center space-x-2">
-              {}
-            </span>
+            <span className="flex items-center space-x-2">{}</span>
           </div>
         </div>
       </div>

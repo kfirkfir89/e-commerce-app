@@ -52,7 +52,7 @@ const UserProfile = () => {
   return (
     <div className="flex h-full w-full flex-col items-center">
       <div className="container h-full max-w-6xl">
-        <h2 className="m-4 mb-8 text-center text-2xl font-semibold capitalize text-slate-700">
+        <h2 className="mb-6 text-center text-2xl font-semibold capitalize text-slate-700 lg:m-2 lg:mb-8">
           My Account
         </h2>
 

@@ -40,7 +40,6 @@ export function* getSnapshotFromUserAuth(
     );
 
     if (userSnapshot) {
-      console.log('userSnapshot:', userSnapshot.data().dateOfBirth.toDate());
       yield* put(signInSuccess(userSnapshot.data()));
     }
   } catch (error) {
