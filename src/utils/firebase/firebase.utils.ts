@@ -46,6 +46,7 @@ import {
   ColorStock,
   SizeStock,
 } from '../../components/add-firebase/add-item-stock.component';
+import { UserDetailsFormFields } from '../../routes/user-profile/user-details.component';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -742,6 +743,30 @@ export const signInAuthUserWithEmailAndPassword = async (
   if (!email || !password) return;
 
   return await signInWithEmailAndPassword(auth, email, password);
+};
+
+export const updateUserDocument = async (
+  userDataForm: UserDetailsFormFields & { uid: string }
+): Promise<UserData | undefined> => {
+  console.log('userDataForm:', userDataForm);
+  const userDocRef = doc(db, 'users', userDataForm.uid);
+  try {
+    // const docUpdate = await setDoc(userDocRef, userDataForm, { merge: true });
+    await updateDoc(userDocRef, {
+      firstName: userDataForm.firstName,
+      lastName: userDataForm.lastName,
+      dateOfBirth: userDataForm.dateOfBirth,
+      email: userDataForm.email,
+      sendNotification: userDataForm.sendNotification,
+    });
+  } catch (error) {
+    console.error('Error updating document: ', error);
+  }
+  const userSnapshot = await getDoc(userDocRef);
+  if (userSnapshot.exists()) {
+    const user = userSnapshot.data() as UserData;
+    return user;
+  }
 };
 
 export const signOutUser = async () => signOut(auth);

@@ -1,42 +1,55 @@
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../../store/user/user.selector';
 
+import { ReactComponent as AddressIcon } from '../../assets/home_FILL0.svg';
+import { ReactComponent as OrderIcon } from '../../assets/package_FILL0.svg';
+import { ReactComponent as FavoritesIcon } from '../../assets/favorite_FILL0_w.svg';
+
 const UserAccount = () => {
   const currentUserSelector = useSelector(selectCurrentUser);
 
   return (
-    <div className="flex h-full w-full flex-col bg-red-100">
-      <div className="max-w-md p-8 dark:bg-gray-900 dark:text-gray-100 sm:flex sm:space-x-6">
-        <div className="mb-6 h-44 w-full flex-shrink-0 sm:mb-0 sm:h-32 sm:w-32">
-          <img
-            src="https://source.unsplash.com/100x100/?portrait?1"
-            alt=""
-            className="h-full w-full rounded object-cover object-center dark:bg-gray-500"
-          />
-        </div>
-        <div className="flex flex-col space-y-4">
-          <div>
-            <h2 className="text-2xl font-semibold">Leroy Jenkins</h2>
-            <span className="text-sm dark:text-gray-400">General manager</span>
-          </div>
-          <div className="space-y-1">
-            <span className="flex items-center space-x-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 512 512"
-                aria-label="Email address"
-                className="h-4 w-4"
-              >
-                <path
-                  fill="currentColor"
-                  d="M274.6,25.623a32.006,32.006,0,0,0-37.2,0L16,183.766V496H496V183.766ZM464,402.693,339.97,322.96,464,226.492ZM256,51.662,454.429,193.4,311.434,304.615,256,268.979l-55.434,35.636L57.571,193.4ZM48,226.492,172.03,322.96,48,402.693ZM464,464H48V440.735L256,307.021,464,440.735Z"
-                ></path>
-              </svg>
-              <span className="dark:text-gray-400">
-                leroy.jenkins@company.com
+    <div className="relative flex h-full w-full flex-col bg-gradient-to-tl from-white via-gray-100 to-gray-300 text-slate-700">
+      <div className="flex flex-col gap-2 p-10 text-3xl font-semibold text-white">
+        <span className="w-fit bg-slate-700 p-1 px-4">Welcome To</span>
+        <span className="w-fit bg-slate-700 p-1 px-4">Your Account</span>
+      </div>
+      <div className="flex justify-center">
+        <div className="absolute  bottom-12 flex flex-col gap-4 px-4 lg:flex-row">
+          <div className="flex w-full gap-x-6 bg-gray-100 p-2 px-6 shadow">
+            <div className="rounded-md bg-white p-1">
+              <FavoritesIcon className="w-11" />
+            </div>
+            <div className="flex w-full flex-col items-center justify-center gap-1">
+              <span className="font-semibold">Favorites</span>
+              <span className="text-2xl font-extrabold">
+                {currentUserSelector?.orders.length}
               </span>
-            </span>
-            <span className="flex items-center space-x-2">{}</span>
+            </div>
+          </div>
+
+          <div className="flex w-full gap-x-6 bg-gray-100 p-2 px-6 shadow">
+            <div className="rounded-md bg-white p-1">
+              <OrderIcon className="w-11" />
+            </div>
+            <div className="flex w-full flex-col items-center justify-center gap-1">
+              <span className="font-semibold">Orders</span>
+              <span className="text-2xl font-extrabold">
+                {currentUserSelector?.favoriteProducts.length}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex w-full gap-x-6 bg-gray-100 p-2 px-6 shadow">
+            <div className="rounded-md bg-white p-1">
+              <AddressIcon className="w-11" />
+            </div>
+            <div className="flex w-full flex-col items-center justify-center gap-1">
+              <span className="font-semibold">Addresses</span>
+              <span className="text-2xl font-extrabold">
+                {currentUserSelector?.addresses.length}
+              </span>
+            </div>
           </div>
         </div>
       </div>

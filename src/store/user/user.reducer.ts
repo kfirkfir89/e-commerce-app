@@ -1,7 +1,14 @@
 import { AnyAction } from 'redux';
 
 import {
-  signInFailed, signUpFailed, signOutFailed, signOutSuccess, signInSuccess, 
+  signInFailed,
+  signUpFailed,
+  signOutFailed,
+  signOutSuccess,
+  signInSuccess,
+  updateUserDataStart,
+  updateUserDataSuccess,
+  updateUserDataFailed,
 } from './user.action';
 import { UserData } from '../../utils/firebase/firebase.utils';
 
@@ -18,6 +25,19 @@ const INITIAL_STATE: UserState = {
 };
 
 export const userReducer = (state = INITIAL_STATE, action: AnyAction) => {
+  if (updateUserDataStart.match(action)) {
+    return { ...state, isLoading: true };
+  }
+
+  if (updateUserDataSuccess.match(action)) {
+    return {
+      ...state,
+      isLoading: false,
+      currentUser: action.payload,
+      error: null,
+    };
+  }
+
   if (signInSuccess.match(action)) {
     return { ...state, currentUser: action.payload, error: null };
   }
@@ -26,7 +46,12 @@ export const userReducer = (state = INITIAL_STATE, action: AnyAction) => {
     return { ...state, currentUser: null };
   }
 
-  if (signUpFailed.match(action) || signInFailed.match(action) || signOutFailed.match(action)) {
+  if (
+    signUpFailed.match(action) ||
+    updateUserDataFailed.match(action) ||
+    signInFailed.match(action) ||
+    signOutFailed.match(action)
+  ) {
     return { ...state, error: action.payload };
   }
 

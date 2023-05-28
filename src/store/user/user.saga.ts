@@ -14,6 +14,9 @@ import {
   EmailSignInStart,
   SignUpStart,
   SignUpSuccess,
+  updateUserDataFailed,
+  updateUserDataSuccess,
+  UpdateUserDataStart,
 } from './user.action';
 
 import {
@@ -25,7 +28,9 @@ import {
   signOutUser,
   AddittionalInformation,
   UserData,
+  updateUserDocument,
 } from '../../utils/firebase/firebase.utils';
+import { UserDetailsFormFields } from '../../routes/user-profile/user-details.component';
 
 // getting the user auth to connect or create
 export function* getSnapshotFromUserAuth(
@@ -122,6 +127,23 @@ export function* signUp({
   }
 }
 
+export function* updateUserData({
+  payload: { formDetails, uid },
+}: UpdateUserDataStart) {
+  try {
+    const userData = {
+      ...formDetails,
+      uid,
+    };
+    const res = yield* call(updateUserDocument, userData);
+    if (res) {
+      yield* put(updateUserDataSuccess(res));
+    }
+  } catch (error) {
+    yield* put(updateUserDataFailed(error as Error));
+  }
+}
+
 export function* signOut() {
   try {
     yield* call(signOutUser);
@@ -153,6 +175,10 @@ export function* onSignUpStart() {
   yield* takeLatest(USER_ACTION_TYPES.SIGN_UP_START, signUp);
 }
 
+export function* onUpdateUserData() {
+  yield* takeLatest(USER_ACTION_TYPES.UPDATE_USER_DATA_START, updateUserData);
+}
+
 export function* onSignUpSuccess() {
   yield* takeLatest(USER_ACTION_TYPES.SIGN_UP_SUCCESS, signInAfterSignUp);
 }
@@ -169,5 +195,6 @@ export function* userSagas() {
     call(onSignUpStart),
     call(onSignUpSuccess),
     call(onSignOutStart),
+    call(onUpdateUserData),
   ]);
 }
