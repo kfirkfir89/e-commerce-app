@@ -9,6 +9,8 @@ import {
   updateUserDataStart,
   updateUserDataSuccess,
   updateUserDataFailed,
+  updateUserAddressStart,
+  removeUserAddress,
 } from './user.action';
 import { UserData } from '../../utils/firebase/firebase.utils';
 
@@ -26,6 +28,14 @@ const INITIAL_STATE: UserState = {
 
 export const userReducer = (state = INITIAL_STATE, action: AnyAction) => {
   if (updateUserDataStart.match(action)) {
+    return { ...state, isLoading: true };
+  }
+
+  if (updateUserAddressStart.match(action)) {
+    return { ...state, isLoading: true };
+  }
+
+  if (removeUserAddress.match(action)) {
     return { ...state, isLoading: true };
   }
 

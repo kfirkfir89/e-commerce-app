@@ -1,7 +1,6 @@
 import { takeLatest, put, all, call } from 'typed-redux-saga';
 import { User } from 'firebase/auth';
 
-import { QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';
 import { USER_ACTION_TYPES } from './user.types';
 
 import {
@@ -17,6 +16,9 @@ import {
   updateUserDataFailed,
   updateUserDataSuccess,
   UpdateUserDataStart,
+  UpdateUserAddressStart,
+  UpdateUserDefualtAddress,
+  RemoveAddress,
 } from './user.action';
 
 import {
@@ -27,10 +29,8 @@ import {
   createAuthUserWithEmailAndPassword,
   signOutUser,
   AddittionalInformation,
-  UserData,
   updateUserDocument,
 } from '../../utils/firebase/firebase.utils';
-import { UserDetailsFormFields } from '../../routes/user-profile/user-details.component';
 
 // getting the user auth to connect or create
 export function* getSnapshotFromUserAuth(
@@ -114,6 +114,7 @@ export function* signUp({
         firstName,
         lastName,
         dateOfBirth,
+        defualtAddressId: '',
         addresses: [],
         favoriteProducts: [],
         orders: [],
@@ -134,6 +135,56 @@ export function* updateUserData({
     const userData = {
       ...formDetails,
       uid,
+    };
+    const res = yield* call(updateUserDocument, userData);
+    if (res) {
+      yield* put(updateUserDataSuccess(res));
+    }
+  } catch (error) {
+    yield* put(updateUserDataFailed(error as Error));
+  }
+}
+
+export function* updateDefualtAddress({
+  payload: { addressId, userId },
+}: UpdateUserDefualtAddress) {
+  try {
+    const res = yield* call(updateUserDocument, {
+      defualtAddressId: addressId,
+      uid: userId,
+    });
+    if (res) {
+      yield* put(updateUserDataSuccess(res));
+    }
+  } catch (error) {
+    yield* put(updateUserDataFailed(error as Error));
+  }
+}
+
+export function* updateUserAddress({
+  payload: { formDetails, uid },
+}: UpdateUserAddressStart) {
+  try {
+    const userData = {
+      ...formDetails,
+      uid,
+    };
+    const res = yield* call(updateUserDocument, userData);
+    if (res) {
+      yield* put(updateUserDataSuccess(res));
+    }
+  } catch (error) {
+    yield* put(updateUserDataFailed(error as Error));
+  }
+}
+
+export function* removeAddress({
+  payload: { removeAddressId, userId },
+}: RemoveAddress) {
+  try {
+    const userData = {
+      removeAddressId,
+      uid: userId,
     };
     const res = yield* call(updateUserDocument, userData);
     if (res) {
@@ -179,6 +230,24 @@ export function* onUpdateUserData() {
   yield* takeLatest(USER_ACTION_TYPES.UPDATE_USER_DATA_START, updateUserData);
 }
 
+export function* onUpdateUserDefualtAddress() {
+  yield* takeLatest(
+    USER_ACTION_TYPES.UPDATE_USER_DEFUALT_ADDRESS_START,
+    updateDefualtAddress
+  );
+}
+
+export function* onUpdateUserAddress() {
+  yield* takeLatest(
+    USER_ACTION_TYPES.UPDATE_USER_ADDRESS_START,
+    updateUserAddress
+  );
+}
+
+export function* onRemoveUserAddress() {
+  yield* takeLatest(USER_ACTION_TYPES.REMOVE_USER_ADDRESS_START, removeAddress);
+}
+
 export function* onSignUpSuccess() {
   yield* takeLatest(USER_ACTION_TYPES.SIGN_UP_SUCCESS, signInAfterSignUp);
 }
@@ -196,5 +265,8 @@ export function* userSagas() {
     call(onSignUpSuccess),
     call(onSignOutStart),
     call(onUpdateUserData),
+    call(onUpdateUserAddress),
+    call(onUpdateUserDefualtAddress),
+    call(onRemoveUserAddress),
   ]);
 }

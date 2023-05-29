@@ -9,11 +9,13 @@ import {
 import {
   UserData,
   AddittionalInformation,
+  UserAddress,
 } from '../../utils/firebase/firebase.utils';
 import { FormFields } from '../../components/sign-up-form/sign-up-form.component';
 import { UserDetailsFormFields } from '../../routes/user-profile/user-details.component';
 
 export type CheckUserSession = Action<USER_ACTION_TYPES.CHECK_USER_SESSION>;
+
 export type SetCurrentUser = ActionWithPayload<
   USER_ACTION_TYPES.SET_CURRENT_USER,
   UserData
@@ -47,6 +49,21 @@ export type SignUpSuccess = ActionWithPayload<
 export type UpdateUserDataStart = ActionWithPayload<
   USER_ACTION_TYPES.UPDATE_USER_DATA_START,
   { formDetails: UserDetailsFormFields; uid: string }
+>;
+
+export type UpdateUserDefualtAddress = ActionWithPayload<
+  USER_ACTION_TYPES.UPDATE_USER_DEFUALT_ADDRESS_START,
+  { addressId: string; userId: string }
+>;
+
+export type RemoveAddress = ActionWithPayload<
+  USER_ACTION_TYPES.REMOVE_USER_ADDRESS_START,
+  { removeAddressId: string; userId: string }
+>;
+
+export type UpdateUserAddressStart = ActionWithPayload<
+  USER_ACTION_TYPES.UPDATE_USER_ADDRESS_START,
+  { formDetails: UserAddress; uid: string }
 >;
 
 export type UpdateUserDataSuccess = ActionWithPayload<
@@ -112,6 +129,30 @@ export const signUpSuccess = withMatcher(
 export const updateUserDataStart = withMatcher(
   (formDetails: UserDetailsFormFields, uid: string): UpdateUserDataStart =>
     createAction(USER_ACTION_TYPES.UPDATE_USER_DATA_START, {
+      formDetails,
+      uid,
+    })
+);
+
+export const updateUserDefualtAddress = withMatcher(
+  (addressId: string, userId: string): UpdateUserDefualtAddress =>
+    createAction(USER_ACTION_TYPES.UPDATE_USER_DEFUALT_ADDRESS_START, {
+      addressId,
+      userId,
+    })
+);
+
+export const removeUserAddress = withMatcher(
+  (removeAddressId: string, userId: string): RemoveAddress =>
+    createAction(USER_ACTION_TYPES.REMOVE_USER_ADDRESS_START, {
+      removeAddressId,
+      userId,
+    })
+);
+
+export const updateUserAddressStart = withMatcher(
+  (formDetails: UserAddress, uid: string): UpdateUserAddressStart =>
+    createAction(USER_ACTION_TYPES.UPDATE_USER_ADDRESS_START, {
       formDetails,
       uid,
     })

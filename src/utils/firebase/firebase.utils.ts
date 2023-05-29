@@ -12,6 +12,7 @@ import {
   NextOrObserver,
   sendEmailVerification,
   sendPasswordResetEmail,
+  updateEmail,
 } from 'firebase/auth';
 import {
   getFirestore,
@@ -31,6 +32,8 @@ import {
   DocumentData,
   Timestamp,
   updateDoc,
+  arrayUnion,
+  arrayRemove,
 } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
@@ -622,13 +625,15 @@ export type AddittionalInformation = {
   lastName: string;
   dateOfBirth: Timestamp;
   sendNotification: boolean;
-  addresses: Address[];
+  defualtAddressId: string;
+  addresses: UserAddress[];
   orders: string[];
   favoriteProducts: string[];
   isAdmin: boolean;
 };
 
-export type Address = {
+export type UserAddress = {
+  aid: string;
   firstName: string;
   lastName: string;
   mobile: number;
@@ -671,6 +676,7 @@ export const createUserDocumentFromAuth = async (
         lastName: '',
         dateOfBirth: Timestamp.fromDate(new Date()),
         sendNotification: true,
+        defualtAddressId: '',
         addresses: [],
         orders: [],
         favoriteProducts: [],
@@ -703,10 +709,7 @@ export const createUserDocumentFromAuth = async (
 
   return userSnapshot as QueryDocumentSnapshot<UserData>;
 };
-// email verefication
-export const sendEmailVerificationFirebaseAuth = async (user: User) => {
-  await sendEmailVerification(user);
-};
+
 // reset password
 export const sendPasswordResetEmailFireBase = async (email: string) => {
   try {
@@ -731,7 +734,7 @@ export const createAuthUserWithEmailAndPassword = async (
     email,
     password
   );
-  await sendEmailVerificationFirebaseAuth(userCredentialres.user);
+  await sendEmailVerification(userCredentialres.user);
   return userCredentialres;
 };
 
@@ -745,23 +748,85 @@ export const signInAuthUserWithEmailAndPassword = async (
   return await signInWithEmailAndPassword(auth, email, password);
 };
 
+// update user doc
 export const updateUserDocument = async (
-  userDataForm: UserDetailsFormFields & { uid: string }
+  userDataForm: (
+    | UserDetailsFormFields
+    | UserAddress
+    | { defualtAddressId: string }
+    | { removeAddressId: string }
+  ) & { uid: string }
 ): Promise<UserData | undefined> => {
-  console.log('userDataForm:', userDataForm);
   const userDocRef = doc(db, 'users', userDataForm.uid);
-  try {
-    // const docUpdate = await setDoc(userDocRef, userDataForm, { merge: true });
-    await updateDoc(userDocRef, {
-      firstName: userDataForm.firstName,
-      lastName: userDataForm.lastName,
-      dateOfBirth: userDataForm.dateOfBirth,
-      email: userDataForm.email,
-      sendNotification: userDataForm.sendNotification,
-    });
-  } catch (error) {
-    console.error('Error updating document: ', error);
+  const { uid, ...otherFields } = userDataForm;
+  // string type mean defualt address change
+  if ('defualtAddressId' in userDataForm) {
+    try {
+      await updateDoc(userDocRef, {
+        defualtAddressId: userDataForm.defualtAddressId,
+      });
+    } catch (error) {
+      console.error('Error updating document: ', error);
+    }
   }
+  // update the whole addresses array after delete or change
+  if ('removeAddressId' in userDataForm) {
+    console.log('userDataForm:', userDataForm);
+    const userSnapshot = await getDoc(userDocRef);
+    const user = userSnapshot.data() as UserData;
+    const itemToRemove = user.addresses.find(
+      (address) => address.aid === userDataForm.removeAddressId
+    );
+
+    try {
+      await updateDoc(userDocRef, {
+        addresses: arrayRemove(itemToRemove),
+      });
+    } catch (error) {
+      console.error('Error updating document: ', error);
+    }
+  }
+  // UserAddress type mean new address
+  if ('address' in userDataForm) {
+    try {
+      await updateDoc(userDocRef, {
+        addresses: arrayUnion(otherFields),
+      });
+    } catch (error) {
+      console.error('Error updating document: ', error);
+    }
+  }
+  // UserDetailsForm type mean user change his details
+  if ('sendNotification' in userDataForm) {
+    const userSnapshot = await getDoc(userDocRef);
+    if (userSnapshot.exists()) {
+      const user = userSnapshot.data() as UserData;
+      const preEmail = user.email;
+      try {
+        await updateDoc(userDocRef, {
+          firstName: userDataForm.firstName,
+          lastName: userDataForm.lastName,
+          dateOfBirth: userDataForm.dateOfBirth,
+          email: userDataForm.email,
+          sendNotification: userDataForm.sendNotification,
+        });
+        // checking if the email changed to update firebase auth and send vereficaiton
+        if (preEmail !== userDataForm.email) {
+          // Get current user
+          const user = auth.currentUser;
+          if (user) {
+            // Update user email
+            await updateEmail(user, userDataForm.email);
+            // Send verification email to new email
+            await sendEmailVerification(user);
+          }
+        }
+      } catch (error) {
+        console.error('Error updating document: ', error);
+      }
+    }
+  }
+
   const userSnapshot = await getDoc(userDocRef);
   if (userSnapshot.exists()) {
     const user = userSnapshot.data() as UserData;

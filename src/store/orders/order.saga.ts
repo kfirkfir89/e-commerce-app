@@ -58,13 +58,13 @@ export function* confirmStripePayment({
 }
 
 export function* paymentIntentInit({
-  payload: { amount, card, currentUser, stripe },
+  payload: { amount, element, currentUser, stripe },
 }: CreateOrderStart) {
   const { paymentIntent, error } = yield* call(stripePaymentIntent, amount);
   if (paymentIntent !== undefined && paymentIntent.client_secret !== null) {
     const { client_secret } = paymentIntent;
     yield* call(confirmStripePayment, {
-      card,
+      element,
       currentUser,
       stripe,
       client_secret,

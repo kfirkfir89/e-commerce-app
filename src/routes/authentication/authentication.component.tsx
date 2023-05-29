@@ -47,7 +47,7 @@ const Authentication = () => {
           </div>
 
           {/* forget password modal */}
-          <div className="mt-2">
+          <div className="mt-2 mb-8 bg-white">
             <label
               htmlFor="my-modal-4"
               className="cursor-pointer font-semibold hover:text-blue-400"

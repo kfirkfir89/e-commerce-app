@@ -26,9 +26,7 @@
   html, body, #root{
     @apply h-full w-full bg-white;
   }
-  .testy {
-    height: 100dvi;
-  }
+
   .scrollbarStyle::-webkit-scrollbar {
       @apply w-2;
 
