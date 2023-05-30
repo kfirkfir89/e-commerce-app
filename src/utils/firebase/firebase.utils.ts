@@ -585,10 +585,10 @@ export async function getItemsSearch(): Promise<ItemPreview[]> {
 export async function getItemFromRoute(
   collectionKey: string,
   docKey: string,
-  itemId: string
+  itemSlug: string
 ): Promise<NewItemValues | undefined> {
   const collectionRef = collection(db, collectionKey, docKey, 'items');
-  const itemQuery = query(collectionRef, where('id', '==', itemId));
+  const itemQuery = query(collectionRef, where('slug', '==', itemSlug));
   const itemQuerySnapshot = await getDocs(itemQuery);
   if (itemQuerySnapshot.docs.length > 0) {
     const CategoryItem = itemQuerySnapshot.docs[0].data() as NewItemValues;
@@ -748,6 +748,34 @@ export const signInAuthUserWithEmailAndPassword = async (
   return await signInWithEmailAndPassword(auth, email, password);
 };
 
+// user favortie update depend on if exsist or not ..if exsist remove if not add..
+export const updateUserFavorite = async (itemId: string) => {
+  if (auth.currentUser) {
+    const userDocRef = doc(db, 'users', auth.currentUser.uid);
+    const userSnapshot = await getDoc(userDocRef);
+    if (userSnapshot.exists()) {
+      const user = userSnapshot.data() as UserData;
+
+      if (user.favoriteProducts.includes(itemId)) {
+        try {
+          await updateDoc(userDocRef, {
+            favoriteProducts: arrayRemove(itemId),
+          });
+        } catch (error) {
+          console.error('Error updating document: ', error);
+        }
+      } else {
+        try {
+          await updateDoc(userDocRef, {
+            favoriteProducts: arrayUnion(itemId),
+          });
+        } catch (error) {
+          console.error('Error updating document: ', error);
+        }
+      }
+    }
+  }
+};
 // update user doc
 export const updateUserDocument = async (
   userDataForm: (

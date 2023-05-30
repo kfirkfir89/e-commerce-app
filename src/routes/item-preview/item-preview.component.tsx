@@ -22,7 +22,6 @@ const ItemPreview = () => {
   >() as CategoryRouteParams;
 
   const [product, setProduct] = useState<NewItemValues | undefined>();
-
   const [selectedColorIndex, setSelectedColorIndex] = useState(0);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedSizeOption, setSelectedSizeOption] = useState<SelectOption>({
@@ -40,15 +39,13 @@ const ItemPreview = () => {
 
   const dispatch = useDispatch();
   const location = useLocation();
-  const productId = location.state as string;
-
-  // geting the item by id
+  // geting the item by itemPata(slug)
   const fetchItem = async () => {
     try {
       const resProduct = await getItemFromRoute(
         shopPara,
         subCategoryPara,
-        productId
+        itemPara
       );
       if (resProduct !== undefined) {
         setProduct(resProduct);
@@ -80,7 +77,7 @@ const ItemPreview = () => {
 
   // fetch the product
   useEffect(() => {
-    if (productId) {
+    if (itemPara) {
       const res = fetchItem().then(() => setIsLoadingPage(false));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

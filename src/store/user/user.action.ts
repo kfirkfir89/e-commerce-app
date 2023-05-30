@@ -46,6 +46,11 @@ export type SignUpSuccess = ActionWithPayload<
   { user: User; additionalDetails: AddittionalInformation }
 >;
 
+export type UpdateUserFavoriteProducts = ActionWithPayload<
+  USER_ACTION_TYPES.UPDATE_USER_FAVORITE_PRODUCT,
+  string
+>;
+
 export type UpdateUserDataStart = ActionWithPayload<
   USER_ACTION_TYPES.UPDATE_USER_DATA_START,
   { formDetails: UserDetailsFormFields; uid: string }
@@ -124,6 +129,11 @@ export const signUpStart = withMatcher(
 export const signUpSuccess = withMatcher(
   (user: User, additionalDetails: AddittionalInformation): SignUpSuccess =>
     createAction(USER_ACTION_TYPES.SIGN_UP_SUCCESS, { user, additionalDetails })
+);
+
+export const updateUserFavoriteProducts = withMatcher(
+  (productId: string): UpdateUserFavoriteProducts =>
+    createAction(USER_ACTION_TYPES.UPDATE_USER_FAVORITE_PRODUCT, productId)
 );
 
 export const updateUserDataStart = withMatcher(

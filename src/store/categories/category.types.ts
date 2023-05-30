@@ -1,4 +1,7 @@
-import { ItemPreview, NewItemValues } from '../../components/add-firebase/add-item.component';
+import {
+  ItemPreview,
+  NewItemValues,
+} from '../../components/add-firebase/add-item.component';
 
 export enum CATEGORIES_ACTION_TYPES {
   FETCH_PREVIEW_CATEGORIES_START = 'category/FETCH_PREVIEW_CATEGORIES_START',

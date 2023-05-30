@@ -70,7 +70,7 @@ const CheckoutItem: FC<CheckoutItemsProps> = ({ cartItem }) => {
                   </button>
                 </div>
               </div>
-              <div className="flex flex">
+              <div className="flex">
                 <button
                   onClick={clearItemHandler}
                   type="button"

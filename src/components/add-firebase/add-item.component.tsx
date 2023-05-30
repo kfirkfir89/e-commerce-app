@@ -14,6 +14,7 @@ import { v4 } from 'uuid';
 import slug from 'slug';
 
 import { Timestamp } from 'firebase/firestore';
+import { useSelector } from 'react-redux';
 import { storageFB } from '../../utils/firebase/firebase.utils';
 import {
   ActionWithPayload,
@@ -29,6 +30,7 @@ import UploadInput, {
   ImageColorsFiles,
 } from '../upload-input/upload-input.component';
 import { AddItemStock, SizeStock } from './add-item-stock.component';
+import { selectAddFirebaseReducer } from '../../store/add-firebase/add-firebase.reducer';
 
 // ACTION AND TYPES
 export enum UPLOADIMG_ACTION_TYPES {
@@ -271,6 +273,7 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
   const [selectedTypeOption, setSelectedTypeOption] = useState<SelectOption[]>(
     []
   );
+  const addFirebaseReducer = useSelector(selectAddFirebaseReducer);
   // useRef to reset the productName and price after reset values;
   const productNameRef = useRef<HTMLInputElement>(null);
   const priceRef = useRef<HTMLInputElement>(null);
@@ -414,7 +417,12 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
     }));
     setAddItemValues((prevState) => ({
       ...prevState,
-      id: `${prevState.slug + v4()}`,
+      id: `${
+        prevState.slug +
+        addFirebaseReducer.collectionKey +
+        addFirebaseReducer.docKey +
+        v4()
+      }`,
     }));
     if (mounted === false) {
       dispatch(featchMounted(true));

@@ -8,6 +8,7 @@ import CartDropdown from '../../components/cart-dropdown/cart-dropdown.componene
 import { selectCurrentUser } from '../../store/user/user.selector';
 
 import { ReactComponent as AdminIcon } from '../../assets/manage_accounts.svg';
+import { ReactComponent as FavoriteIcon } from '../../assets/favorite_FILL0_w.svg';
 
 import SideMenu from '../side-menu/side-menu.component';
 import {
@@ -147,6 +148,9 @@ const Navigation = () => {
                         </Link>
                       </div>
                     )}
+                    <NavLink to="favorites" className="mt-[10px] flex px-1">
+                      <FavoriteIcon className="h-8 w-9" />
+                    </NavLink>
 
                     <ProfileDropdown />
                     {/* CART */}

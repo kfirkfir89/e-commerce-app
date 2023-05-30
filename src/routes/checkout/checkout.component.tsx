@@ -130,8 +130,9 @@ const CheckOut = () => {
   return (
     <div className="flex h-full w-full justify-center bg-white">
       <div className="container">
-        <div className="grid h-full w-full justify-items-center md:grid-cols-6">
-          <div className="order-2 flex h-full w-full flex-col md:order-1 md:col-span-4">
+        <div className="grid h-full w-full justify-items-center gap-3 px-2 md:grid-cols-6">
+          {/* payment page */}
+          <div className="order-2 flex h-full w-full flex-col pt-[6px] md:order-1 md:col-span-4">
             {stripePromiseState && clientSecret && (
               <Elements
                 stripe={stripePromiseState!}
@@ -141,10 +142,38 @@ const CheckOut = () => {
               </Elements>
             )}
           </div>
-          <div className="md:order-1 md:col-span-2">
-            <div className="flex h-full max-w-md flex-col items-center justify-start overflow-y-auto bg-white p-2">
+          {/* side cart  */}
+          <div className="h-full w-full md:order-1 md:col-span-2">
+            <div className="flex h-full w-full max-w-md flex-col items-center justify-start overflow-y-auto bg-white">
               {cartItems.map((cartItem) => (
-                <CheckoutItem key={cartItem.colorId} cartItem={cartItem} />
+                <div
+                  key={cartItem.colorId}
+                  className="flex w-full space-x-2 border-b-2 bg-white font-dosis uppercase tracking-wide text-slate-700"
+                >
+                  <img
+                    src={`${cartItem.previewImage}`}
+                    alt={`${cartItem.productName}`}
+                    className="h-full w-1/3 flex-shrink-0 rounded object-cover outline-none dark:border-transparent dark:bg-gray-500"
+                  />
+                  <div className="flex h-full w-full flex-col gap-y-2 px-1 capitalize">
+                    <div className="flex flex-1 flex-col gap-y-1 text-base font-semibold">
+                      <h3>{cartItem.productName}</h3>
+                      <p>$ {cartItem.price}</p>
+                      <div className="grid grid-cols-2 text-sm font-normal">
+                        <div className="flex flex-col">
+                          <span>Color:</span>
+                          <span>Size:</span>
+                          <span>Quantity:</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span>{cartItem.color}</span>
+                          <span>{cartItem.size}</span>
+                          <span>{cartItem.quantity}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               ))}
               <div className="leading-0 my-8 bg-white font-dosis text-sm uppercase tracking-wide text-slate-700">
                 <span className="flex text-lg  font-semibold">

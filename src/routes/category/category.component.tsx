@@ -407,11 +407,17 @@ const Category = () => {
                 ></progress>
                 <button
                   onClick={loadMore}
-                  className={`btn-ghost btn-sm btn my-4 hover:btn-accent ${
+                  className={`btn-md btn my-4 rounded-none shadow hover:btn-accent ${
                     isLoadingItems ? 'loading' : ''
                   } ${countSortOption === products.length ? 'invisible' : ''}`}
                 >
-                  load more
+                  {!isLoadingItems && (
+                    <div className="flex w-full items-center justify-center ">
+                      <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
+                        load more
+                      </span>
+                    </div>
+                  )}
                 </button>
               </div>
             </div>

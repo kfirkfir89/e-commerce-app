@@ -29,36 +29,12 @@ const ifValidPaymentElement = (
   element: StripeElement | null
 ): element is StripeElement => element !== null;
 
-// const element: StripeCardElementOptions = {
-//   iconStyle: 'solid',
-//   style: {
-//     base: {
-//       iconColor: '#c4f0ff',
-//       color: '#ff0',
-//       fontWeight: '500',
-//       fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
-//       fontSize: '16px',
-//       fontSmoothing: 'antialiased',
-
-//       ':-webkit-autofill': {
-//         color: '#fce883',
-//       },
-//       '::placeholder': {
-//         color: '#87BBFD',
-//       },
-//     },
-//     invalid: {
-//       iconColor: '#FFC7EE',
-//       color: '#FFC7EE',
-//     },
-//   },
-// };
 const PaymentForm = () => {
   const stripe = useStripe();
   const elements = useElements();
   const dispatch = useDispatch();
   const amount = useSelector(selectCartTotal);
-  const currentUser = useSelector(selectCurrentUser);
+  const currentUserSelector = useSelector(selectCurrentUser);
   const orderIsLoading = useSelector(selectIsLoadingOrder);
   const orderDetails = useSelector(selectOrderDetails);
 

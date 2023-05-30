@@ -11,6 +11,7 @@ import {
   updateUserDataFailed,
   updateUserAddressStart,
   removeUserAddress,
+  updateUserFavoriteProducts,
 } from './user.action';
 import { UserData } from '../../utils/firebase/firebase.utils';
 
@@ -27,6 +28,33 @@ const INITIAL_STATE: UserState = {
 };
 
 export const userReducer = (state = INITIAL_STATE, action: AnyAction) => {
+  if (updateUserFavoriteProducts.match(action)) {
+    if (state.currentUser !== null) {
+      const currentFavoriteProducts = state.currentUser.favoriteProducts;
+      const productId = action.payload;
+
+      if (currentFavoriteProducts.includes(productId)) {
+        const updatedFavorites = currentFavoriteProducts.filter(
+          (item) => item !== productId
+        );
+        const updatedUser = {
+          ...state.currentUser,
+          favoriteProducts: updatedFavorites,
+        };
+        return { ...state, currentUser: updatedUser };
+      }
+
+      const updatedFavorites = [...currentFavoriteProducts, productId];
+      const updatedUser = {
+        ...state.currentUser,
+        favoriteProducts: updatedFavorites,
+      };
+
+      return { ...state, currentUser: updatedUser };
+    }
+    return state;
+  }
+
   if (updateUserDataStart.match(action)) {
     return { ...state, isLoading: true };
   }
