@@ -23,6 +23,7 @@ export type ShopCategoryRouteParams = {
   shopPara: string;
 };
 
+// pop up message context use to change the message in the nav state
 export const popUpMessageContext = createContext({
   message: '',
   setMessage: (value: { message: string }) => {},
@@ -46,6 +47,18 @@ const Navigation = () => {
     }
   }, [popUpMessage]);
 
+  useEffect(() => {
+    if (isHover) {
+      setIsHover(true);
+    } else {
+      const timeout = setTimeout(() => {
+        setIsHover(false);
+      }, 700);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [isHover]);
+
   // featch only the userKeys(collectionKeys) from the system-data obj
   useEffect(() => {
     const featchUserCollectionKeys = async () => {
@@ -59,7 +72,7 @@ const Navigation = () => {
     const featch = featchUserCollectionKeys();
   }, []);
 
-  // featch all the user categories by userCollectionKeys
+  // featch all the user categories keys by userCollectionKeys
   useEffect(() => {
     const featchUserCollectionKeys = async () => {
       try {
@@ -78,6 +91,7 @@ const Navigation = () => {
   // useLocation is used to check if the current path if the admin dashbord to hide the web navbar
   const path = useLocation();
 
+  // get the sub categories after hover one of the main
   const memorizedCategories = useMemo(
     () => userCategories?.get(hoverSelected),
     [hoverSelected, userCategories]
@@ -146,7 +160,7 @@ const Navigation = () => {
 
             {/* categories navbar */}
             <div className="relative hidden w-full flex-col items-center justify-center bg-white lg:flex">
-              <div className="container p-2">
+              <div className="container pt-2">
                 <div className="flex justify-center">
                   {userCollectionKeys &&
                     userCollectionKeys.keys.map((key) => (
@@ -154,11 +168,11 @@ const Navigation = () => {
                         key={key}
                         className="relative flex flex-col items-center justify-center"
                         onClick={() => setIsHover(!isHover)}
-                        onMouseEnter={() => setIsHover(true)}
                       >
                         <div className="flex justify-center">
                           <div
                             className="static flex px-3"
+                            onMouseLeave={() => setIsHover(false)}
                             onMouseEnter={() => {
                               setIsHover(true);
                               setHoverSelected(key);
@@ -179,15 +193,16 @@ const Navigation = () => {
 
               <div
                 tabIndex={0}
+                onMouseEnter={() => setIsHover(true)}
                 onMouseLeave={() => setIsHover(false)}
-                className={`grid w-full grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${
+                className={`grid w-full grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out  ${
                   isHover ? 'grid-rows-[1fr]' : ''
                 }`}
               >
                 <div className="min-h-0">
                   <div className="flex justify-center">
                     <div className="container flex justify-center bg-white">
-                      <div className="mb-4 flex w-[448px] flex-col px-2">
+                      <div className="mb-8 mt-2 flex w-[448px] flex-col px-2">
                         {memorizedCategories?.map((sc) => (
                           <div key={sc} className="flex">
                             <div className="static flex justify-start px-3">

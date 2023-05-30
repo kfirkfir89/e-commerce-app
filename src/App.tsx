@@ -24,6 +24,7 @@ import UserAddressBook from './routes/user-profile/user-address-book.component';
 import UserOrders from './routes/user-profile/user-orders.component';
 import UserProfile from './routes/user-profile/user-profile.component';
 import UserAccount from './routes/user-profile/user-account.component';
+import Cart from './routes/cart/cart.component';
 
 const Home = lazy(() => import('./routes/home/home.component'));
 const Authentication = lazy(
@@ -60,6 +61,7 @@ const App = () => {
         </Route>
 
         <Route path="checkout" element={<CheckOut />} />
+        <Route path="cart" element={<Cart />} />
         <Route path="payment-succeeded" element={<PaymentSucceeded />} />
         <Route path="search-results" element={<SearchResults />} />
 

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
   selectCartCount,
@@ -18,7 +18,6 @@ import { CartItemPreview } from '../../store/cart/cart.types';
 
 const CartDropdown = () => {
   const cartItems = useSelector(selectCartItems);
-  const isCartOpen = useSelector(selectIsCartOpen);
   const cartTotal = useSelector(selectCartTotal);
   const cartCount = useSelector(selectCartCount);
 
@@ -28,12 +27,13 @@ const CartDropdown = () => {
   const [isIconHover, setIsIconHover] = useState(false);
   const [isHover, setIsHover] = useState(false);
 
+  // reset the previous order details if exsist before go to checkout
   const goToCheckOutHandler = useCallback(() => {
-    dispatch(setIsCartOpen(!isCartOpen));
     dispatch(resetOrderState());
     navigate('/checkout');
   }, []);
 
+  // cartdropdown open and close hover
   useEffect(() => {
     if (isHover) {
       setIsIconHover(true);
@@ -46,6 +46,7 @@ const CartDropdown = () => {
     }
   }, [isHover]);
 
+  // remove item from cart
   const clearItemHandler = (item: CartItemPreview) =>
     dispatch(clearItemFromCart(cartItems, item));
 
@@ -172,7 +173,17 @@ const CartDropdown = () => {
                 </p>
               </div>
 
-              <div className="bg-gray-100 p-2 pb-6 pt-0">
+              <div className="flex flex-col gap-4 bg-gray-100 p-2 pb-6 pt-0">
+                <button className="btn w-full rounded-none p-0 shadow-sm">
+                  <Link
+                    to="/cart"
+                    className="flex h-full w-full items-center justify-center"
+                  >
+                    <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
+                      my bag
+                    </span>
+                  </Link>
+                </button>
                 <button
                   onClick={goToCheckOutHandler}
                   className="btn w-full rounded-none shadow-sm"

@@ -29,30 +29,30 @@ const ifValidPaymentElement = (
   element: StripeElement | null
 ): element is StripeElement => element !== null;
 
-const element: StripeCardElementOptions = {
-  iconStyle: 'solid',
-  style: {
-    base: {
-      iconColor: '#c4f0ff',
-      color: '#ff0',
-      fontWeight: '500',
-      fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
-      fontSize: '16px',
-      fontSmoothing: 'antialiased',
+// const element: StripeCardElementOptions = {
+//   iconStyle: 'solid',
+//   style: {
+//     base: {
+//       iconColor: '#c4f0ff',
+//       color: '#ff0',
+//       fontWeight: '500',
+//       fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
+//       fontSize: '16px',
+//       fontSmoothing: 'antialiased',
 
-      ':-webkit-autofill': {
-        color: '#fce883',
-      },
-      '::placeholder': {
-        color: '#87BBFD',
-      },
-    },
-    invalid: {
-      iconColor: '#FFC7EE',
-      color: '#FFC7EE',
-    },
-  },
-};
+//       ':-webkit-autofill': {
+//         color: '#fce883',
+//       },
+//       '::placeholder': {
+//         color: '#87BBFD',
+//       },
+//     },
+//     invalid: {
+//       iconColor: '#FFC7EE',
+//       color: '#FFC7EE',
+//     },
+//   },
+// };
 const PaymentForm = () => {
   const stripe = useStripe();
   const elements = useElements();
@@ -63,6 +63,7 @@ const PaymentForm = () => {
   const orderDetails = useSelector(selectOrderDetails);
 
   const [isProcessing, setIsProcessing] = useState(false);
+  const [message, setMessage] = useState('');
   const shouldRedirect = useMemo(() => {
     if (orderDetails !== null) {
       return true;
@@ -82,41 +83,35 @@ const PaymentForm = () => {
 
     setIsProcessing(true);
 
-    const { error } = await stripe.confirmPayment({
+    const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {
         return_url: 'http://localhost:8888/',
       },
+      redirect: 'if_required',
     });
 
-    if (error) {
-      console.log('error:', error);
-    } else {
-      console.log('veryyyyyyyyyyyyy veryvery');
+    if (error && error.message) {
+      setMessage(error.message);
+    } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+      setMessage('weeeeee payment succeedede');
     }
     setIsProcessing(false);
     // dispatch(createOrderStart(amount, paymentElement, currentUser, stripe));
   };
 
   return (
-    // <div className="flex h-80 flex-col items-center justify-center">
-    //   <form className="container bg-gray-100" onSubmit={paymentHandler}>
-    //     <h2>Credit Card Payment</h2>
-    //     <PaymentElement />
-    //     <CardElement options={element} />
-    //     <button className={`btn-accent btn ${orderIsLoading ? 'loading' : ''}`}>
-    //       Pay Now
-    //     </button>
-    //     {shouldRedirect && <Navigate to="/payment-succeeded" />}
-    //   </form>
-    // </div>
     <div className="flex h-80 flex-col items-center justify-center">
-      <form className="container bg-gray-100" onSubmit={paymentHandler}>
+      <form
+        className="container flex flex-col bg-gray-100"
+        onSubmit={paymentHandler}
+      >
         <h2>Credit Card Payment</h2>
         <PaymentElement />
         <button className={`btn-accent btn ${isProcessing ? 'loading' : ''}`}>
           Pay Now
         </button>
+        <span className="text-lg font-semibold text-slate-500">{message}</span>
         {shouldRedirect && <Navigate to="/payment-succeeded" />}
       </form>
     </div>
