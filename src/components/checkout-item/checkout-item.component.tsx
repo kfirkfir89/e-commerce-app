@@ -34,7 +34,7 @@ const CheckoutItem: FC<CheckoutItemsProps> = ({ cartItem }) => {
       <img
         src={`${cartItem.previewImage}`}
         alt={`${cartItem.productName}`}
-        className="h-full w-1/3 flex-shrink-0 rounded object-cover outline-none dark:border-transparent dark:bg-gray-500"
+        className="h-full w-1/3 flex-shrink-0 rounded object-cover outline-none"
       />
       <div className="flex h-full w-full flex-col gap-y-2 px-1 capitalize">
         <div className="flex h-full w-full text-base">

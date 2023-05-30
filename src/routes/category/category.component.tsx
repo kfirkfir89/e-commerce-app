@@ -346,12 +346,16 @@ const Category = () => {
                 onChangeColor={onSortChangeColorHandler}
                 valueOption={sortOption}
               />
-              <div className="flex justify-center">
+              <div className="absolute bottom-24 flex w-full justify-center p-5">
                 <button
                   onClick={filterToggleHandler}
-                  className="left- btn-primary btn absolute bottom-24"
+                  className="btn w-full rounded-none shadow-sm"
                 >
-                  close
+                  <div className="flex w-full items-center justify-center ">
+                    <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
+                      close
+                    </span>
+                  </div>
                 </button>
               </div>
             </div>

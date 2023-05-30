@@ -97,9 +97,9 @@ const CheckOut = () => {
   }, []);
 
   useEffect(() => {
-    const getClientSecret = async () => {
+    const getClientSecret = async (amount: number) => {
       try {
-        const res = await stripePaymentIntent(10000);
+        const res = await stripePaymentIntent(amount);
         if (res && res.paymentIntent) {
           setClientSecret(res.paymentIntent.client_secret as string);
         }
@@ -107,7 +107,10 @@ const CheckOut = () => {
         console.log('error:', error);
       }
     };
-    const res = getClientSecret();
+    if (cartTotal) {
+      const amount: number = cartTotal;
+      const res = getClientSecret(amount);
+    }
   }, [cartTotal]);
 
   useEffect(() => {
@@ -153,7 +156,7 @@ const CheckOut = () => {
                   <img
                     src={`${cartItem.previewImage}`}
                     alt={`${cartItem.productName}`}
-                    className="h-full w-1/3 flex-shrink-0 rounded object-cover outline-none dark:border-transparent dark:bg-gray-500"
+                    className="h-full w-1/3 flex-shrink-0 rounded object-cover outline-none"
                   />
                   <div className="flex h-full w-full flex-col gap-y-2 px-1 capitalize">
                     <div className="flex flex-1 flex-col gap-y-1 text-base font-semibold">

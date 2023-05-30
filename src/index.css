@@ -23,6 +23,10 @@
 }
 
 @layer utilities {
+  :root {
+    color-scheme: only light;
+  }
+  
   html, body, #root{
     @apply h-full w-full bg-white;
   }

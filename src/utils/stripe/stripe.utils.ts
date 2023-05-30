@@ -32,6 +32,7 @@ export const stripePromise = loadStripe(
 export const stripePaymentIntent = async (
   amount: number
 ): Promise<PaymentIntentResult | undefined> => {
+  console.log('amounttttttttttttttttttttttttt:', amount);
   try {
     const response = await fetch('/.netlify/functions/create-payment-intent', {
       method: 'post',
@@ -51,28 +52,29 @@ export const stripePaymentIntent = async (
   }
 };
 
-export const stripePaymentConfirm = async (
-  amount: number
-): Promise<PaymentIntentResult | undefined> => {
-  try {
-    const response = await fetch('/.netlify/functions/create-payment-intent', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ amount: amount * 100 }),
-    });
-    console.log('response:', response);
-    if (response.ok) {
-      const res: PaymentIntentResult = await response.json();
-      return res;
-    }
-    console.error('Error: ', response.status, response.statusText);
-  } catch (error) {
-    console.log('error:', error);
-  }
-};
+// export const stripePaymentConfirm = async (
+//   amount: number
+// ): Promise<PaymentIntentResult | undefined> => {
+//   try {
+//     const response = await fetch('/.netlify/functions/create-payment-intent', {
+//       method: 'post',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ amount: amount * 100 }),
+//     });
+//     console.log('response:', response);
+//     if (response.ok) {
+//       const res: PaymentIntentResult = await response.json();
+//       return res;
+//     }
+//     console.error('Error: ', response.status, response.statusText);
+//   } catch (error) {
+//     console.log('error:', error);
+//   }
+// };
 
+// cart option (old way to do it)
 // export const stripePaymentIntent = (
 //   amount: number
 // ): Promise<PaymentIntentResult> => {
@@ -110,36 +112,3 @@ export const stripePaymentConfirm = async (
 //       });
 //   }) as Promise<PaymentIntentResult>;
 // };
-
-/* 
-export const stripePaymentIntent = async ({amount}) => {
-    
-    const response = await fetch('/.netlify/functions/create-payment-intent', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ amount: amount * 100 }),
-    }).then(res => {return res.json()});
-  
-    console.log('response result:',response);
-      
-    const {paymentIntent: { client_secret }} = response;
-
-    const paymentResult = await stripe.confirmCardPayment(client_secret, {
-      payment_method: {
-        card: card,
-        billing_details: {
-          name: currentUser ? currentUser.displayName : 'Guest',
-        }
-      }
-    });
-    console.log('payment result:',paymentResult);
-
-    if(paymentResult.error){
-      return paymentResult.error;
-    }
-    else if(paymentResult.paymentIntent.status === 'succeeded'){
-      return paymentResult.paymentIntent;
-    }
-}; */

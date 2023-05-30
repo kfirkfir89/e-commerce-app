@@ -29,6 +29,7 @@ const CartDropdown = () => {
 
   // reset the previous order details if exsist before go to checkout
   const goToCheckOutHandler = useCallback(() => {
+    setIsIconHover(false);
     dispatch(resetOrderState());
     navigate('/checkout');
   }, []);
@@ -105,7 +106,7 @@ const CartDropdown = () => {
                             <img
                               src={`${item.previewImage}`}
                               alt={`${item.productName}`}
-                              className="w-1/4 flex-shrink-0 rounded object-cover outline-none dark:border-transparent dark:bg-gray-500"
+                              className="w-1/4 flex-shrink-0 rounded object-cover outline-none"
                             />
                             <div className="flex w-full flex-col gap-y-2 px-2 capitalize">
                               <div className="flex w-full text-base">
@@ -128,26 +129,16 @@ const CartDropdown = () => {
 
                               <div className="grid grid-cols-4 font-normal">
                                 <div className="col-span-1 flex flex-col">
-                                  <span className="text-sm dark:text-gray-400">
-                                    Quantity:
-                                  </span>
-                                  <span className="text-sm dark:text-gray-400">
-                                    Color:
-                                  </span>
-                                  <span className="text-sm dark:text-gray-400">
-                                    Size:
-                                  </span>
+                                  <span className="text-sm">Quantity:</span>
+                                  <span className="text-sm">Color:</span>
+                                  <span className="text-sm">Size:</span>
                                 </div>
                                 <div className="col-span-3 flex flex-col">
-                                  <span className="text-sm dark:text-gray-400">
+                                  <span className="text-sm">
                                     {item.quantity}
                                   </span>
-                                  <span className="text-sm dark:text-gray-400">
-                                    {item.color}
-                                  </span>
-                                  <span className="text-sm dark:text-gray-400">
-                                    {item.size}
-                                  </span>
+                                  <span className="text-sm">{item.color}</span>
+                                  <span className="text-sm">{item.size}</span>
                                 </div>
                               </div>
                             </div>
@@ -174,7 +165,10 @@ const CartDropdown = () => {
               </div>
 
               <div className="flex flex-col gap-4 bg-gray-100 p-2 pb-6 pt-0">
-                <button className="btn w-full rounded-none p-0 shadow-sm">
+                <button
+                  onClick={() => setIsIconHover(false)}
+                  className="btn h-full w-full rounded-none p-0 shadow-sm"
+                >
                   <Link
                     to="/cart"
                     className="flex h-full w-full items-center justify-center"
@@ -186,9 +180,9 @@ const CartDropdown = () => {
                 </button>
                 <button
                   onClick={goToCheckOutHandler}
-                  className="btn w-full rounded-none shadow-sm"
+                  className="btn h-full w-full rounded-none shadow-sm"
                 >
-                  <div className="flex w-full items-center justify-center ">
+                  <div className="flex h-full w-full items-center justify-center ">
                     <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
                       CHECK OUT
                     </span>
