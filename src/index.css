@@ -23,12 +23,13 @@
 }
 
 @layer utilities {
-  :root {
+  :root, html, body, {
     color-scheme: only light;
   }
   
   html, body, #root{
     @apply h-full w-full bg-white;
+    color-scheme: only light;
   }
 
   .scrollbarStyle::-webkit-scrollbar {

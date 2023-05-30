@@ -286,7 +286,7 @@ const Category = () => {
   };
 
   return (
-    <>
+    <div className="bg-white">
       {/* banner */}
       <div className="mb-4 flex justify-center ">
         <div className="container">
@@ -428,7 +428,7 @@ const Category = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
