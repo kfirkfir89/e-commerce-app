@@ -118,11 +118,8 @@ const UserDetails = () => {
 
   return (
     <div className="flex w-full flex-col items-center justify-center">
-      <h1 className="mb-4 flex  justify-center p-6 font-smoochSans text-lg font-semibold uppercase tracking-wide">
-        my details
-      </h1>
-      <div className="w-2/3">
-        <form className="flex flex-col gap-y-6 sm:px-4" onSubmit={handleSubmit}>
+      <div className="w-full max-w-md">
+        <form className="flex flex-col gap-y-6 py-4" onSubmit={handleSubmit}>
           <FormInput
             type="text"
             name="firstName"

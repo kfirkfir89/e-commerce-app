@@ -16,6 +16,7 @@ const UserProfile = () => {
   const location = useLocation();
   const currentUserSelector = useSelector(selectCurrentUser);
   const [isOpenMenu, setIsOpenMenu] = useState(true);
+  const [outletTitle, setOutletTitle] = useState('');
 
   // shortcut of user name for avatar
   let avatarNameShortcut = '';
@@ -26,22 +27,9 @@ const UserProfile = () => {
   }
 
   useEffect(() => {
-    // if (currentUserSelector) {
-    //   setUser(currentUserSelector);
-    // }
-    // const fetch = async () => {
-    //   try {
-    //     const res = await getCurrentUser();
-    //     if (res !== null) {
-    //       res;
-    //       setUserAuth(res);
-    //     }
-    //   } catch (error) {
-    //     console.log('error:', error);
-    //   }
-    // };
-    // const res = fetch();
-  }, []);
+    const title = location.pathname.split('/').pop()!.replace(/-/g, ' ');
+    setOutletTitle(title);
+  }, [location.pathname]);
 
   const signOutUser = () => dispatch(signOutStart());
 
@@ -52,13 +40,13 @@ const UserProfile = () => {
   const setOptionHandler = () => setIsOpenMenu(true);
 
   return (
-    <div className="flex h-full w-full flex-col items-center">
+    <div className="flex h-full w-full flex-col items-center ">
       <div className="container h-full max-w-6xl">
         <h2 className="mb-6 text-center text-2xl font-semibold capitalize text-slate-700 lg:m-2 lg:mb-8">
           My Account
         </h2>
 
-        <div className="relative flex h-full w-full gap-2 px-4 md:h-5/6">
+        <div className="relative flex h-full w-full gap-2 px-4 md:h-22/24 ">
           {/* left/ menu side  */}
           <div className="relative flex w-1/3 flex-1 flex-col text-center font-smoochSans text-sm capitalize tracking-wider text-slate-700 md:max-w-xs md:flex-initial">
             <div className="relative mb-4 flex h-28 bg-gray-300 p-4 pb-6 shadow-sm md:mb-2">
@@ -163,7 +151,7 @@ const UserProfile = () => {
             className={`
             ${
               isOpenMenu
-                ? 'absolute left-0 h-full w-full md:static  md:left-auto'
+                ? 'absolute left-0 h-full w-full md:static md:left-auto'
                 : 'hidden'
             }
              flex-1 bg-gray-100 font-smoochSans text-sm capitalize tracking-wider text-slate-700 shadow-sm`}
@@ -175,7 +163,14 @@ const UserProfile = () => {
               >
                 <Close className="m-1 h-9 w-9" />
               </button>
-              <div className="h-full w-full">
+              <div className="flex h-full w-full flex-col">
+                <h1
+                  className={`${
+                    outletTitle === 'my account' ? 'hidden' : ''
+                  } flex justify-center p-6 font-smoochSans text-lg font-semibold uppercase tracking-wide`}
+                >
+                  my {outletTitle}
+                </h1>
                 <Outlet />
               </div>
             </div>

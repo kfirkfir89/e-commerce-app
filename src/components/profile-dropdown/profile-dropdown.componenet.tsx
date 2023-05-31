@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { ReactComponent as ProfileIcon } from '../../assets/person_FILL0.svg';
 import { ReactComponent as LogoutIcon } from '../../assets/logout_FILL0.svg';
@@ -17,6 +17,8 @@ const ProfileDropdown = () => {
   const [isIconHover, setIsIconHover] = useState(false);
   const [isHover, setIsHover] = useState(false);
   const signOutUser = () => dispatch(signOutStart());
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isHover) {
@@ -34,7 +36,12 @@ const ProfileDropdown = () => {
     <div className="relative z-[100]">
       <button
         className="relative flex flex-col items-center justify-center"
-        onClick={() => setIsIconHover(!isIconHover)}
+        onClick={() => {
+          selectCurrentUser !== null
+            ? navigate('/my-account')
+            : navigate('/authentication');
+          setIsIconHover(false);
+        }}
         onMouseEnter={() => setIsIconHover(true)}
         onMouseLeave={() => setIsIconHover(false)}
       >

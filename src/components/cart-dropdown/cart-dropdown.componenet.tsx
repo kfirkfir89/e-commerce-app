@@ -28,11 +28,11 @@ const CartDropdown = () => {
   const [isHover, setIsHover] = useState(false);
 
   // reset the previous order details if exsist before go to checkout
-  const goToCheckOutHandler = useCallback(() => {
+  const goToCheckOutHandler = () => {
     setIsIconHover(false);
     dispatch(resetOrderState());
     navigate('/checkout');
-  }, []);
+  };
 
   // cartdropdown open and close hover
   useEffect(() => {
@@ -55,7 +55,10 @@ const CartDropdown = () => {
     <div className="relative z-[100]">
       <button
         className="relative flex flex-col items-center justify-center"
-        onClick={() => setIsIconHover(!isIconHover)}
+        onClick={() => {
+          navigate('/cart');
+          setIsIconHover(false);
+        }}
         onMouseEnter={() => setIsIconHover(true)}
         onMouseLeave={() => setIsIconHover(false)}
       >
@@ -165,20 +168,17 @@ const CartDropdown = () => {
               </div>
 
               <div className="flex flex-col gap-4 bg-gray-100 p-2 pb-6 pt-0">
-                <button
+                <Link
                   onClick={() => setIsIconHover(false)}
-                  className="btn h-full w-full rounded-none p-0 shadow-sm"
+                  to="/cart"
+                  className="btn flex h-full w-full items-center justify-center rounded-none p-0 shadow-sm"
                 >
-                  <Link
-                    to="/cart"
-                    className="flex h-full w-full items-center justify-center"
-                  >
-                    <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
-                      my bag
-                    </span>
-                  </Link>
-                </button>
+                  <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
+                    my bag
+                  </span>
+                </Link>
                 <button
+                  disabled={cartItems.length === 0}
                   onClick={goToCheckOutHandler}
                   className="btn h-full w-full rounded-none shadow-sm"
                 >

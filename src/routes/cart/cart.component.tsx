@@ -39,7 +39,10 @@ const Cart = () => {
           </div>
         </div>
         <div className="container mt-4 max-w-2xl">
-          <button className="btn w-full rounded-none p-0 shadow-sm">
+          <button
+            className="btn w-full rounded-none p-0 shadow-sm"
+            disabled={cartItems.length === 0}
+          >
             <Link
               to="/checkout"
               className="flex h-full w-full items-center justify-center"

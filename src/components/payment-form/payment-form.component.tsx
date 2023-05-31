@@ -40,6 +40,7 @@ const PaymentForm = () => {
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [message, setMessage] = useState('');
+
   const shouldRedirect = useMemo(() => {
     if (orderDetails !== null) {
       return true;
@@ -77,16 +78,25 @@ const PaymentForm = () => {
   };
 
   return (
-    <div className="flex h-80 flex-col items-center justify-center">
+    <div className="w-full max-w-2xl px-4">
       <form
-        className="container flex flex-col bg-gray-100"
+        className="container flex flex-col  gap-2 bg-gray-100 p-2"
         onSubmit={paymentHandler}
       >
-        <h2>Credit Card Payment</h2>
         <PaymentElement />
-        <button className={`btn-accent btn ${isProcessing ? 'loading' : ''}`}>
-          Pay Now
-        </button>
+        <div className="flex justify-center ">
+          <button
+            className={`${
+              isProcessing ? 'loading' : ''
+            }  btn mt-4 w-full max-w-md rounded-none shadow-sm`}
+          >
+            <div className="flex w-full items-center justify-center ">
+              <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
+                Pay now
+              </span>
+            </div>
+          </button>
+        </div>
         <span className="text-lg font-semibold text-slate-500">{message}</span>
         {shouldRedirect && <Navigate to="/payment-succeeded" />}
       </form>

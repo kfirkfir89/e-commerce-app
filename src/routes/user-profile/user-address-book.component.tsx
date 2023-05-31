@@ -97,191 +97,192 @@ const UserAddressBook = () => {
   };
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center">
-      <h1 className="mb-4 flex  justify-center p-6 font-smoochSans text-lg font-semibold uppercase tracking-wide">
-        address book
-      </h1>
-      <div className="mb-8 flex w-full max-w-xs">
-        {/* add address modal */}
-        <div className="mt-2 mb-4 w-full bg-white">
-          <label
-            htmlFor="my-modal-4"
-            className="btn w-full cursor-pointer rounded-none shadow-sm"
-          >
-            <div className={`flex w-full items-center justify-center `}>
-              <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
-                Add New Address
-              </span>
-            </div>
-          </label>
-
-          <input
-            ref={modalRef}
-            type="checkbox"
-            id="my-modal-4"
-            className="modal-toggle"
-          />
-          <label htmlFor="my-modal-4" className="modal cursor-pointer">
-            <label className="modal-box relative" htmlFor="">
-              <h3 className="mb-4 text-lg font-bold tracking-wider">
-                Add New Address
-              </h3>
-              <form
-                className="flex flex-col gap-y-6 sm:px-4"
-                onSubmit={handleSubmit}
-              >
-                <FormInput
-                  type="text"
-                  name="firstName"
-                  label="First Name"
-                  pattern="^[A-Za-z0-9]{3,16}$"
-                  onChange={onChange}
-                  value={formFields.firstName}
-                  required
-                  errorMessage="First name should be 3-16 characters and shouldn't include any special character!"
-                />
-                <FormInput
-                  type="text"
-                  name="lastName"
-                  label="Last Name"
-                  pattern="^[A-Za-z0-9]{3,16}$"
-                  onChange={onChange}
-                  value={formFields.lastName}
-                  required
-                  errorMessage="Last name should be 3-16 characters and shouldn't include any special character!"
-                />
-                <FormInput
-                  type="tel"
-                  name="mobile"
-                  label="Mobile"
-                  onChange={onChange}
-                  value={formFields.mobile ? formFields.mobile : ''}
-                  required
-                  errorMessage="It should be a valid mobile address!"
-                />
-                <FormInput
-                  type="text"
-                  name="country"
-                  label="Country"
-                  pattern="^[A-Za-z0-9\s\-._]{3,32}$"
-                  onChange={onChange}
-                  value={formFields.country}
-                  required
-                  errorMessage="country should be 3-24 characters and shouldn't include only letters!"
-                />
-                <FormInput
-                  type="text"
-                  name="address"
-                  label="Address"
-                  pattern="^[A-Za-z0-9\s\-._]{3,32}$"
-                  onChange={onChange}
-                  value={formFields.address}
-                  required
-                  errorMessage="address should be 3-32 characters!"
-                />
-                <FormInput
-                  type="text"
-                  name="city"
-                  label="City"
-                  pattern="^[A-Za-z0-9\s\-._]{3,32}$"
-                  onChange={onChange}
-                  value={formFields.city}
-                  required
-                  errorMessage="address should be 3-32 characters!"
-                />
-                <FormInput
-                  type="text"
-                  name="state"
-                  label="State"
-                  pattern="^[A-Za-z0-9]{2,24}$"
-                  onChange={onChange}
-                  value={formFields.state}
-                  required
-                  errorMessage="address should be 3-24 characters!"
-                />
-                <FormInput
-                  type="number"
-                  name="postcode"
-                  label="Postcode"
-                  pattern="^[0-9]{3,8}$"
-                  onChange={onChange}
-                  value={formFields.postcode ? formFields.postcode : ''}
-                  required
-                  errorMessage="It should be a valid postcode!"
-                />
-                <button
-                  type="submit"
-                  className={`${
-                    currentUserIsLoading ? 'loading' : ''
-                  } btn mt-4 w-full rounded-none shadow-sm`}
-                >
-                  <div
-                    className={`${
-                      currentUserIsLoading ? 'hidden' : ''
-                    } flex w-full items-center justify-center `}
-                  >
-                    <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
-                      Add Address
-                    </span>
-                  </div>
-                </button>
-              </form>
+    <div className="relative flex h-full w-full flex-col items-center">
+      <div className="z-50 w-full">
+        <div className="flex w-full ">
+          {/* add address modal */}
+          <div className="flex w-full justify-center bg-gray-100">
+            <label
+              htmlFor="my-modal-4"
+              className="btn w-full max-w-md cursor-pointer rounded-none shadow-sm"
+            >
+              <div className={`flex w-full items-center justify-center `}>
+                <span className="leading-0 flex  font-smoochSans text-xs font-semibold uppercase tracking-widest">
+                  Add New Address
+                </span>
+              </div>
             </label>
-          </label>
+
+            <input
+              ref={modalRef}
+              type="checkbox"
+              id="my-modal-4"
+              className="modal-toggle"
+            />
+            <label htmlFor="my-modal-4" className="modal cursor-pointer">
+              <label className="modal-box relative" htmlFor="">
+                <h3 className="mb-4 text-lg font-bold tracking-wider">
+                  Add New Address
+                </h3>
+                <form
+                  className="flex flex-col gap-y-6 sm:px-4"
+                  onSubmit={handleSubmit}
+                >
+                  <FormInput
+                    type="text"
+                    name="firstName"
+                    label="First Name"
+                    pattern="^[A-Za-z0-9]{3,16}$"
+                    onChange={onChange}
+                    value={formFields.firstName}
+                    required
+                    errorMessage="First name should be 3-16 characters and shouldn't include any special character!"
+                  />
+                  <FormInput
+                    type="text"
+                    name="lastName"
+                    label="Last Name"
+                    pattern="^[A-Za-z0-9]{3,16}$"
+                    onChange={onChange}
+                    value={formFields.lastName}
+                    required
+                    errorMessage="Last name should be 3-16 characters and shouldn't include any special character!"
+                  />
+                  <FormInput
+                    type="tel"
+                    name="mobile"
+                    label="Mobile"
+                    onChange={onChange}
+                    value={formFields.mobile ? formFields.mobile : ''}
+                    required
+                    errorMessage="It should be a valid mobile address!"
+                  />
+                  <FormInput
+                    type="text"
+                    name="country"
+                    label="Country"
+                    pattern="^[A-Za-z0-9\s\-._]{3,32}$"
+                    onChange={onChange}
+                    value={formFields.country}
+                    required
+                    errorMessage="country should be 3-24 characters and shouldn't include only letters!"
+                  />
+                  <FormInput
+                    type="text"
+                    name="address"
+                    label="Address"
+                    pattern="^[A-Za-z0-9\s\-._]{3,32}$"
+                    onChange={onChange}
+                    value={formFields.address}
+                    required
+                    errorMessage="address should be 3-32 characters!"
+                  />
+                  <FormInput
+                    type="text"
+                    name="city"
+                    label="City"
+                    pattern="^[A-Za-z0-9\s\-._]{3,32}$"
+                    onChange={onChange}
+                    value={formFields.city}
+                    required
+                    errorMessage="address should be 3-32 characters!"
+                  />
+                  <FormInput
+                    type="text"
+                    name="state"
+                    label="State"
+                    pattern="^[A-Za-z0-9]{2,24}$"
+                    onChange={onChange}
+                    value={formFields.state}
+                    required
+                    errorMessage="address should be 3-24 characters!"
+                  />
+                  <FormInput
+                    type="number"
+                    name="postcode"
+                    label="Postcode"
+                    pattern="^[0-9]{3,8}$"
+                    onChange={onChange}
+                    value={formFields.postcode ? formFields.postcode : ''}
+                    required
+                    errorMessage="It should be a valid postcode!"
+                  />
+                  <button
+                    type="submit"
+                    className={`${
+                      currentUserIsLoading ? 'loading' : ''
+                    } btn mt-4 w-full rounded-none shadow-sm`}
+                  >
+                    <div
+                      className={`${
+                        currentUserIsLoading ? 'hidden' : ''
+                      } flex w-full items-center justify-center `}
+                    >
+                      <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
+                        Add Address
+                      </span>
+                    </div>
+                  </button>
+                </form>
+              </label>
+            </label>
+          </div>
         </div>
       </div>
       {/* exsisting addresess */}
-      <div className="relative flex h-full w-full  flex-col gap-4 p-4">
-        {currentUserIsLoading && (
-          <div className="absolute z-50 h-full w-full bg-gray-400 opacity-50">
-            <Spinner />
-          </div>
-        )}
-        {userAddressBook &&
-          userAddressBook.map((address, index) => (
-            <div
-              key={`${address.aid}+${v4()}`}
-              className="flex w-full  bg-white p-4"
-            >
-              <div className="flex w-full flex-col gap-y-1 p-2 px-2 font-smoochSans tracking-widest">
-                <span>
-                  {address.firstName} {address.lastName}
-                </span>
-                <span>{address.address}</span>
-                <span>{address.city}</span>
-                <span>{address.country}</span>
-                <span>{address.postcode}</span>
-                <span>{address.state}</span>
-                <span>{address.mobile}</span>
-              </div>
-              <div className="flex flex-col items-end  whitespace-nowrap">
-                <button
-                  onClick={() => removeAddressHandler(address.aid)}
-                  type="button"
-                  className="mr-1 flex items-center justify-center"
-                >
-                  <span className="pr-2">Delete</span>
-                  <DeleteIcon className="w-7" />
-                </button>
-                {currentUserSelector?.defualtAddressId === address.aid ? (
-                  <label className="mr-[6px] flex items-center justify-center">
-                    <span className="pr-2 font-semibold text-green-600">
-                      Defualt Option
-                    </span>
-                  </label>
-                ) : (
-                  <label className="mr-[6px] flex items-center justify-center">
-                    <span className="pr-2">Set Defualt</span>
-                    <input
-                      type="checkbox"
-                      onChange={() => checkboxDefualtHandler(index)}
-                      className="checkbox-accent checkbox"
-                    />
-                  </label>
-                )}
-              </div>
+      <div className="absolute flex h-full w-full pt-20 pb-4">
+        <div className="scrollbarStyle relative flex h-full w-full flex-col gap-4 overflow-y-auto px-4">
+          {currentUserIsLoading && (
+            <div className="absolute z-50 flex h-full w-full flex-col items-center justify-center bg-gray-400 opacity-50">
+              <Spinner />
             </div>
-          ))}
+          )}
+          {userAddressBook &&
+            userAddressBook.map((address, index) => (
+              <div
+                key={`${address.aid}+${v4()}`}
+                className="flex w-full flex-col bg-white p-4"
+              >
+                <div className="flex w-full flex-col gap-y-1 p-2 px-2 font-smoochSans tracking-widest">
+                  <span>
+                    {address.firstName} {address.lastName}
+                  </span>
+                  <span>{address.address}</span>
+                  <span>{address.city}</span>
+                  <span>{address.country}</span>
+                  <span>{address.postcode}</span>
+                  <span>{address.state}</span>
+                  <span>{address.mobile}</span>
+                </div>
+                <div className="mt-2 grid grid-cols-2 whitespace-nowrap bg-gray-100">
+                  <button
+                    onClick={() => removeAddressHandler(address.aid)}
+                    type="button"
+                    className="mr-1 flex items-center justify-center"
+                  >
+                    <span className="pr-2">Delete</span>
+                    <DeleteIcon className="w-7" />
+                  </button>
+                  {currentUserSelector?.defualtAddressId === address.aid ? (
+                    <label className="mr-[6px] flex items-center justify-center">
+                      <span className="pr-2 font-semibold text-green-600">
+                        Defualt Option
+                      </span>
+                    </label>
+                  ) : (
+                    <label className="mr-[6px] flex items-center justify-center">
+                      <span className="pr-2">Set Defualt</span>
+                      <input
+                        type="checkbox"
+                        onChange={() => checkboxDefualtHandler(index)}
+                        className="checkbox-accent checkbox"
+                      />
+                    </label>
+                  )}
+                </div>
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );

@@ -238,7 +238,7 @@ const Navigation = () => {
         </div>
       )}
       <div
-        className={`absolute flex h-full w-full flex-col pt-20 lg:pt-28 ${
+        className={`scrollbarStyle scrollbarStyle-hidden absolute flex h-full w-full flex-col overflow-auto pt-20 lg:pt-28 ${
           isSideMenuToggled ? 'hidden' : 'block'
         }`}
       >

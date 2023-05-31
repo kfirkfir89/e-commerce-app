@@ -37,7 +37,7 @@ const SideMenu = ({ categories, onChangeToggle }: SideMenuProps) => {
             />
           </label>
         </div>
-        <div>
+        <div className="bg-white">
           {isMenuOpen && (
             <div className="fixed top-[70px] left-0 z-50 flex h-screen w-full flex-col bg-white">
               <div className="flex w-full justify-center bg-gray-200 p-2">

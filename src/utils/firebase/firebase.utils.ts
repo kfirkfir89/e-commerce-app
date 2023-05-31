@@ -529,6 +529,7 @@ export async function getSubCategoryDocument(
       sliceItems: sliceItemsArray,
       count: sortCount,
     };
+
     return categoryData;
   }
 
@@ -565,6 +566,7 @@ export async function getSubCategoryDocument(
     sliceItems: sliceItemsArray,
     count: sortCount,
   };
+
   return categoryData;
 }
 

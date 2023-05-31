@@ -3,7 +3,6 @@ import {
   loadStripe,
   PaymentIntentResult,
   Stripe,
-  StripeCardElement,
   StripeElement,
 } from '@stripe/stripe-js';
 
@@ -32,7 +31,6 @@ export const stripePromise = loadStripe(
 export const stripePaymentIntent = async (
   amount: number
 ): Promise<PaymentIntentResult | undefined> => {
-  console.log('amounttttttttttttttttttttttttt:', amount);
   try {
     const response = await fetch('/.netlify/functions/create-payment-intent', {
       method: 'post',
