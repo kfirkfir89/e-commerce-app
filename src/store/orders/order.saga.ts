@@ -1,18 +1,12 @@
 import { all, call, takeLatest, put, select } from 'typed-redux-saga';
 
-import { CreateOrderStart, orderSuccesded, orderFailed } from './order.action';
 import { resetCartItemsState } from '../cart/cart.action';
 
 import { ORDER_ACTION_TYPES, NewOrderDetails } from './order.types';
 
 // eslint-disable-next-line import/no-cycle
 import * as cartSelectors from '../cart/cart.selector';
-
-import {
-  stripePaymentIntent,
-  StripeFormFieldCSecret,
-} from '../../utils/stripe/stripe.utils';
-import { createNewOrderDocument } from '../../utils/firebase/firebase.utils';
+import { OrderSuccesded } from './order.action';
 
 // old saga for stripe with clegacy card
 // export function* confirmStripePayment({
@@ -66,6 +60,11 @@ import { createNewOrderDocument } from '../../utils/firebase/firebase.utils';
 //   }
 // }
 
+// eslint-disable-next-line require-yield
+
+export function* addNewOrder({ payload }: OrderSuccesded) {
+  payload
+}
 export function* getCartItemsSAGA() {
   const cartItems = yield* select(cartSelectors.selectCartItems);
   return cartItems;
@@ -76,12 +75,8 @@ export function* resetCartItems() {
 }
 
 export function* onNewOrderSuccess() {
-  yield* takeLatest(ORDER_ACTION_TYPES.FETCH_ORDER_SUCCESS, resetCartItems);
+  yield* takeLatest(ORDER_ACTION_TYPES.FETCH_ORDER_SUCCESS, addNewOrder);
 }
-
-// export function* onCreateOrderStart() {
-//   yield* takeLatest(ORDER_ACTION_TYPES.FETCH_ORDER_START, paymentIntentInit);
-// }
 
 export function* orderSaga() {
   yield* all([call(onNewOrderSuccess)]);
