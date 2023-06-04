@@ -85,7 +85,7 @@ export function* resetCartItems() {
 }
 
 export function* onNewOrderSuccess() {
-  yield* takeLatest(ORDER_ACTION_TYPES.FETCH_ORDER_SUCCESS, addNewOrder);
+  yield* takeLatest(ORDER_ACTION_TYPES.FETCH_ORDER_START, addNewOrder);
 }
 
 export function* orderSaga() {

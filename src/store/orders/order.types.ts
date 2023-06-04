@@ -1,5 +1,5 @@
 import { PaymentIntent } from '@stripe/stripe-js';
-import { UserData } from '../../utils/firebase/firebase.utils';
+import { UserAddress, UserData } from '../../utils/firebase/firebase.utils';
 
 import { CartItemPreview } from '../cart/cart.types';
 import { Timestamp } from 'firebase/firestore';
@@ -18,5 +18,7 @@ export type NewOrderDetails = {
   user: UserData;
   orderItems: CartItemPreview[];
   paymentIntent: PaymentIntent;
+  deliveryAddress: UserAddress;
+  isExpressDelivery:boolean
   orderStatus: string;
 };

@@ -14,7 +14,7 @@ export const PaymentSucceeded = () => {
     <div>
       <h1>ty {user.displayName}</h1>
       {orderItems.map((cartItem) => (
-        <CheckoutItem key={cartItem.id} cartItem={cartItem} />
+        <CheckoutItem key={cartItem.colorId} cartItem={cartItem} />
       ))}
       <span>Payment Successful on {createDate.toString()}</span>
       <span>Your Order Number: {orderId}</span>

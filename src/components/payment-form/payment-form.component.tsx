@@ -27,6 +27,8 @@ import { createOrderStart, orderSuccesded } from '../../store/orders/order.actio
 import { NewOrderDetails } from '../../store/orders/order.types';
 import { v4 } from 'uuid';
 import { Timestamp } from 'firebase/firestore';
+import { UserAddress } from '../../utils/firebase/firebase.utils';
+import { resetCartItemsState } from '../../store/cart/cart.action';
 
 export enum PAYMENT_STATUS {
   PENDING = "Pending",
@@ -39,7 +41,7 @@ const ifValidPaymentElement = (
   element: StripeElement | null
 ): element is StripeElement => element !== null;
 
-const PaymentForm = () => {
+const PaymentForm = ({deliveryAddress, isExpressDelivery} : {deliveryAddress: UserAddress ,isExpressDelivery: boolean}) => {
   const stripe = useStripe();
   const elements = useElements();
   const dispatch = useDispatch();
@@ -66,8 +68,8 @@ const PaymentForm = () => {
       return;
     }
 
-    const paymentElement = elements.getElement(PaymentElement);
-    if (!ifValidPaymentElement(paymentElement)) return;
+    // const paymentElement = elements.getElement(PaymentElement);
+    // if (!ifValidPaymentElement(paymentElement)) return;
 
     setIsProcessing(true);
 
@@ -81,8 +83,9 @@ const PaymentForm = () => {
 
     if (error && error.message) {
       setMessage(error.message);
-    } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-      setMessage('weeeeee payment succeedede');
+    } else if (paymentIntent && paymentIntent.status === 'succeeded') 
+    {
+      setMessage('weeeeee payment succeeded');
 
       const newOrder : NewOrderDetails = {
         orderId: `${currentUserSelector.firstName + currentUserSelector.lastName + v4()}`,
@@ -90,12 +93,15 @@ const PaymentForm = () => {
         user: currentUserSelector,
         orderItems: cartItemsSelector,
         paymentIntent: paymentIntent,
+        deliveryAddress: deliveryAddress,
+        isExpressDelivery: isExpressDelivery,
         orderStatus: PAYMENT_STATUS.PENDING,
 
       };
-      dispatch(orderSuccesded(newOrder));
+      dispatch(createOrderStart(newOrder));
     }
     setIsProcessing(false);
+    // dispatch(resetCartItemsState());
   };
 
   return (

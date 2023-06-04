@@ -309,12 +309,12 @@ const CheckOut = () => {
             </div>
             {/* stripe payment form */}
             <div className="flex w-full justify-center bg-gray-100 p-4">
-              {stripePromiseState && clientSecret && isEmailVerified ? (
+              {stripePromiseState && clientSecret && isEmailVerified && deliveryAddress ? (
                 <Elements
                   stripe={stripePromiseState!}
                   options={{ clientSecret, appearance }}
                 >
-                  <PaymentForm />
+                  <PaymentForm deliveryAddress={deliveryAddress} isExpressDelivery={isExpressDelivery}/>
                 </Elements>
               ) : (
                 <div className="flex w-full flex-col items-center  gap-5 p-4">

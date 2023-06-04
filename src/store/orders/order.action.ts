@@ -12,7 +12,7 @@ import { UserData } from '../../utils/firebase/firebase.utils';
 
 export type CreateOrderStart = ActionWithPayload<
   ORDER_ACTION_TYPES.FETCH_ORDER_START,
-  StripeFormFieldAmount
+  NewOrderDetails
 >;
 export type OrderSuccesded = ActionWithPayload<
   ORDER_ACTION_TYPES.FETCH_ORDER_SUCCESS,
@@ -38,17 +38,23 @@ export const resetOrderState = withMatcher(
   (): ResetOrderState => createAction(ORDER_ACTION_TYPES.RESET_STATE)
 );
 
+
 export const createOrderStart = withMatcher(
-  (
-    amount: number,
-    element: StripeElement,
-    currentUser: UserData | null,
-    stripe: Stripe
-  ): CreateOrderStart =>
-    createAction(ORDER_ACTION_TYPES.FETCH_ORDER_START, {
-      amount,
-      element,
-      currentUser,
-      stripe,
-    })
+  (newOrderDetails: NewOrderDetails): CreateOrderStart =>
+    createAction(ORDER_ACTION_TYPES.FETCH_ORDER_START, newOrderDetails)
 );
+
+// export const createOrderStart = withMatcher(
+//   (
+//     amount: number,
+//     element: StripeElement,
+//     currentUser: UserData | null,
+//     stripe: Stripe
+//   ): CreateOrderStart =>
+//     createAction(ORDER_ACTION_TYPES.FETCH_ORDER_START, {
+//       amount,
+//       element,
+//       currentUser,
+//       stripe,
+//     })
+// );
