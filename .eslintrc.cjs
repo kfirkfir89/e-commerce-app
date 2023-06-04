@@ -47,6 +47,7 @@ module.exports = {
     "@typescript-eslint/no-unused-expressions": 0,
     "no-plusplus": 0,
     "@typescript-eslint/no-floating-promises": "error",
+    "eslint-disable-next-line": 'no-console',
     "prettier/prettier": [
       "error",
       {

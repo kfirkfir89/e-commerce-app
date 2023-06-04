@@ -887,6 +887,7 @@ export const getCurrentUser = (): Promise<User | null> => {
 export const createNewOrderDocument = async (
   newOrderDetails: NewOrderDetails
 ) => {
+  console.log('newOrderDetails:', newOrderDetails)
   if (!newOrderDetails) return;
 
   await setDoc(

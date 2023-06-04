@@ -2,6 +2,7 @@ import { PaymentIntent } from '@stripe/stripe-js';
 import { UserData } from '../../utils/firebase/firebase.utils';
 
 import { CartItemPreview } from '../cart/cart.types';
+import { Timestamp } from 'firebase/firestore';
 
 export enum ORDER_ACTION_TYPES {
   FETCH_ORDER_START = 'order/FETCH_ORDER_START',
@@ -10,10 +11,12 @@ export enum ORDER_ACTION_TYPES {
   RESET_STATE = 'order/RESET_STATE',
 }
 
+
 export type NewOrderDetails = {
-  orderId: number;
-  createDate: Date;
-  user: UserData | null;
+  orderId: string;
+  createDate: Timestamp;
+  user: UserData;
   orderItems: CartItemPreview[];
-  paymentIntent: PaymentIntent | undefined;
+  paymentIntent: PaymentIntent;
+  orderStatus: string;
 };

@@ -17,14 +17,24 @@ import {
 } from '@stripe/stripe-js';
 
 import { selectCurrentUser } from '../../store/user/user.selector';
-import { selectCartTotal } from '../../store/cart/cart.selector';
+import { selectCartItems, selectCartTotal } from '../../store/cart/cart.selector';
 import {
   selectIsLoadingOrder,
   selectOrderDetails,
 } from '../../store/orders/order.selector';
 
-import { createOrderStart } from '../../store/orders/order.action';
+import { createOrderStart, orderSuccesded } from '../../store/orders/order.action';
+import { NewOrderDetails } from '../../store/orders/order.types';
+import { v4 } from 'uuid';
+import { Timestamp } from 'firebase/firestore';
 
+export enum PAYMENT_STATUS {
+  PENDING = "Pending",
+  PROCESSING = "Processing",
+  COMPLETED = "Completed",
+  FAILED = "Failed",
+  CANCELLED = "Cancelled"
+}
 const ifValidPaymentElement = (
   element: StripeElement | null
 ): element is StripeElement => element !== null;
@@ -35,6 +45,7 @@ const PaymentForm = () => {
   const dispatch = useDispatch();
   const amount = useSelector(selectCartTotal);
   const currentUserSelector = useSelector(selectCurrentUser);
+  const cartItemsSelector = useSelector(selectCartItems);
   const orderIsLoading = useSelector(selectIsLoadingOrder);
   const orderDetails = useSelector(selectOrderDetails);
 
@@ -51,7 +62,7 @@ const PaymentForm = () => {
   const paymentHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!stripe || !elements) {
+    if (!stripe || !elements || !currentUserSelector) {
       return;
     }
 
@@ -72,9 +83,19 @@ const PaymentForm = () => {
       setMessage(error.message);
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
       setMessage('weeeeee payment succeedede');
+
+      const newOrder : NewOrderDetails = {
+        orderId: `${currentUserSelector.firstName + currentUserSelector.lastName + v4()}`,
+        createDate: Timestamp.fromDate(new Date()),
+        user: currentUserSelector,
+        orderItems: cartItemsSelector,
+        paymentIntent: paymentIntent,
+        orderStatus: PAYMENT_STATUS.PENDING,
+
+      };
+      dispatch(orderSuccesded(newOrder));
     }
     setIsProcessing(false);
-    // dispatch(createOrderStart(amount, paymentElement, currentUser, stripe));
   };
 
   return (

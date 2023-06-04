@@ -6,7 +6,8 @@ import { ORDER_ACTION_TYPES, NewOrderDetails } from './order.types';
 
 // eslint-disable-next-line import/no-cycle
 import * as cartSelectors from '../cart/cart.selector';
-import { OrderSuccesded } from './order.action';
+import { OrderSuccesded, orderSuccesded } from './order.action';
+import { createNewOrderDocument } from '../../utils/firebase/firebase.utils';
 
 // old saga for stripe with clegacy card
 // export function* confirmStripePayment({
@@ -62,9 +63,18 @@ import { OrderSuccesded } from './order.action';
 
 // eslint-disable-next-line require-yield
 
-export function* addNewOrder({ payload }: OrderSuccesded) {
-  payload
+// eslint-disable-next-line require-yield
+export function* addNewOrder({ payload: newOrder }: OrderSuccesded) {
+  try {
+    yield* call(createNewOrderDocument, newOrder);
+
+    yield* put(orderSuccesded(newOrder)); 
+    
+  } catch (error) {
+    console.log('error:', error);
+  }
 }
+
 export function* getCartItemsSAGA() {
   const cartItems = yield* select(cartSelectors.selectCartItems);
   return cartItems;
