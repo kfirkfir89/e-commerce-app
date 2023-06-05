@@ -8,10 +8,14 @@ import { ReactComponent as LogoutIcon } from '../../assets/logout_FILL0.svg';
 import { ReactComponent as LoginIcon } from '../../assets/login_FILL0.svg';
 
 import { signOutStart } from '../../store/user/user.action';
-import { selectCurrentUser } from '../../store/user/user.selector';
+import {
+  selectCurrentUser,
+  selectUserIsLoading,
+} from '../../store/user/user.selector';
 
 const ProfileDropdown = () => {
-  const currentUser = useSelector(selectCurrentUser);
+  const currentUserSelector = useSelector(selectCurrentUser);
+  const userIsLoadingSelector = useSelector(selectUserIsLoading);
   const dispatch = useDispatch();
 
   const [isIconHover, setIsIconHover] = useState(false);
@@ -32,16 +36,18 @@ const ProfileDropdown = () => {
     }
   }, [isHover]);
 
+  const onClickIconHandler = () => {
+    if (currentUserSelector && !userIsLoadingSelector) {
+      return navigate('/my-account');
+    }
+    return navigate('/authentication');
+  };
+
   return (
     <div className="relative z-[100]">
       <button
         className="relative flex flex-col items-center justify-center"
-        onClick={() => {
-          selectCurrentUser !== null
-            ? navigate('/my-account')
-            : navigate('/authentication');
-          setIsIconHover(false);
-        }}
+        onClick={onClickIconHandler}
         onMouseEnter={() => setIsIconHover(true)}
         onMouseLeave={() => setIsIconHover(false)}
       >
@@ -65,19 +71,19 @@ const ProfileDropdown = () => {
           onMouseEnter={() => setIsHover(true)}
           onMouseLeave={() => setIsHover(false)}
         >
-          {currentUser && (
+          {currentUserSelector && (
             <div className="leading-0 flex max-w-3xl flex-col bg-slate-300 p-2 font-dosis text-xs font-normal uppercase tracking-wide text-slate-700">
               <h2>
                 Welcome,{' '}
                 <span className="pl-1 text-base font-semibold capitalize">
-                  {currentUser.displayName}
+                  {currentUserSelector.displayName}
                 </span>
               </h2>
             </div>
           )}
           <div className="bg-gray-100">
             <ul className="flex flex-col text-sm">
-              {currentUser === null ? (
+              {currentUserSelector === null ? (
                 <li className="hover:bg-gray-200">
                   <Link
                     to="/authentication"

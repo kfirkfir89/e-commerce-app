@@ -1,5 +1,5 @@
-import { FormEvent, useMemo, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { FormEvent, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import {
@@ -18,7 +18,6 @@ import { selectCartItems } from '../../store/cart/cart.selector';
 import { selectOrderDetails } from '../../store/orders/order.selector';
 
 import { createOrderStart } from '../../store/orders/order.action';
-import { resetCartItemsState } from '../../store/cart/cart.action';
 import { updateUserOrders } from '../../store/user/user.action';
 import { UserAddress } from '../../utils/firebase/firebase.user.utils';
 
@@ -40,6 +39,7 @@ const PaymentForm = ({
   const stripe = useStripe();
   const elements = useElements();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const currentUserSelector = useSelector(selectCurrentUser);
   const cartItemsSelector = useSelector(selectCartItems);
   const orderDetails = useSelector(selectOrderDetails);
@@ -47,12 +47,14 @@ const PaymentForm = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [message, setMessage] = useState('');
 
-  const shouldRedirect = useMemo(() => {
+  useEffect(() => {
     if (orderDetails !== null) {
-      return true;
+      return navigate('/payment-succeeded');
     }
-    return false;
-  }, [orderDetails]);
+    if (cartItemsSelector.length === 0) {
+      return navigate('/cart');
+    }
+  }, [orderDetails, cartItemsSelector, navigate]);
 
   const paymentHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -97,7 +99,6 @@ const PaymentForm = ({
     }
 
     setIsProcessing(false);
-    dispatch(resetCartItemsState());
   };
 
   return (
@@ -121,7 +122,6 @@ const PaymentForm = ({
           </button>
         </div>
         <span className="text-lg font-semibold text-slate-500">{message}</span>
-        {shouldRedirect && <Navigate to="/payment-succeeded" />}
       </form>
     </div>
   );

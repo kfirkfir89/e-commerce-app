@@ -136,7 +136,7 @@ const UserProfile = () => {
                   className={({ isActive }) =>
                     isActive
                       ? 'flex items-center bg-gray-200 p-2 font-semibold child-span:bg-accent'
-                      : 'flex items-center p-2'
+                      : 'flex items-center p-2 hover:bg-gray-200 '
                   }
                 >
                   <LogoutIcon className="mr-2 w-8 text-slate-500" />

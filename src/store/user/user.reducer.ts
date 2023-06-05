@@ -13,6 +13,7 @@ import {
   removeUserAddress,
   updateUserFavoriteProducts,
   updateUserOrders,
+  signOutStart,
 } from './user.action';
 import { UserData } from '../../utils/firebase/firebase.user.utils';
 
@@ -65,6 +66,10 @@ export const userReducer = (state = INITIAL_STATE, action: AnyAction) => {
     return state;
   }
 
+  if (signOutStart.match(action)) {
+    return { ...state, isLoading: true };
+  }
+
   if (updateUserDataStart.match(action)) {
     return { ...state, isLoading: true };
   }
@@ -91,7 +96,7 @@ export const userReducer = (state = INITIAL_STATE, action: AnyAction) => {
   }
 
   if (signOutSuccess.match(action)) {
-    return { ...state, currentUser: null };
+    return { ...state, isLoading: false, currentUser: null };
   }
 
   if (

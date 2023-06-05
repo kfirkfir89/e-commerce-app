@@ -98,10 +98,10 @@ const UserAddressBook = () => {
 
   return (
     <div className="relative flex h-full w-full flex-col items-center">
-      <div className="z-50 w-full">
+      <div className="z-[100] w-full">
         <div className="flex w-full ">
           {/* add address modal */}
-          <div className="flex w-full justify-center bg-gray-100">
+          <div className="flex w-full justify-center bg-gray-100 px-4">
             <label
               htmlFor="my-modal-4"
               className="btn w-full max-w-md cursor-pointer rounded-none shadow-sm"

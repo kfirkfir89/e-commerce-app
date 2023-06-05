@@ -99,7 +99,7 @@ const CheckOut = () => {
       console.log('error:', error);
     }
   };
-
+  console.log('finalTotal:', finalTotal);
   const ifValidPaymentData = (
     stripePromiseState: Stripe | null | undefined,
     deliveryAddress: UserAddress | undefined
