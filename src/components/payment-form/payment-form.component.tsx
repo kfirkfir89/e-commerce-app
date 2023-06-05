@@ -3,52 +3,45 @@ import { Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import {
-  CardElement,
   useStripe,
   useElements,
   PaymentElement,
 } from '@stripe/react-stripe-js';
-import {
-  StripeCardElement,
-  Appearance,
-  StripeCardElementOptions,
-  StripePaymentElement,
-  StripeElement,
-} from '@stripe/stripe-js';
+import { v4 } from 'uuid';
+
+import { StripeError } from '@stripe/stripe-js';
+import { Timestamp } from 'firebase/firestore';
+import { NewOrderDetails } from '../../store/orders/order.types';
 
 import { selectCurrentUser } from '../../store/user/user.selector';
-import { selectCartItems, selectCartTotal } from '../../store/cart/cart.selector';
-import {
-  selectIsLoadingOrder,
-  selectOrderDetails,
-} from '../../store/orders/order.selector';
+import { selectCartItems } from '../../store/cart/cart.selector';
+import { selectOrderDetails } from '../../store/orders/order.selector';
 
-import { createOrderStart, orderSuccesded } from '../../store/orders/order.action';
-import { NewOrderDetails } from '../../store/orders/order.types';
-import { v4 } from 'uuid';
-import { Timestamp } from 'firebase/firestore';
-import { UserAddress } from '../../utils/firebase/firebase.utils';
+import { createOrderStart } from '../../store/orders/order.action';
 import { resetCartItemsState } from '../../store/cart/cart.action';
+import { updateUserOrders } from '../../store/user/user.action';
+import { UserAddress } from '../../utils/firebase/firebase.user.utils';
 
 export enum PAYMENT_STATUS {
-  PENDING = "Pending",
-  PROCESSING = "Processing",
-  COMPLETED = "Completed",
-  FAILED = "Failed",
-  CANCELLED = "Cancelled"
+  PENDING = 'Pending',
+  PROCESSING = 'Processing',
+  COMPLETED = 'Completed',
+  FAILED = 'Failed',
+  CANCELLED = 'Cancelled',
 }
-const ifValidPaymentElement = (
-  element: StripeElement | null
-): element is StripeElement => element !== null;
 
-const PaymentForm = ({deliveryAddress, isExpressDelivery} : {deliveryAddress: UserAddress ,isExpressDelivery: boolean}) => {
+const PaymentForm = ({
+  deliveryAddress,
+  isExpressDelivery,
+}: {
+  deliveryAddress: UserAddress;
+  isExpressDelivery: boolean;
+}) => {
   const stripe = useStripe();
   const elements = useElements();
   const dispatch = useDispatch();
-  const amount = useSelector(selectCartTotal);
   const currentUserSelector = useSelector(selectCurrentUser);
   const cartItemsSelector = useSelector(selectCartItems);
-  const orderIsLoading = useSelector(selectIsLoadingOrder);
   const orderDetails = useSelector(selectOrderDetails);
 
   const [isProcessing, setIsProcessing] = useState(false);
@@ -68,40 +61,43 @@ const PaymentForm = ({deliveryAddress, isExpressDelivery} : {deliveryAddress: Us
       return;
     }
 
-    // const paymentElement = elements.getElement(PaymentElement);
-    // if (!ifValidPaymentElement(paymentElement)) return;
-
     setIsProcessing(true);
 
-    const { error, paymentIntent } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: 'http://localhost:8888/',
-      },
-      redirect: 'if_required',
-    });
+    try {
+      const { paymentIntent } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: 'http://localhost:8888/',
+        },
+        redirect: 'if_required',
+      });
 
-    if (error && error.message) {
-      setMessage(error.message);
-    } else if (paymentIntent && paymentIntent.status === 'succeeded') 
-    {
-      setMessage('weeeeee payment succeeded');
+      if (paymentIntent && paymentIntent.status === 'succeeded') {
+        setMessage('payment succeeded');
 
-      const newOrder : NewOrderDetails = {
-        orderId: `${currentUserSelector.firstName + currentUserSelector.lastName + v4()}`,
-        createDate: Timestamp.fromDate(new Date()),
-        user: currentUserSelector,
-        orderItems: cartItemsSelector,
-        paymentIntent: paymentIntent,
-        deliveryAddress: deliveryAddress,
-        isExpressDelivery: isExpressDelivery,
-        orderStatus: PAYMENT_STATUS.PENDING,
-
-      };
-      dispatch(createOrderStart(newOrder));
+        const newOrder: NewOrderDetails = {
+          orderId: `${
+            currentUserSelector.firstName + currentUserSelector.lastName + v4()
+          }`,
+          createDate: Timestamp.fromDate(new Date()),
+          user: currentUserSelector,
+          orderItems: cartItemsSelector,
+          paymentIntent,
+          deliveryAddress,
+          isExpressDelivery,
+          trackingNumber: '',
+          orderStatus: PAYMENT_STATUS.PENDING,
+        };
+        dispatch(createOrderStart(newOrder));
+        dispatch(updateUserOrders(newOrder.orderId));
+      }
+    } catch (error) {
+      const stripeError = error as StripeError;
+      stripeError.message && setMessage(stripeError.message);
     }
+
     setIsProcessing(false);
-    // dispatch(resetCartItemsState());
+    dispatch(resetCartItemsState());
   };
 
   return (

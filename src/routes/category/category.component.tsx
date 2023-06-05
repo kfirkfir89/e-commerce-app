@@ -1,22 +1,26 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { SelectOption } from '../../components/select/select.component';
+import {
+  getCategoryCount,
+  getSubCategoryDocument,
+} from '../../utils/firebase/firebase.category.utils';
+
 import {
   selectCategories,
   selectCategoriesIsLoading,
 } from '../../store/categories/category.selector';
-import { ItemPreview } from '../../components/add-firebase/add-item.component';
-import {
-  getCategoryCount,
-  getSubCategoryDocument,
-} from '../../utils/firebase/firebase.utils';
+
 import { featchUpdateCategory } from '../../store/categories/category.action';
+
+import { ReactComponent as Close } from '../../assets/close_FILL0.svg';
+import { ReactComponent as SortIcon } from '../../assets/sort_FILL0_wght200.svg';
+
+import { SelectOption } from '../../components/select/select.component';
+import { ItemPreview } from '../../components/add-firebase/add-item.component';
 import Spinner from '../../components/spinner/spinner.component';
 import SortFilter from '../../components/sort-filter/sort-filter.component';
 import ProductCard from '../../components/product-card/product-card.component';
-import { ReactComponent as Close } from '../../assets/close_FILL0.svg';
-import { ReactComponent as SortIcon } from '../../assets/sort_FILL0_wght200.svg';
 
 export type CategoryRouteParams = {
   shopPara: string;
@@ -314,10 +318,10 @@ const Category = () => {
       {/* sort option */}
       <div className="bg-gray-100">
         {/* small screen button */}
-        <div className="flex justify-end py-3 px-2 sm:hidden">
+        <div className="flex justify-end px-2 py-3 sm:hidden">
           <button
             onClick={filterToggleHandler}
-            className="container flex min-h-[2rem] max-w-[10rem] flex-shrink cursor-pointer items-center border-t-4 border-b-4 border-double border-gray-300 bg-transparent p-2"
+            className="container flex min-h-[2rem] max-w-[10rem] flex-shrink cursor-pointer items-center border-b-4 border-t-4 border-double border-gray-300 bg-transparent p-2"
           >
             <span className="flex flex-grow flex-wrap gap-2 font-semibold text-gray-500">
               Filters

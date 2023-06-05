@@ -1,6 +1,5 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { selectCurrentUser } from '../../store/user/user.selector';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import {
   selectCartItems,
   selectCartTotal,
@@ -8,12 +7,8 @@ import {
 import CheckoutItem from '../../components/checkout-item/checkout-item.component';
 
 const Cart = () => {
-  const currentUserSelector = useSelector(selectCurrentUser);
-  const cartItems = useSelector(selectCartItems);
-  const cartTotal = useSelector(selectCartTotal);
-
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const cartItemsSelector = useSelector(selectCartItems);
+  const cartTotalSelector = useSelector(selectCartTotal);
 
   return (
     <div className="flex h-full w-full flex-col items-center ">
@@ -22,16 +17,25 @@ const Cart = () => {
       </h2>
       <div className="container flex h-full w-full flex-col items-center gap-2">
         <div className="flex max-w-2xl flex-col items-center justify-start overflow-y-auto bg-white p-2">
-          {cartItems.map((cartItem) => (
-            <CheckoutItem key={cartItem.colorId} cartItem={cartItem} />
-          ))}
+          {cartItemsSelector.length > 0 ? (
+            cartItemsSelector.map((cartItem) => (
+              <CheckoutItem key={cartItem.colorId} cartItem={cartItem} />
+            ))
+          ) : (
+            <div className="leading-0 flex max-w-3xl flex-col font-dosis text-sm font-semibold uppercase tracking-wide text-slate-700">
+              {/* cart items */}
+              <span className="m-auto my-4 text-lg font-medium">
+                Your bag is empty
+              </span>
+            </div>
+          )}
         </div>
         <div className="flex"></div>
         <div className="leading-0 flex w-screen justify-center bg-gray-100 py-8 font-dosis text-sm uppercase tracking-wide text-slate-700">
           <div className="container max-w-2xl px-4">
             <span className="flex text-lg  font-semibold">
               <span className="flex-1">Total amount: </span>
-              <span className="flex-none">${cartTotal}</span>
+              <span className="flex-none">${cartTotalSelector}</span>
             </span>
             <p className="text-sm text-gray-400">
               Not including taxes and shipping costs
@@ -41,7 +45,7 @@ const Cart = () => {
         <div className="container mt-4 max-w-2xl">
           <button
             className="btn w-full rounded-none p-0 shadow-sm"
-            disabled={cartItems.length === 0}
+            disabled={cartItemsSelector.length === 0}
           >
             <Link
               to="/checkout"

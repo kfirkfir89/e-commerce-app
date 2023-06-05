@@ -1,11 +1,11 @@
-import { memo, MouseEventHandler, useState } from 'react';
+import { memo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   featchRemoveItem,
   selectAddFirebaseItems,
 } from '../../store/add-firebase/add-firebase.reducer';
 import { deleteImageUrls } from '../../utils/firebase/firebase.utils';
-import { ColorImages, NewItemValues } from './add-item.component';
+import { NewItemValues } from './add-item.component';
 
 const AddItemsPreview = () => {
   const addFirebaseItems = useSelector(selectAddFirebaseItems);
@@ -57,7 +57,7 @@ const AddItemsPreview = () => {
                         return (
                           <div
                             key={c.label}
-                            className={`${c.value} mt-1 mr-1 h-3 w-3 rounded-sm`}
+                            className={`${c.value} mr-1 mt-1 h-3 w-3 rounded-sm`}
                           />
                         );
                       })}

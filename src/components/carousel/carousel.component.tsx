@@ -5,7 +5,6 @@ import React, { useState, useEffect } from 'react';
 import { ReactComponent as ArrowBack } from '../../assets/arrow_back.svg';
 import { ReactComponent as ArrowForward } from '../../assets/arrow_forward.svg';
 
-
 export const images = [
   {
     title: 'image-one',
@@ -38,14 +37,14 @@ const Carousel = () => {
   }, [currentImg]);
 
   return (
-    <section className="container flex items-center justify-center h-[350px] w-screen ">
-      <div className="w-full h-full">
+    <section className="container flex h-[350px] w-screen items-center justify-center ">
+      <div className="h-full w-full">
         <div
           style={{ backgroundImage: `url(${images[currentImg].img})` }}
-          className="relative h-full w-full bg-cover bg-center bg-no-repeat transition-all ease-in-out duration-1000 overflow-hidden"
+          className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-in-out"
         >
           {/* bg-gradient */}
-          <div className="w-full h-full absolute top-0 left-0 bg-gradient-to-r from-black/30"></div>
+          <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-r from-black/30"></div>
 
           {/* title-subtitle */}
           {/* <div className="text-white opacity-60 flex flex-col gap-3 mb-3 absolute bottom-0 left-1/2 -translate-x-1/2 -translate-y-1/2 ">

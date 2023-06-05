@@ -1,4 +1,3 @@
-
 export enum CART_ACTION_TYPES {
   SET_CART_ITEMS = 'cart/SET_CART_ITEMS',
   UPDATE_CART_ITEMS = 'cart/UPDATE_CART_ITEMS',
@@ -9,12 +8,12 @@ export enum CART_ACTION_TYPES {
 }
 
 export type CartItemPreview = {
-  id: string
-  colorId: string
-  productName: string
-  price: number
-  color: string
-  size: string
-  previewImage: string
+  id: string;
+  colorId: string;
+  productName: string;
+  price: number;
+  color: string;
+  size: string;
+  previewImage: string;
   quantity: number;
 };

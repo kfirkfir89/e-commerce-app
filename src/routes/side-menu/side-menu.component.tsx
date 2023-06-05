@@ -20,7 +20,7 @@ const SideMenu = ({ categories, onChangeToggle }: SideMenuProps) => {
     <div className="top-0 z-[100] w-full flex-none">
       <div className="flex bg-transparent">
         <div className="z-[100]">
-          <label className="swap-rotate swap btn-circle border-none bg-transparent">
+          <label className="swap swap-rotate btn-circle border-none bg-transparent">
             <input
               type="checkbox"
               checked={isMenuOpen}
@@ -39,7 +39,7 @@ const SideMenu = ({ categories, onChangeToggle }: SideMenuProps) => {
         </div>
         <div className="bg-white">
           {isMenuOpen && (
-            <div className="fixed top-[70px] left-0 z-50 flex h-screen w-full flex-col bg-white">
+            <div className="fixed left-0 top-[70px] z-50 flex h-screen w-full flex-col bg-white">
               <div className="flex w-full justify-center bg-gray-200 p-2">
                 <Search />
               </div>
@@ -49,7 +49,7 @@ const SideMenu = ({ categories, onChangeToggle }: SideMenuProps) => {
                   Array.from(categories.entries()).map(([key, value]) => {
                     return (
                       <div
-                        className="flex-col border-r-[1px] border-dashed border-slate-400 p-6 pr-12 pb-10"
+                        className="flex-col border-r-[1px] border-dashed border-slate-400 p-6 pb-10 pr-12"
                         key={key}
                       >
                         <div key={key}>

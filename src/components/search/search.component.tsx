@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { ReactComponent as SearchIcon } from '../../assets/manage_search.svg';
 import { ItemPreview } from '../add-firebase/add-item.component';
-import { getItemsSearch } from '../../utils/firebase/firebase.utils';
+import { getItemsSearch } from '../../utils/firebase/firebase.category.utils';
 import { featchSearchPreview } from '../../store/categories/category.action';
 import { selectCategoriesSearchPreview } from '../../store/categories/category.selector';
 

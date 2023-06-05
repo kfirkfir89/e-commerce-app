@@ -2,11 +2,16 @@ import { AnyAction } from 'redux';
 
 import { CartItemPreview } from './cart.types';
 
-import { setIsCartOpen, setCartItems, resetCartItemsState, updateCartItems } from './cart.action';
+import {
+  setIsCartOpen,
+  setCartItems,
+  resetCartItemsState,
+  updateCartItems,
+} from './cart.action';
 
 export type CartState = {
   readonly isCartOpen: boolean;
-  readonly cartItems: CartItemPreview[],
+  readonly cartItems: CartItemPreview[];
 };
 
 const INITIAL_STATE: CartState = {
@@ -16,7 +21,7 @@ const INITIAL_STATE: CartState = {
 
 export const cartReducer = (
   state = INITIAL_STATE,
-  action: AnyAction,
+  action: AnyAction
 ): CartState => {
   if (setIsCartOpen.match(action)) {
     return { ...state, isCartOpen: action.payload };
@@ -27,8 +32,10 @@ export const cartReducer = (
     const newCart = action.payload;
 
     newCart.forEach((newCartItem) => {
-      const existingCartItem = cateState.find((cateState) => cateState.colorId === newCartItem.colorId);
-  
+      const existingCartItem = cateState.find(
+        (cateState) => cateState.colorId === newCartItem.colorId
+      );
+
       if (existingCartItem) {
         // If the item exists, increment its quantity
         existingCartItem.quantity += 1;
@@ -44,7 +51,7 @@ export const cartReducer = (
   if (updateCartItems.match(action)) {
     return { ...state, cartItems: action.payload };
   }
-  
+
   if (resetCartItemsState.match(action)) {
     return { isCartOpen: false, cartItems: [] };
   }

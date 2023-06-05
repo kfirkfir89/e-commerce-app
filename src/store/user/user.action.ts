@@ -10,7 +10,7 @@ import {
   UserData,
   AddittionalInformation,
   UserAddress,
-} from '../../utils/firebase/firebase.utils';
+} from '../../utils/firebase/firebase.user.utils';
 import { FormFields } from '../../components/sign-up-form/sign-up-form.component';
 import { UserDetailsFormFields } from '../../routes/user-profile/user-details.component';
 
@@ -48,6 +48,11 @@ export type SignUpSuccess = ActionWithPayload<
 
 export type UpdateUserFavoriteProducts = ActionWithPayload<
   USER_ACTION_TYPES.UPDATE_USER_FAVORITE_PRODUCT,
+  string
+>;
+
+export type UpdateUserOrders = ActionWithPayload<
+  USER_ACTION_TYPES.UPDATE_USER_ORDERS,
   string
 >;
 
@@ -134,6 +139,11 @@ export const signUpSuccess = withMatcher(
 export const updateUserFavoriteProducts = withMatcher(
   (productId: string): UpdateUserFavoriteProducts =>
     createAction(USER_ACTION_TYPES.UPDATE_USER_FAVORITE_PRODUCT, productId)
+);
+
+export const updateUserOrders = withMatcher(
+  (orderId: string): UpdateUserOrders =>
+    createAction(USER_ACTION_TYPES.UPDATE_USER_ORDERS, orderId)
 );
 
 export const updateUserDataStart = withMatcher(

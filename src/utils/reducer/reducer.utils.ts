@@ -7,9 +7,13 @@ type Matchable<AC extends () => AnyAction> = AC & {
   match(action: AnyAction): action is ReturnType<AC>;
 };
 
-export function withMatcher<AC extends () => AnyAction & { type: string }>(actionCreator: AC): Matchable<AC>;
+export function withMatcher<AC extends () => AnyAction & { type: string }>(
+  actionCreator: AC
+): Matchable<AC>;
 
-export function withMatcher<AC extends (...args: any[]) => AnyAction & { type: string }>(actionCreator: AC): Matchable<AC>;
+export function withMatcher<
+  AC extends (...args: any[]) => AnyAction & { type: string }
+>(actionCreator: AC): Matchable<AC>;
 
 export function withMatcher(actionCreator: Function) {
   const { type } = actionCreator();
@@ -31,9 +35,15 @@ export type Action<T> = {
 };
 
 // function overload
-export function createAction<T extends string, P>(type: T, payload: P): ActionWithPayload<T, P>; 
+export function createAction<T extends string, P>(
+  type: T,
+  payload: P
+): ActionWithPayload<T, P>;
 
-export function createAction<T extends string>(type: T, payload: void): Action<T>; 
+export function createAction<T extends string>(
+  type: T,
+  payload: void
+): Action<T>;
 
 export function createAction<T extends string, P>(type: T, payload: P) {
   return { type, payload };

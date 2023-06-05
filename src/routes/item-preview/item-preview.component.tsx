@@ -1,17 +1,18 @@
 import { useLocation, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { CategoryRouteParams } from '../category/category.component';
-import { NewItemValues } from '../../components/add-firebase/add-item.component';
-import { getItemFromRoute } from '../../utils/firebase/firebase.utils';
+import { getItemFromRoute } from '../../utils/firebase/firebase.category.utils';
 
 import { ReactComponent as ArrowBack } from '../../assets/arrow_back.svg';
 import { ReactComponent as ArrowForward } from '../../assets/arrow_forward.svg';
 import { ReactComponent as ShoppingIcon } from '../../assets/local_mall.svg';
 
+import { CategoryRouteParams } from '../category/category.component';
+import { NewItemValues } from '../../components/add-firebase/add-item.component';
 import { SelectOption } from '../../components/sort-select/sort-select.component';
 import SizeProductSelect from '../../components/size-product-select/size-product-select.component';
 import Spinner from '../../components/spinner/spinner.component';
+
 import { setCartItems } from '../../store/cart/cart.action';
 import { CartItemPreview } from '../../store/cart/cart.types';
 import { selectCartItems } from '../../store/cart/cart.selector';

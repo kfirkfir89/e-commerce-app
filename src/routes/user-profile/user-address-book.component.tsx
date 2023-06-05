@@ -7,7 +7,7 @@ import {
   selectCurrentUser,
   selectUserIsLoading,
 } from '../../store/user/user.selector';
-import { UserAddress } from '../../utils/firebase/firebase.utils';
+import { UserAddress } from '../../utils/firebase/firebase.user.utils';
 import {
   removeUserAddress,
   updateUserAddressStart,
@@ -230,7 +230,7 @@ const UserAddressBook = () => {
         </div>
       </div>
       {/* exsisting addresess */}
-      <div className="absolute flex h-full w-full pt-20 pb-4">
+      <div className="absolute flex h-full w-full pb-4 pt-20">
         <div className="scrollbarStyle relative flex h-full w-full flex-col gap-4 overflow-y-auto px-4">
           {currentUserIsLoading && (
             <div className="absolute z-50 flex h-full w-full flex-col items-center justify-center bg-gray-400 opacity-50">

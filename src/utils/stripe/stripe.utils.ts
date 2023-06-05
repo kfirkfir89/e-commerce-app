@@ -5,8 +5,7 @@ import {
   Stripe,
   StripeElement,
 } from '@stripe/stripe-js';
-
-import { UserData } from '../firebase/firebase.utils';
+import { UserData } from '../firebase/firebase.user.utils';
 
 // fix the any type
 export type StripeFormFields = {
@@ -31,7 +30,6 @@ export const stripePromise = loadStripe(
 export const stripePaymentIntent = async (
   amount: number
 ): Promise<PaymentIntentResult | undefined> => {
-  console.log('amount:', amount)
   try {
     const response = await fetch('/.netlify/functions/create-payment-intent', {
       method: 'post',
@@ -40,7 +38,6 @@ export const stripePaymentIntent = async (
       },
       body: JSON.stringify({ amount: amount * 100 }),
     });
-    console.log('response:', response);
     if (response.ok) {
       const res: PaymentIntentResult = await response.json();
       return res;

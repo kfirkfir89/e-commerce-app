@@ -1,16 +1,19 @@
-import {
-  useState, FormEvent, ChangeEvent, useEffect,
-} from 'react';
+import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import { AuthError } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ReactComponent as GoogleIcon } from '../../assets/icons8-google.svg';
 
-
-import { googleSignInStart, emailSignInStart } from '../../store/user/user.action';
+import {
+  googleSignInStart,
+  emailSignInStart,
+} from '../../store/user/user.action';
 import FormInput from '../input-form/input-form.component';
-import { selectCurrentUser, selectUserError } from '../../store/user/user.selector';
+import {
+  selectCurrentUser,
+  selectUserError,
+} from '../../store/user/user.selector';
 
 const defaultFormFields = {
   displayName: '',
@@ -27,10 +30,8 @@ const SignInForm = () => {
   const currentUser = useSelector(selectCurrentUser);
   const userErrorSelector = useSelector(selectUserError);
 
-  
-  const { email, password } = formFields; 
-  
-  
+  const { email, password } = formFields;
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -42,12 +43,16 @@ const SignInForm = () => {
     event.preventDefault();
     dispatch(emailSignInStart(email, password));
   };
-  
-  // error handling 
+
+  // error handling
   useEffect(() => {
     // check for error
     if (userErrorSelector) {
-      setError((userErrorSelector as AuthError).code.replace('auth/', '').replace(/-/g, ' '));
+      setError(
+        (userErrorSelector as AuthError).code
+          .replace('auth/', '')
+          .replace(/-/g, ' ')
+      );
     }
     // navigate after user signin
     if (userErrorSelector === null && currentUser) {
@@ -57,7 +62,7 @@ const SignInForm = () => {
     if (userErrorSelector === null && error !== '') {
       setShouldNavigate(true);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userErrorSelector, currentUser]);
 
   // navigate to to home page
@@ -74,65 +79,82 @@ const SignInForm = () => {
   };
 
   return (
-    <div className="flex flex-col w-full max-w-md shadow-lg p-6 sm:p-10 py-8 bg-gray-100 font-dosis tracking-wide text-slate-700">
-      {error && error !== 'initial'
-      && (
-      <div className="alert alert-error shadow-sm flex flex-col my-4">
-        <div>
-          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-          <span>{error}</span>
+    <div className="flex w-full max-w-md flex-col bg-gray-100 p-6 py-8 font-dosis tracking-wide text-slate-700 shadow-lg sm:p-10">
+      {error && error !== 'initial' && (
+        <div className="alert alert-error my-4 flex flex-col shadow-sm">
+          <div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 flex-shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <span>{error}</span>
+          </div>
         </div>
-      </div>
       )}
-      <span className="mb-6 sm:text-lg whitespace-nowrap">Sign in with your email and password</span>
+      <span className="mb-6 whitespace-nowrap sm:text-lg">
+        Sign in with your email and password
+      </span>
       <form className="flex flex-col gap-y-4 sm:px-4" onSubmit={handleSubmit}>
-
-        <FormInput 
+        <FormInput
           label="Email"
-          name="email" 
-          type="email" 
-          onChange={handleChange} 
-          value={email} 
+          name="email"
+          type="email"
+          onChange={handleChange}
+          value={email}
           errorMessage="It should be a valid email address!"
           required
         />
 
-        <FormInput 
+        <FormInput
           label="Password"
-          name="password" 
-          type="password" 
-          onChange={handleChange} 
-          value={password} 
+          name="password"
+          type="password"
+          onChange={handleChange}
+          value={password}
           errorMessage="Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!"
           required
         />
-        
-        <button type="submit" className="btn rounded-none w-full shadow-sm mt-4">
-          <div className="w-full flex justify-center items-center ">
-            <span className="flex pt-1 font-semibold text-xs tracking-widest font-smoochSans uppercase leading-0">
+
+        <button
+          type="submit"
+          className="btn mt-4 w-full rounded-none shadow-sm"
+        >
+          <div className="flex w-full items-center justify-center ">
+            <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
               Sign In
             </span>
           </div>
         </button>
-
       </form>
-      <div className="relative flex flex-col justify-center items-center my-3">
+      <div className="relative my-3 flex flex-col items-center justify-center">
         <div className="divider mx-4" />
-        <span className="absolute text-center mb-1 mx-10 w-2/6 bg-gray-100 whitespace-nowrap">or sign in with</span>
+        <span className="absolute mx-10 mb-1 w-2/6 whitespace-nowrap bg-gray-100 text-center">
+          or sign in with
+        </span>
       </div>
-      <div className="px-2 md:px-4 mb-4">
-        <button onClick={signInWithGoogle} className="btn rounded-none w-full shadow-sm bg-gray-100 text-slate-700 hover:text-white border-dashed">
-          <div className="w-full flex gap-x-2 justify-center items-center ">
+      <div className="mb-4 px-2 md:px-4">
+        <button
+          onClick={signInWithGoogle}
+          className="btn w-full rounded-none border-dashed bg-gray-100 text-slate-700 shadow-sm hover:text-white"
+        >
+          <div className="flex w-full items-center justify-center gap-x-2 ">
             <GoogleIcon className="w-8" />
-            <span className="flex pt-1 font-semibold text-xs tracking-widest font-smoochSans uppercase leading-0">
+            <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
               Google
             </span>
           </div>
         </button>
       </div>
-      
     </div>
-    
   );
 };
 

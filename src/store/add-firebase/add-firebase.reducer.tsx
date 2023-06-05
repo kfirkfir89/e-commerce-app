@@ -1,20 +1,21 @@
 import { Action, AnyAction } from 'redux';
 import { createSelector } from 'reselect';
-import {
-  all, call, takeLatest, put, 
-} from 'typed-redux-saga';
 import { NewItemValues } from '../../components/add-firebase/add-item.component';
-import { ActionWithPayload, createAction, withMatcher } from '../../utils/reducer/reducer.utils';
+import {
+  ActionWithPayload,
+  createAction,
+  withMatcher,
+} from '../../utils/reducer/reducer.utils';
 import { RootState } from '../store';
 
 // SELECTORS
-export const selectAddFirebaseReducer = (state: RootState): AddFireBaseState => state.addFirebase;
+export const selectAddFirebaseReducer = (state: RootState): AddFireBaseState =>
+  state.addFirebase;
 
 export const selectAddFirebaseItems = createSelector(
   [selectAddFirebaseReducer],
-  (addFirebase) => addFirebase.items,
+  (addFirebase) => addFirebase.items
 );
-
 
 // TYPES
 export enum ADDFIREBASE_ACTION_TYPES {
@@ -36,50 +37,77 @@ export type AddFireBaseState = {
 };
 
 // ACTIONS
-export type FeatchSetCollectionKey = ActionWithPayload<ADDFIREBASE_ACTION_TYPES.FETCH_SET_COLLECTION_KEY, string>;
+export type FeatchSetCollectionKey = ActionWithPayload<
+  ADDFIREBASE_ACTION_TYPES.FETCH_SET_COLLECTION_KEY,
+  string
+>;
 
-export type FeatchSetTitleDocKey = ActionWithPayload<ADDFIREBASE_ACTION_TYPES.FETCH_SET_TITLE_DOC_KEY, string>;
+export type FeatchSetTitleDocKey = ActionWithPayload<
+  ADDFIREBASE_ACTION_TYPES.FETCH_SET_TITLE_DOC_KEY,
+  string
+>;
 
-export type FeatchAddItem = ActionWithPayload<ADDFIREBASE_ACTION_TYPES.FETCH_SET_ITEM, NewItemValues>;
+export type FeatchAddItem = ActionWithPayload<
+  ADDFIREBASE_ACTION_TYPES.FETCH_SET_ITEM,
+  NewItemValues
+>;
 
-export type FeatchRemoveItem = ActionWithPayload<ADDFIREBASE_ACTION_TYPES.FETCH_DEL_ITEM, NewItemValues>;
+export type FeatchRemoveItem = ActionWithPayload<
+  ADDFIREBASE_ACTION_TYPES.FETCH_DEL_ITEM,
+  NewItemValues
+>;
 
-export type FeatchAddFirebaseData = Action<ADDFIREBASE_ACTION_TYPES.FETCH_ADD_FIREBASE_DATA>;
+export type FeatchAddFirebaseData =
+  Action<ADDFIREBASE_ACTION_TYPES.FETCH_ADD_FIREBASE_DATA>;
 
-export type FeatchAddFirebaseDataSuccessded = Action<ADDFIREBASE_ACTION_TYPES.FETCH_ADD_FIREBASE_DATA_SUCCESSDED>;
+export type FeatchAddFirebaseDataSuccessded =
+  Action<ADDFIREBASE_ACTION_TYPES.FETCH_ADD_FIREBASE_DATA_SUCCESSDED>;
 
-export type FeatchAddFirebaseDataFailed = ActionWithPayload<ADDFIREBASE_ACTION_TYPES.FETCH_ADD_FIREBASE_DATA_FAILED, Error>;
+export type FeatchAddFirebaseDataFailed = ActionWithPayload<
+  ADDFIREBASE_ACTION_TYPES.FETCH_ADD_FIREBASE_DATA_FAILED,
+  Error
+>;
 
 export const featchSetCollectionKey = withMatcher(
-  (collectionKey: string): FeatchSetCollectionKey => createAction(ADDFIREBASE_ACTION_TYPES.FETCH_SET_COLLECTION_KEY, collectionKey),
+  (collectionKey: string): FeatchSetCollectionKey =>
+    createAction(
+      ADDFIREBASE_ACTION_TYPES.FETCH_SET_COLLECTION_KEY,
+      collectionKey
+    )
 );
 
 export const featchSetTitleDocKey = withMatcher(
-  (titleDoc: string): FeatchSetTitleDocKey => createAction(ADDFIREBASE_ACTION_TYPES.FETCH_SET_TITLE_DOC_KEY, titleDoc),
+  (titleDoc: string): FeatchSetTitleDocKey =>
+    createAction(ADDFIREBASE_ACTION_TYPES.FETCH_SET_TITLE_DOC_KEY, titleDoc)
 );
 
 export const featchAddItem = withMatcher(
-  (item: NewItemValues): FeatchAddItem => createAction(ADDFIREBASE_ACTION_TYPES.FETCH_SET_ITEM, item),
+  (item: NewItemValues): FeatchAddItem =>
+    createAction(ADDFIREBASE_ACTION_TYPES.FETCH_SET_ITEM, item)
 );
 
 export const featchRemoveItem = withMatcher(
-  (item: NewItemValues): FeatchRemoveItem => createAction(ADDFIREBASE_ACTION_TYPES.FETCH_DEL_ITEM, item),
+  (item: NewItemValues): FeatchRemoveItem =>
+    createAction(ADDFIREBASE_ACTION_TYPES.FETCH_DEL_ITEM, item)
 );
 
 export const featchAddFirebaseData = withMatcher(
-  (): FeatchAddFirebaseData => createAction(ADDFIREBASE_ACTION_TYPES.FETCH_ADD_FIREBASE_DATA),
+  (): FeatchAddFirebaseData =>
+    createAction(ADDFIREBASE_ACTION_TYPES.FETCH_ADD_FIREBASE_DATA)
 );
 
 export const featchAddFirebaseDataSuccessded = withMatcher(
-  (): FeatchAddFirebaseDataSuccessded => createAction(ADDFIREBASE_ACTION_TYPES.FETCH_ADD_FIREBASE_DATA_SUCCESSDED),
+  (): FeatchAddFirebaseDataSuccessded =>
+    createAction(ADDFIREBASE_ACTION_TYPES.FETCH_ADD_FIREBASE_DATA_SUCCESSDED)
 );
 
 export const featchAddFirebaseDataFailed = withMatcher(
-  (error: Error): FeatchAddFirebaseDataFailed => createAction(ADDFIREBASE_ACTION_TYPES.FETCH_ADD_FIREBASE_DATA_FAILED, error),
+  (error: Error): FeatchAddFirebaseDataFailed =>
+    createAction(ADDFIREBASE_ACTION_TYPES.FETCH_ADD_FIREBASE_DATA_FAILED, error)
 );
 
 // REDUCER
-export const ADDFIREBASE_INITIAL_STATE : AddFireBaseState = {
+export const ADDFIREBASE_INITIAL_STATE: AddFireBaseState = {
   collectionKey: '',
   docKey: '',
   items: [],
@@ -89,12 +117,12 @@ export const ADDFIREBASE_INITIAL_STATE : AddFireBaseState = {
 
 export const addFirebaseReducer = (
   state = ADDFIREBASE_INITIAL_STATE,
-  action: AnyAction,
+  action: AnyAction
 ): AddFireBaseState => {
   if (featchSetCollectionKey.match(action)) {
     return { ...state, collectionKey: action.payload };
   }
-    
+
   if (featchSetTitleDocKey.match(action)) {
     return { ...state, docKey: action.payload };
   }
@@ -104,7 +132,10 @@ export const addFirebaseReducer = (
   }
 
   if (featchRemoveItem.match(action)) {
-    return { ...state, items: state.items.filter((item) => item.id !== action.payload.id) };
+    return {
+      ...state,
+      items: state.items.filter((item) => item.id !== action.payload.id),
+    };
   }
 
   if (featchAddFirebaseData.match(action)) {
@@ -113,7 +144,11 @@ export const addFirebaseReducer = (
 
   if (featchAddFirebaseDataSuccessded.match(action)) {
     return {
-      collectionKey: '', docKey: '', items: [], error: null, isLoading: false, 
+      collectionKey: '',
+      docKey: '',
+      items: [],
+      error: null,
+      isLoading: false,
     };
   }
 

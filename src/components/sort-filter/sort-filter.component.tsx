@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { SelectOption } from '../select/select.component';
 import SortSelect from '../sort-select/sort-select.component';
 import { SortOption } from '../../routes/category/category.component';

@@ -4,6 +4,9 @@ module.exports = {
     browser: true,
     es2021: true,
   },
+  plugins: ["react", "@typescript-eslint", "prettier"],
+
+  parser: "@typescript-eslint/parser",
   extends: [
     "airbnb",
     "airbnb-typescript",
@@ -13,13 +16,12 @@ module.exports = {
     "plugin:prettier/recommended",
   ],
   overrides: [],
-  parser: "@typescript-eslint/parser",
   parserOptions: {
-    ecmaVersion: "latest",
     sourceType: "module",
+    ecmaVersion: "latest",
     project: "./tsconfig.json",
+    // extraFileExtensions: [".json"],
   },
-  plugins: ["react", "@typescript-eslint", "prettier"],
   rules: {
     "react/react-in-jsx-scope": 0,
     "react/button-has-type": 0,
@@ -31,7 +33,6 @@ module.exports = {
     "no-trailing-spaces": 0,
     "react/self-closing-comp": 0,
     "import/no-cycle": 0,
-    "eslint-disable-next-line": 0,
     "import/prefer-default-export": 0,
     "max-len": 0,
     "consistent-return": 0,
@@ -47,7 +48,6 @@ module.exports = {
     "@typescript-eslint/no-unused-expressions": 0,
     "no-plusplus": 0,
     "@typescript-eslint/no-floating-promises": "error",
-    "eslint-disable-next-line": 'no-console',
     "prettier/prettier": [
       "error",
       {

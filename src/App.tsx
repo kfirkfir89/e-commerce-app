@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense } from 'react';
+import { useEffect, lazy, Suspense, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   Route,
@@ -34,10 +34,14 @@ const Authentication = lazy(
 const CheckOut = lazy(() => import('./routes/checkout/checkout.component'));
 
 const App = () => {
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
+    setIsCheckingSession(true);
     dispatch(checkUserSession());
+    setIsCheckingSession(false);
   }, [dispatch]);
 
   const router = createBrowserRouter(
@@ -78,7 +82,7 @@ const App = () => {
   );
   return (
     <Suspense fallback={<Spinner />}>
-      <RouterProvider router={router} />
+      {!isCheckingSession ? <RouterProvider router={router} /> : <Spinner />}
     </Suspense>
   );
 };

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ItemPreview } from '../add-firebase/add-item.component';
 import { ReactComponent as FavoriteIcon } from '../../assets/favorite_FILL0_w.svg';
 import { ReactComponent as FavoriteIconFill } from '../../assets/favorite_FILL1.svg';
-import { updateUserFavorite } from '../../utils/firebase/firebase.utils';
+import { updateUserFavorite } from '../../utils/firebase/firebase.user.utils';
 import { selectCurrentUser } from '../../store/user/user.selector';
 import { updateUserFavoriteProducts } from '../../store/user/user.action';
 
@@ -66,7 +66,7 @@ const ProductCard = ({ product }: { product: ItemPreview }) => {
             key={imagesUrls[1]}
             src={imagesUrls[1]}
             alt={imagesUrls[1]}
-            className="absolute top-0 left-0 max-h-full w-full object-cover object-center opacity-0 transition-opacity duration-200 ease-in-out hover:opacity-100"
+            className="absolute left-0 top-0 max-h-full w-full object-cover object-center opacity-0 transition-opacity duration-200 ease-in-out hover:opacity-100"
           />
         </Link>
         <div className="absolute bottom-0 right-2 z-50">

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -7,12 +7,11 @@ import {
   selectCartCount,
   selectCartItems,
   selectCartTotal,
-  selectIsCartOpen,
 } from '../../store/cart/cart.selector';
 import { ReactComponent as ShoppingIcon } from '../../assets/local_mall.svg';
 import { ReactComponent as DeleteIcon } from '../../assets/delete.svg';
 
-import { clearItemFromCart, setIsCartOpen } from '../../store/cart/cart.action';
+import { clearItemFromCart } from '../../store/cart/cart.action';
 import { resetOrderState } from '../../store/orders/order.action';
 import { CartItemPreview } from '../../store/cart/cart.types';
 
@@ -150,14 +149,14 @@ const CartDropdown = () => {
                       ))
                     ) : (
                       <span className="m-auto my-4 font-medium">
-                        Your cart is empty
+                        Your bag is empty
                       </span>
                     )}
                   </ul>
                 </div>
               </div>
               {/* cart total */}
-              <div className="leading-0 my-8 border-y-2 bg-white p-2 py-4 px-4 font-dosis text-sm uppercase tracking-wide text-slate-700">
+              <div className="leading-0 my-8 border-y-2 bg-white p-2 px-4 py-4 font-dosis text-sm uppercase tracking-wide text-slate-700">
                 <span className="flex text-lg  font-semibold">
                   <span className="flex-1">Total amount: </span>
                   <span className="flex-none">${cartTotal}</span>

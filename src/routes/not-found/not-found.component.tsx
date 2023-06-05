@@ -13,7 +13,7 @@ const NotFound = () => {
             <p className="text-2xl font-semibold md:text-3xl">
               Sorry, we couldn&apos;t find this page.
             </p>
-            <p className="mt-4 mb-8">
+            <p className="mb-8 mt-4">
               But dont worry, you can find plenty of other things on our
               homepage.
             </p>

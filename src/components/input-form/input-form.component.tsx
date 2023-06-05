@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable react/require-default-props */
 import { useState, FC, ChangeEvent, InputHTMLAttributes } from 'react';
 
 export type Inputs = {

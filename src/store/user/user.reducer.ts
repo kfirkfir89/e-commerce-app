@@ -12,8 +12,9 @@ import {
   updateUserAddressStart,
   removeUserAddress,
   updateUserFavoriteProducts,
+  updateUserOrders,
 } from './user.action';
-import { UserData } from '../../utils/firebase/firebase.utils';
+import { UserData } from '../../utils/firebase/firebase.user.utils';
 
 export type UserState = {
   readonly currentUser: UserData | null;
@@ -51,6 +52,15 @@ export const userReducer = (state = INITIAL_STATE, action: AnyAction) => {
       };
 
       return { ...state, currentUser: updatedUser };
+    }
+    return state;
+  }
+
+  if (updateUserOrders.match(action)) {
+    if (state.currentUser) {
+      const user = state.currentUser;
+      user.orders.push(action.payload);
+      return { ...state, currentUser: user };
     }
     return state;
   }

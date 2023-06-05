@@ -1,7 +1,9 @@
 import { FormEvent, useRef, useState } from 'react';
+
+import { sendPasswordResetEmailFireBase } from '../../utils/firebase/firebase.user.utils';
+
 import SignInForm from '../../components/sign-in-form/sign-in-form.component';
 import SignUpForm from '../../components/sign-up-form/sign-up-form.component';
-import { sendPasswordResetEmailFireBase } from '../../utils/firebase/firebase.utils';
 import FormInput from '../../components/input-form/input-form.component';
 
 const Authentication = () => {
@@ -47,7 +49,7 @@ const Authentication = () => {
           </div>
 
           {/* forget password modal */}
-          <div className="mt-2 mb-8 bg-white">
+          <div className="mb-8 mt-2 bg-white">
             <label
               htmlFor="my-modal-4"
               className="cursor-pointer font-semibold hover:text-blue-400"

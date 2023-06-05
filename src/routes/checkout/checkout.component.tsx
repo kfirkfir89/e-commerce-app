@@ -1,42 +1,27 @@
 import { useDispatch, useSelector } from 'react-redux';
-
 import { useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
-import { Appearance, PaymentIntentResult, Stripe } from '@stripe/stripe-js';
-import {
-  Elements,
-  PaymentElement,
-  useElements,
-  useStripe,
-} from '@stripe/react-stripe-js';
-import { apply } from 'redux-saga/effects';
-import { v4 } from 'uuid';
+import { Appearance, Stripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+
 import { sendEmailVerification } from 'firebase/auth';
+import {
+  UserAddress,
+  getCurrentUser,
+} from '../../utils/firebase/firebase.user.utils';
+import {
+  stripePaymentIntent,
+  stripePromise,
+} from '../../utils/stripe/stripe.utils';
+
 import {
   selectCartCount,
   selectCartItems,
   selectCartTotal,
 } from '../../store/cart/cart.selector';
-
-import CheckoutItem from '../../components/checkout-item/checkout-item.component';
+import { selectCurrentUser } from '../../store/user/user.selector';
 
 import PaymentForm from '../../components/payment-form/payment-form.component';
-import {
-  selectCurrentUser,
-  selectUserIsLoading,
-} from '../../store/user/user.selector';
-import {
-  UserAddress,
-  getCurrentUser,
-} from '../../utils/firebase/firebase.utils';
-
-import { ReactComponent as DeleteIcon } from '../../assets/delete.svg';
-import { CartItemPreview } from '../../store/cart/cart.types';
-import { clearItemFromCart } from '../../store/cart/cart.action';
-import {
-  stripePaymentIntent,
-  stripePromise,
-} from '../../utils/stripe/stripe.utils';
 import UserDetails from '../user-profile/user-details.component';
 import UserAddressBook from '../user-profile/user-address-book.component';
 import { popUpMessageContext } from '../navigation/navigation.component';
@@ -54,8 +39,6 @@ const appearance: Appearance = {
     '.Block': {
       backgroundColor: 'var(--colorBackground)',
       boxShadow: 'none',
-      padding: '0px',
-      margin: '0px',
     },
     '.Input': {
       padding: '10px',
@@ -92,16 +75,37 @@ const CheckOut = () => {
   const cartCountSelector = useSelector(selectCartCount);
   const { setMessage } = useContext(popUpMessageContext);
 
-  const [stripePromiseState, setStripePromiseState] = useState<Stripe | null>();
+  const [stripePromiseState, setStripePromiseState] = useState<Stripe | null>(
+    null
+  );
   const [clientSecret, setClientSecret] = useState<string>();
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isDiffrentAddress, setIsDiffrentAddress] = useState(false);
   const [isExpressDelivery, setIsExpressDelivery] = useState(false);
+  const [isUserPaying, setIsUserPaying] = useState(false);
   const [finalTotal, setFinalTotal] = useState(0);
   const [deliveryAddress, setDeliveryAddress] = useState<UserAddress>();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const getClientSecret = async (amount: number) => {
+    try {
+      const res = await stripePaymentIntent(amount);
+      if (res && res.paymentIntent) {
+        setClientSecret(res.paymentIntent.client_secret as string);
+      }
+    } catch (error) {
+      console.log('error:', error);
+    }
+  };
+
+  const ifValidPaymentData = (
+    stripePromiseState: Stripe | null | undefined,
+    deliveryAddress: UserAddress | undefined
+  ): boolean => {
+    return stripePromiseState !== null && deliveryAddress !== undefined && true;
+  };
 
   // fetch stripe obj
   useEffect(() => {
@@ -113,32 +117,35 @@ const CheckOut = () => {
         console.log('error:', error);
       }
     };
-    const res = getStripe();
-  }, []);
-  // create payment intent
-  useEffect(() => {
-    const getClientSecret = async (amount: number) => {
+
+    const getAuthUser = async () => {
       try {
-        const res = await stripePaymentIntent(amount);
-        if (res && res.paymentIntent) {
-          setClientSecret(res.paymentIntent.client_secret as string);
+        const user = await getCurrentUser();
+        if (user === null) {
+          return navigate('/authentication');
         }
+
+        setIsEmailVerified(user.emailVerified);
       } catch (error) {
         console.log('error:', error);
       }
     };
 
+    const res = getStripe();
+    const checkAuthUser = getAuthUser();
+  }, [navigate]);
+
+  useEffect(() => {
     if (cartTotalSelector) {
       if (isExpressDelivery) {
         setFinalTotal(cartTotalSelector + 15.99);
       } else {
         setFinalTotal(cartTotalSelector);
       }
-
-      const res = getClientSecret(finalTotal);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cartTotalSelector, isExpressDelivery]);
+  }, [isExpressDelivery]);
+
   // handling the address change option
   useEffect(() => {
     setIsDiffrentAddress(false);
@@ -149,23 +156,6 @@ const CheckOut = () => {
       setDeliveryAddress(address);
     }
   }, [currentUserSelector, currentUserSelector?.defualtAddressId]);
-
-  const getAuthUserEmailVerified = async () => {
-    try {
-      const user = await getCurrentUser();
-      if (user) {
-        setIsEmailVerified(user.emailVerified);
-      }
-    } catch (error) {
-      console.log('error:', error);
-    }
-  };
-  useEffect(() => {
-    if (currentUserSelector === null) {
-      navigate('/authentication');
-    }
-    const getUserVerification = getAuthUserEmailVerified();
-  }, [currentUserSelector, navigate]);
 
   const emailVereficationHandler = async () => {
     try {
@@ -178,11 +168,27 @@ const CheckOut = () => {
       console.log('error:', error);
     }
   };
-  console.log('isExpressDelivery:', isExpressDelivery);
+
+  const userGoToPayHandler = async () => {
+    if (cartTotalSelector) {
+      let total = 0;
+      if (isExpressDelivery) {
+        total = cartTotalSelector + 15.99;
+        const res = getClientSecret(total);
+        setFinalTotal(total);
+      } else {
+        total = cartTotalSelector;
+        const res = getClientSecret(total);
+        setFinalTotal(total);
+      }
+    }
+    setIsUserPaying(true);
+  };
+
   return (
     <div className="flex h-full w-full justify-center bg-white">
       <div className="container max-w-5xl">
-        <div className="grid h-full w-full justify-items-center gap-3 px-2 md:grid-cols-3">
+        <div className="grid h-full w-full justify-items-center gap-3 px-2 md:grid-cols-3 ">
           {/* payment page */}
           <div className="order-2 flex h-full w-full flex-col gap-3 bg-white md:order-1  md:col-span-2">
             {/* user details */}
@@ -193,7 +199,7 @@ const CheckOut = () => {
                 currentUserSelector?.dateOfBirth
               ) ? (
                 <>
-                  <h1 className="flex p-4 py-4 font-smoochSans font-semibold uppercase tracking-wider text-slate-700">
+                  <h1 className="flex  p-4 py-4 font-smoochSans font-semibold uppercase tracking-wider text-slate-700">
                     my details
                   </h1>
                   <span className="flex justify-center px-4 font-smoochSans text-sm capitalize tracking-wider text-yellow-500">
@@ -308,15 +314,39 @@ const CheckOut = () => {
               </div>
             </div>
             {/* stripe payment form */}
-            <div className="flex w-full justify-center bg-gray-100 p-4">
-              {stripePromiseState && clientSecret && isEmailVerified && deliveryAddress ? (
-                <Elements
-                  stripe={stripePromiseState!}
-                  options={{ clientSecret, appearance }}
-                >
-                  <PaymentForm deliveryAddress={deliveryAddress} isExpressDelivery={isExpressDelivery}/>
-                </Elements>
-              ) : (
+            <div className="flex w-full flex-col items-center justify-center bg-gray-100 p-4">
+              <button
+                disabled={
+                  !ifValidPaymentData(stripePromiseState, deliveryAddress)
+                }
+                onClick={userGoToPayHandler}
+                className={`${
+                  isUserPaying ? 'hidden' : 'block'
+                } btn mt-4 w-full max-w-md rounded-none shadow-sm`}
+              >
+                <div className="flex w-full items-center justify-center ">
+                  <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
+                    Go to payment
+                  </span>
+                </div>
+              </button>
+
+              {isUserPaying &&
+                isEmailVerified &&
+                clientSecret &&
+                deliveryAddress && (
+                  <Elements
+                    stripe={stripePromiseState}
+                    options={{ appearance, clientSecret }}
+                    key={clientSecret}
+                  >
+                    <PaymentForm
+                      deliveryAddress={deliveryAddress}
+                      isExpressDelivery={isExpressDelivery}
+                    />
+                  </Elements>
+                )}
+              {!isEmailVerified && (
                 <div className="flex w-full flex-col items-center  gap-5 p-4">
                   <span className="flex justify-center px-4 font-smoochSans text-sm capitalize tracking-wider text-yellow-500">
                     <svg

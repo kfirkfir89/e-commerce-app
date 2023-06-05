@@ -3,19 +3,20 @@ import { Outlet, Link, useLocation, NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import { createContext, memo, useEffect, useMemo, useState } from 'react';
-import CartDropdown from '../../components/cart-dropdown/cart-dropdown.componenet';
 
 import { selectCurrentUser } from '../../store/user/user.selector';
+
+import {
+  UserCollectionKeys,
+  getUserCollectionKeys,
+} from '../../utils/firebase/firebase.utils';
+import { getUserCategories } from '../../utils/firebase/firebase.category.utils';
 
 import { ReactComponent as AdminIcon } from '../../assets/manage_accounts.svg';
 import { ReactComponent as FavoriteIcon } from '../../assets/favorite_FILL0_w.svg';
 
+import CartDropdown from '../../components/cart-dropdown/cart-dropdown.componenet';
 import SideMenu from '../side-menu/side-menu.component';
-import {
-  UserCollectionKeys,
-  getUserCategories,
-  getUserCollectionKeys,
-} from '../../utils/firebase/firebase.utils';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs.component';
 import Search from '../../components/search/search.component';
 import ProfileDropdown from '../../components/profile-dropdown/profile-dropdown.componenet';

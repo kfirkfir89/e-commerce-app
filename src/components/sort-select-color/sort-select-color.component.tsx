@@ -1,37 +1,40 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import {
-  FC, useEffect, useRef, useState, 
-} from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 
 import { ReactComponent as NoColorIcon } from '../../assets/block_FILL0.svg';
 import { SelectOption } from '../select/select.component';
 
 export type SelectColorOption = {
-  label: string
-  value: string
+  label: string;
+  value: string;
 };
 
 type SelectProps = {
-  value: SelectColorOption[]
-  firstOption: SelectOption
-  onChange: (value: SelectColorOption[]) => void
+  value: SelectColorOption[];
+  firstOption: SelectOption;
+  onChange: (value: SelectColorOption[]) => void;
 };
 
 type SelectColorProps = {
-  options: SelectColorOption[]
+  options: SelectColorOption[];
 } & SelectProps;
 
 // eslint-disable-next-line object-curly-newline
-export const SortSelectColor: FC<SelectColorProps> = ({ firstOption, value, onChange, options }: SelectColorProps) => {
+export const SortSelectColor: FC<SelectColorProps> = ({
+  firstOption,
+  value,
+  onChange,
+  options,
+}: SelectColorProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   function clearOptions() {
     onChange([]);
   }
-  
+
   function selectOption(option: SelectColorOption) {
     if (value.includes(option)) {
       onChange(value.filter((o) => o !== option));
@@ -43,12 +46,12 @@ export const SortSelectColor: FC<SelectColorProps> = ({ firstOption, value, onCh
   function isOptionSelected(option: SelectColorOption) {
     return value.includes(option);
   }
-  
+
   useEffect(() => {
     clearOptions();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
+
   useEffect(() => {
     if (isOpen) setHighlightedIndex(0);
   }, [isOpen]);
@@ -70,7 +73,7 @@ export const SortSelectColor: FC<SelectColorProps> = ({ firstOption, value, onCh
             setIsOpen(true);
             break;
           }
-  
+
           const newValue = highlightedIndex + (e.code === 'ArrowDown' ? 1 : -1);
           if (newValue >= 0 && newValue < options.length) {
             setHighlightedIndex(newValue);
@@ -89,68 +92,109 @@ export const SortSelectColor: FC<SelectColorProps> = ({ firstOption, value, onCh
       // eslint-disable-next-line react-hooks/exhaustive-deps
       containerRef.current?.removeEventListener('keydown', handler);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, highlightedIndex, options]);
-  
+
   return (
-    <div ref={containerRef} tabIndex={0} onBlur={() => setIsOpen(false)} onClick={() => { setIsOpen(!isOpen); }} className="relative container flex flex-shrink items-center border-t-4 border-b-4 border-gray-300 border-double bg-transparent max-w-[16rem] min-h-[2rem] p-2">
+    <div
+      ref={containerRef}
+      tabIndex={0}
+      onBlur={() => setIsOpen(false)}
+      onClick={() => {
+        setIsOpen(!isOpen);
+      }}
+      className="container relative flex min-h-[2rem] max-w-[16rem] flex-shrink items-center border-b-4 border-t-4 border-double border-gray-300 bg-transparent p-2"
+    >
       {/* value */}
-      {Array.isArray(value) && value.length === 0 && <span className="font-semibold text-sm tracking-widest text-slate-600 font-smoochSans leading-0">{firstOption?.label}</span>}
-      <span className="flex-grow flex gap-2 flex-wrap">
-        
-        {value.map((v) => (
-          v.label === 'nocolor' 
-            ? (
-              <button key={v.value} onClick={(e) => { e.stopPropagation(); selectOption(v); }} className={`flex justify-center items-center ${v.value} shadow-lg h-6 w-6 rounded-lg cursor-pointer hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1`}>
-                <span className="text-lg bg-none border-none outline-none text-gray-400 hover:text-gray-700">
-                  <NoColorIcon />
-                </span>
-              </button>
-            ) 
-            : (
-              <button key={v.value} onClick={(e) => { e.stopPropagation(); selectOption(v); }} className={`flex justify-center items-center ${v.value} shadow-lg h-6 w-6 rounded-lg cursor-pointer hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1`}>
-                <span className="text-lg bg-none border-none outline-none text-gray-300 hover:text-gray-700">&times;</span>
-              </button>
-            )
-        ))}
+      {Array.isArray(value) && value.length === 0 && (
+        <span className="leading-0 font-smoochSans text-sm font-semibold tracking-widest text-slate-600">
+          {firstOption?.label}
+        </span>
+      )}
+      <span className="flex flex-grow flex-wrap gap-2">
+        {value.map((v) =>
+          v.label === 'nocolor' ? (
+            <button
+              key={v.value}
+              onClick={(e) => {
+                e.stopPropagation();
+                selectOption(v);
+              }}
+              className={`flex items-center justify-center ${v.value} h-6 w-6 cursor-pointer rounded-lg shadow-lg hover:outline hover:outline-1 hover:outline-offset-1 hover:outline-gray-300`}
+            >
+              <span className="border-none bg-none text-lg text-gray-400 outline-none hover:text-gray-700">
+                <NoColorIcon />
+              </span>
+            </button>
+          ) : (
+            <button
+              key={v.value}
+              onClick={(e) => {
+                e.stopPropagation();
+                selectOption(v);
+              }}
+              className={`flex items-center justify-center ${v.value} h-6 w-6 cursor-pointer rounded-lg shadow-lg hover:outline hover:outline-1 hover:outline-offset-1 hover:outline-gray-300`}
+            >
+              <span className="border-none bg-none text-lg text-gray-300 outline-none hover:text-gray-700">
+                &times;
+              </span>
+            </button>
+          )
+        )}
       </span>
       {/* close btn */}
       {/* <button onClick={(e) => { e.stopPropagation(); clearOptions(); }} type="button" className="bg-none border-none outline-none text-gray-400 text-lg focus:text-black hover:text-black">&times;</button> */}
       {/* down arrow */}
-      <div className="border-4 w-2 border-transparent border-t-gray-400 translate-y-1 cursor-pointer hover:border-t-gray-700"></div>
-      {/* ul items */}  
-      <div className={`absolute list-none ${isOpen ? 'block' : 'hidden'} p-1 mt-1 rounded w-full left-0 top-full bg-white border border-gray-400 focus:border-white z-[100]`}>
+      <div className="w-2 translate-y-1 cursor-pointer border-4 border-transparent border-t-gray-400 hover:border-t-gray-700"></div>
+      {/* ul items */}
+      <div
+        className={`absolute list-none ${
+          isOpen ? 'block' : 'hidden'
+        } left-0 top-full z-[100] mt-1 w-full rounded border border-gray-400 bg-white p-1 focus:border-white`}
+      >
         <div className="flex flex-wrap gap-x-3 gap-y-2">
-          {options.map((option, index) => (
-            option.label === 'nocolor' 
-              ? (
-                <div
-                  role="presentation"
-                  onClick={(e) => { e.stopPropagation(); selectOption(option); setIsOpen(true); }} 
-                  onMouseEnter={() => setHighlightedIndex(index)} 
-                  key={option.value} 
-                  className={`${isOptionSelected(option) && ''} ${index === highlightedIndex && !isOptionSelected(option) && ''} px-2 flex justify-center items-center ${option.value} bg-[${option.value}] p-1 px-2 cursor-pointer shadow-lg h-6 w-6 rounded-lg hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1`}
-                >
-                  <div className="opacity-40">
-                    <NoColorIcon />
-                  </div>
+          {options.map((option, index) =>
+            option.label === 'nocolor' ? (
+              <div
+                role="presentation"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  selectOption(option);
+                  setIsOpen(true);
+                }}
+                onMouseEnter={() => setHighlightedIndex(index)}
+                key={option.value}
+                className={`${isOptionSelected(option) && ''} ${
+                  index === highlightedIndex && !isOptionSelected(option) && ''
+                } flex items-center justify-center px-2 ${option.value} bg-[${
+                  option.value
+                }] h-6 w-6 cursor-pointer rounded-lg p-1 px-2 shadow-lg hover:outline hover:outline-1 hover:outline-offset-1 hover:outline-gray-300`}
+              >
+                <div className="opacity-40">
+                  <NoColorIcon />
                 </div>
-              ) 
-              : (
-                <div
-                  role="presentation"
-                  onClick={(e) => { e.stopPropagation(); selectOption(option); setIsOpen(true); }} 
-                  onMouseEnter={() => setHighlightedIndex(index)} 
-                  key={option.value} 
-                  className={`${isOptionSelected(option) && ''} ${index === highlightedIndex && !isOptionSelected(option) && ''} px-2 flex justify-center items-center ${option.value} bg-[${option.value}] p-1 px-2 cursor-pointer shadow-lg h-6 w-6 rounded-lg hover:outline hover:outline-gray-300 hover:outline-1 hover:outline-offset-1`}
-                >
-                </div>
-              )
-          ))}
+              </div>
+            ) : (
+              <div
+                role="presentation"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  selectOption(option);
+                  setIsOpen(true);
+                }}
+                onMouseEnter={() => setHighlightedIndex(index)}
+                key={option.value}
+                className={`${isOptionSelected(option) && ''} ${
+                  index === highlightedIndex && !isOptionSelected(option) && ''
+                } flex items-center justify-center px-2 ${option.value} bg-[${
+                  option.value
+                }] h-6 w-6 cursor-pointer rounded-lg p-1 px-2 shadow-lg hover:outline hover:outline-1 hover:outline-offset-1 hover:outline-gray-300`}
+              ></div>
+            )
+          )}
         </div>
       </div>
     </div>
-
   );
 };
 

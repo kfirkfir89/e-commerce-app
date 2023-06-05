@@ -30,7 +30,7 @@ import {
   signOutUser,
   AddittionalInformation,
   updateUserDocument,
-} from '../../utils/firebase/firebase.utils';
+} from '../../utils/firebase/firebase.user.utils';
 
 // getting the user auth to connect or create
 export function* getSnapshotFromUserAuth(
