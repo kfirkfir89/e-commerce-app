@@ -57,8 +57,11 @@ const CategoriesPreview = () => {
                           !isImageLoaded ? 'invisible' : 'visible'
                         }`}
                       >
-                        <div className="absolute z-50 border-[1px] border-dashed border-slate-700 bg-white bg-opacity-80 p-4 font-dosis text-lg  font-semibold uppercase tracking-widest">
-                          <Link to={category.title} className="h-full w-full">
+                        <div className="absolute z-50 font-dosis text-lg font-semibold uppercase tracking-widest">
+                          <Link
+                            to={category.title}
+                            className="h-full w-full border-[1px] border-dashed border-slate-700 bg-white bg-opacity-80 p-6"
+                          >
                             {category.title}
                           </Link>
                         </div>

@@ -25,85 +25,46 @@ export const images = [
 
 const Carousel = () => {
   const [currentImg, setCurrentImage] = useState(0);
+  const [prevCurrentImg, setPrevCurrentImage] = useState(0);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       currentImg < images.length - 1
         ? setCurrentImage(currentImg + 1)
         : setCurrentImage(0);
-    }, 5000);
+    }, 3000);
 
+    setPrevCurrentImage(currentImg);
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImg]);
 
   return (
-    <section className="container flex h-[350px] w-screen items-center justify-center ">
-      <div className="h-full w-full">
-        <div
-          style={{ backgroundImage: `url(${images[currentImg].img})` }}
-          className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-in-out"
-        >
-          {/* bg-gradient */}
-          <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-r from-black/30"></div>
-
-          {/* title-subtitle */}
-          {/* <div className="text-white opacity-60 flex flex-col gap-3 mb-3 absolute bottom-0 left-1/2 -translate-x-1/2 -translate-y-1/2 ">
-            <span className="">{images[currentImg].title}</span>
-            <span className="">{images[currentImg].subtitle}</span>
-          </div> */}
-
-          {/* circles */}
-          {/* <div className="flex absolute bottom-0 left-1/2 -translate-x-1/2 -translate-y-1/2 ">
-            <div
-              onClick={() => setCurrentImage(0)}
-              className={`w-3 h-3 rounded-full bg-white transition-all ease-in-out duration-1000 mr-3 cursor-pointer  ${
-                currentImg === 0 ? 'opacity-80' : 'opacity-30'
-              }`}
-            >
-            </div>
-
-            <div
-              onClick={() => setCurrentImage(1)}
-              className={`w-3 h-3 rounded-full bg-white transition-all ease-in-out duration-1000 mr-3 cursor-pointer  ${
-                currentImg === 1 ? 'opacity-80' : 'opacity-30'
-              }`}
-            >
-            </div>
-
-            <div
-              onClick={() => setCurrentImage(2)}
-              className={`w-3 h-3 rounded-full bg-white transition-all ease-in-out duration-1000 mr-3 cursor-pointer  ${
-                currentImg === 2 ? 'opacity-80' : 'opacity-30'
-              }`}
-            >
-            </div>
-          </div> */}
-
-          {/* button-group */}
-          {/* <button
-            onClick={() => (currentImg > 0
-              ? setCurrentImage(currentImg - 1)
-              : setCurrentImage(2))}
-            className="absolute text-white left-7 top-1/2"
+    <div
+      className="container relative flex h-[350px] w-full items-center justify-center  overflow-hidden"
+      style={{ backgroundImage: `url(${images[prevCurrentImg].img})` }}
+    >
+      <div className="flex h-full w-full flex-col">
+        {images.map((img, index) => (
+          <div
+            key={img.title}
+            className={`absolute  bottom-0 h-full w-full transform transition-all duration-1000 ease-out ${
+              index === currentImg && 'translate-y-full'
+            } ${index < currentImg && 'z-10'}`}
           >
-            <span className="w-6 h-6 opacity-30 hover:opacity-80 transition-all ease-in-out duration-300">
-              <ArrowBack />
-            </span>
-          </button>
-
-          <button
-            onClick={() => (currentImg < images.length - 1
-              ? setCurrentImage(currentImg + 1)
-              : setCurrentImage(0))}
-            className="absolute text-white right-7  top-1/2"
-          >
-            <span className="w-6 h-6 opacity-30 hover:opacity-80 transition-all ease-in-out duration-300">
-              <ArrowForward />
-            </span>
-          </button> */}
-        </div>
+            <img
+              alt={img.title}
+              src={images[index].img}
+              className="w-full"
+              // style={{ backgroundImage: `url(${images[currentImg].img})` }}
+            />
+            {index}
+          </div>
+        ))}
+        {/* bg-gradient */}
+        <div className="absolute h-full w-full bg-black bg-gradient-to-r opacity-10"></div>
       </div>
-    </section>
+    </div>
   );
 };
 

@@ -14,8 +14,7 @@ import CategoriesPreview from './routes/categories-preview/categories-preview.co
 import NotFound from './routes/not-found/not-found.component';
 import ItemPreview from './routes/item-preview/item-preview.component';
 import AdminDBNav from './routes/admin-dashboard-nav/admin-db-nav.component';
-import Dashboard from './components/dashboard/dashboard.component';
-import AddFirebase from './components/add-firebase/add-firebase.component';
+import AdminDashboard from './routes/admin-dashboard-nav/admin-dashboard.component';
 import Navigation from './routes/navigation/navigation.component';
 import Category from './routes/category/category.component';
 import SearchResults from './routes/search-results/search-results.component';
@@ -26,6 +25,8 @@ import UserProfile from './routes/user-profile/user-profile.component';
 import UserAccount from './routes/user-profile/user-account.component';
 import Cart from './routes/cart/cart.component';
 import Favorites from './routes/favorites/favorites.component';
+import AdminAdd from './routes/admin-dashboard-nav/admin-add-products.component';
+import PagesPreview from './routes/admin-dashboard-nav/admin-pages-preview.component copy';
 
 const Home = lazy(() => import('./routes/home/home.component'));
 const Authentication = lazy(
@@ -72,8 +73,9 @@ const App = () => {
         <Route path="search-results" element={<SearchResults />} />
 
         <Route path="admin-dashboard/*" element={<AdminDBNav />}>
-          <Route index element={<Dashboard />} />
-          <Route path="addfirebase" element={<AddFirebase />} />
+          <Route index element={<AdminDashboard />} />
+          <Route path="pages-preview" element={<PagesPreview />} />
+          <Route path="addfirebase" element={<AdminAdd />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

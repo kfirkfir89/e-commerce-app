@@ -16,12 +16,11 @@ const AdminDBNav = () => {
               </div> */}
               <div className="z-50 flex-none ">
                 <Link to="/">
-                  <div className="flex flex-col whitespace-nowrap font-dosis text-xl text-slate-700 sm:text-3xl">
-                    <img
-                      className="w-3/4 opacity-90 sm:w-full"
-                      src="/src/assets/NANA STYLE.png"
-                      alt="gfd"
-                    />
+                  <div className="mt-2 flex">
+                    <span className="whitespace-nowrap font-smoochSans text-lg font-bold uppercase tracking-tighter text-slate-700 sm:text-xl">
+                      nana style
+                    </span>
+                    {/* <img className="w-8/12 pl-2 opacity-90 sm:w-full" src="/src/assets/NANA STYLE.png" alt="gfd" /> */}
                   </div>
                 </Link>
               </div>
@@ -29,28 +28,22 @@ const AdminDBNav = () => {
             <div className="z-40 flex w-full flex-wrap justify-center">
               <div className="flex justify-center">
                 <Link
-                  to="/admin-dashboard"
+                  to="admin-dashboard"
                   className={`btn-ghost btn-xs btn mx-2 text-gray-700 sm:btn-sm ${
                     path.pathname === '/admin-dashboard' ? 'bg-gray-300' : ''
                   }`}
                 >
-                  Dashboard
+                  dashboard
                 </Link>
               </div>
               <div className="flex justify-center">
                 <Link
-                  to="addfirebase"
-                  className="btn-ghost btn-xs btn mx-2 text-gray-700 sm:btn-sm"
+                  to="pages-preview"
+                  className={`btn-ghost btn-xs btn mx-2 text-gray-700 sm:btn-sm ${
+                    path.pathname === '/pages-preview' ? 'bg-gray-300' : ''
+                  }`}
                 >
-                  Update Stock
-                </Link>
-              </div>
-              <div className="flex justify-center">
-                <Link
-                  to="addfirebase"
-                  className="btn-ghost btn-xs btn mx-2 text-gray-700 sm:btn-sm"
-                >
-                  Delete Products
+                  pages-preview
                 </Link>
               </div>
               <div className="flex justify-center ">

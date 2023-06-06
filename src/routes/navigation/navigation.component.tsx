@@ -114,136 +114,143 @@ const Navigation = () => {
     <div className="flex h-full w-full flex-col">
       {/* navigation */}
       {!isAdminDashboard() && (
-        <div className="navbar m-0 flex-col p-0">
-          {/* main navbar */}
-          <div className=" m-0 flex min-h-fit w-full justify-center bg-gray-100 p-1">
-            <div className="container navbar m-0 flex min-h-fit bg-transparent p-0">
-              {/* LEFT SIDE LOGO MENU */}
-              <div className="flex-1 ">
-                <div className="flex-none">
-                  {userCategories !== undefined && (
-                    // side menu for small screens
-                    <div className="z-40 flex flex-col items-center justify-center pt-2 md:hidden ">
-                      <SideMenu
-                        onChangeToggle={toggleIsMenuOpen}
-                        categories={userCategories}
-                      />
-                    </div>
-                  )}
+        <div className="mb-[101px]">
+          <div className="navbar absolute z-[101] m-0 flex-col p-0">
+            {/* main navbar */}
+            <div className=" m-0 flex min-h-fit w-full justify-center bg-gray-100 p-1">
+              <div className="container navbar m-0 flex min-h-fit bg-transparent p-0">
+                {/* LEFT SIDE LOGO MENU */}
+                <div className="flex-1 ">
+                  <div className="flex-none">
+                    {userCategories !== undefined && (
+                      // side menu for small screens
+                      <div className="z-40 flex flex-col items-center justify-center pt-2 md:hidden ">
+                        <SideMenu
+                          onChangeToggle={toggleIsMenuOpen}
+                          categories={userCategories}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <div className="z-50 sm:flex-none">
+                    <Link to="/">
+                      <div className="mt-2 flex">
+                        <span className="whitespace-nowrap font-smoochSans text-lg font-bold uppercase tracking-tighter text-slate-700 sm:text-xl">
+                          nana style
+                        </span>
+                        {/* <img className="w-8/12 pl-2 opacity-90 sm:w-full" src="/src/assets/NANA STYLE.png" alt="gfd" /> */}
+                      </div>
+                    </Link>
+                  </div>
+                  <div className="mt-2 hidden w-full px-6 md:flex">
+                    <Search />
+                  </div>
                 </div>
-                <div className="z-50 sm:flex-none">
-                  <Link to="/">
-                    <div className="mt-2 flex">
-                      <span className="whitespace-nowrap font-smoochSans text-lg font-bold uppercase tracking-tighter text-slate-700 sm:text-xl">
-                        nana style
-                      </span>
-                      {/* <img className="w-8/12 pl-2 opacity-90 sm:w-full" src="/src/assets/NANA STYLE.png" alt="gfd" /> */}
-                    </div>
-                  </Link>
-                </div>
-                <div className="mt-2 hidden w-full px-6 md:flex">
-                  <Search />
-                </div>
-              </div>
 
-              {/* RIGTH SIDE NAV BUTTONS */}
-              <div className="flex">
-                <div className="z-[100] flex w-full justify-end">
-                  {/* SIGNIN PROFILE ADMINDB */}
-                  {currentUser && currentUser.isAdmin && (
-                    <div className="flex">
-                      <NavLink
-                        onClick={() => setIsSideMenuToggled(false)}
-                        to="/admin-dashboard"
-                      >
-                        <AdminIcon className="mt-[1px] w-[38px] sm:w-10" />
-                      </NavLink>
-                    </div>
-                  )}
-                  <NavLink to="favorites" className="mt-[10px] flex px-1">
-                    <FavoriteIcon className="h-8 w-9" />
-                  </NavLink>
+                {/* RIGTH SIDE NAV BUTTONS */}
+                <div className="flex">
+                  <div className="z-[100] flex w-full justify-end">
+                    {/* SIGNIN PROFILE ADMINDB */}
+                    {currentUser && currentUser.isAdmin && (
+                      <div className="flex">
+                        <NavLink
+                          onClick={() => setIsSideMenuToggled(false)}
+                          to="/admin-dashboard"
+                        >
+                          <AdminIcon className="mt-[1px] w-[38px] sm:w-10" />
+                        </NavLink>
+                      </div>
+                    )}
+                    <NavLink to="favorites" className="mt-[10px] flex px-1">
+                      <FavoriteIcon className="h-8 w-9" />
+                    </NavLink>
 
-                  <ProfileDropdown />
-                  {/* CART */}
-                  <div className="mt-1 pl-1">
-                    <CartDropdown />
+                    <ProfileDropdown />
+                    {/* CART */}
+                    <div className="mt-1 pl-1">
+                      <CartDropdown />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* categories navbar */}
-          <div className="relative hidden w-full flex-col items-center justify-center bg-white md:flex">
-            <div className="container pt-2">
-              <div className="flex justify-center">
-                {userCollectionKeys &&
-                  userCollectionKeys.keys.map((key) => (
-                    <button
-                      key={key}
-                      className="relative flex flex-col items-center justify-center"
-                      onClick={() => setIsHover(!isHover)}
-                    >
-                      <div className="flex justify-center">
-                        <div
-                          className="static flex px-3"
-                          onMouseLeave={() => setIsHover(false)}
-                          onMouseEnter={() => {
-                            setIsHover(true);
-                            setHoverSelected(key);
-                          }}
-                        >
-                          <NavLink
-                            to={key}
-                            className="leading-0 link-underline link-underline-black p-1 font-smoochSans text-sm uppercase tracking-[0.075em] text-slate-700"
-                          >
-                            {key}
-                          </NavLink>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-              </div>
-            </div>
-
-            <div
-              tabIndex={0}
-              onMouseEnter={() => setIsHover(true)}
-              onMouseLeave={() => setIsHover(false)}
-              className={`grid w-full grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out  ${
-                isHover ? 'grid-rows-[1fr]' : ''
-              }`}
-            >
-              <div className="min-h-0">
+            {/* categories navbar */}
+            <div className="relative hidden w-full flex-col items-center justify-center bg-slate-700 text-white md:flex">
+              <div className="container">
                 <div className="flex justify-center">
-                  <div className="container flex justify-center bg-white">
-                    <div className="mb-8 mt-2 flex w-[448px] flex-col px-2">
-                      {memorizedCategories?.map((sc) => (
-                        <div key={sc} className="flex">
-                          <div className="static flex justify-start px-3">
+                  {userCollectionKeys &&
+                    userCollectionKeys.keys.map((key) => (
+                      <button
+                        key={key}
+                        className="relative flex flex-col  items-center justify-center"
+                        onClick={() => setIsHover(!isHover)}
+                      >
+                        <div className="flex justify-center">
+                          <div
+                            className="static flex"
+                            onMouseLeave={() => setIsHover(false)}
+                            onMouseEnter={() => {
+                              setIsHover(true);
+                              setHoverSelected(key);
+                            }}
+                          >
                             <NavLink
-                              to={`${hoverSelected}/${sc}`}
                               className={({ isActive }) =>
                                 isActive
-                                  ? 'leading-0 z-50 p-1 font-smoochSans text-sm capitalize tracking-widest text-slate-900 underline underline-offset-4 hover:text-slate-900'
-                                  : 'leading-0 z-50 p-1 font-smoochSans text-sm capitalize tracking-widest text-slate-500 hover:text-slate-900'
+                                  ? 'link-underline link-underline-black bg-gray-100 p-1 px-4 font-smoochSans text-sm uppercase leading-8 tracking-[0.075em] text-slate-700 '
+                                  : 'link-underline link-underline-black p-1 px-4 font-smoochSans text-sm uppercase leading-8 tracking-[0.075em] '
                               }
+                              to={key}
+                              // className="link-underline link-underline-black p-1 px-4 font-smoochSans text-sm uppercase leading-8 tracking-[0.075em] "
                             >
-                              {sc}
+                              {key}
                             </NavLink>
                           </div>
                         </div>
-                      ))}
+                      </button>
+                    ))}
+                </div>
+              </div>
+
+              <div
+                tabIndex={0}
+                onMouseEnter={() => setIsHover(true)}
+                onMouseLeave={() => setIsHover(false)}
+                className={`grid w-full grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${
+                  isHover ? 'grid-rows-[1fr]' : ''
+                }`}
+              >
+                <div className="min-h-0">
+                  <div className="flex justify-center">
+                    <div className="container flex justify-center bg-slate-700">
+                      <div className="flex h-full w-[448px] flex-col px-2 pb-5">
+                        {memorizedCategories?.map((sc) => (
+                          <div key={sc} className="flex">
+                            <div className="static flex justify-start px-3">
+                              <NavLink
+                                to={`${hoverSelected}/${sc}`}
+                                className={({ isActive }) =>
+                                  isActive
+                                    ? 'leading-0 z-50 p-1 font-smoochSans text-sm capitalize tracking-widest text-white underline underline-offset-4 hover:text-slate-300'
+                                    : 'leading-0 z-50 p-1 font-smoochSans text-sm capitalize tracking-widest text-white hover:text-slate-300'
+                                }
+                              >
+                                {sc}
+                              </NavLink>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div
+                  className={`z-10 border-b-[1px] border-dashed border-slate-300 opacity-0 transition-all duration-1000 ease-in-out ${
+                    isHover ? 'opacity-100' : ''
+                  }`}
+                ></div>
               </div>
-              <div
-                className={`border-b-[1px] border-dashed border-slate-700 opacity-0 transition-all duration-1000 ease-in-out ${
-                  isHover ? 'opacity-100' : ''
-                }`}
-              ></div>
             </div>
           </div>
         </div>
@@ -293,7 +300,7 @@ const Navigation = () => {
           </popUpMessageContext.Provider>
         </div>
 
-        <footer className="footer flex items-center bg-gray-100 p-4 font-smoochSans leading-7 tracking-wider text-slate-700">
+        <footer className="footer flex items-center bg-slate-700 p-4 font-smoochSans leading-7 tracking-wider text-white">
           <div className="flex-1">
             <p>© nana-style 2023 - All right reserved</p>
           </div>
