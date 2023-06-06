@@ -53,42 +53,47 @@ const SideMenu = ({ categories, onChangeToggle }: SideMenuProps) => {
                 <Search onChangeToggle={() => toggleIsMenuOpen()} />
               </div>
 
-              <div className="flex overflow-x-auto border-b-[1px] border-dashed border-slate-400">
+              <div className="scrollbarStyle flex overflow-x-auto border-b-[1px] border-dashed border-slate-400">
                 {categories !== undefined &&
                   Array.from(categories.entries()).map(([key, value]) => {
                     return (
                       <div
-                        className="flex-col border-r-[1px] border-dashed border-slate-400 p-6 pb-10 pr-12"
+                        className="leading-0 flex w-full min-w-[144px] flex-col border-r-[1px] border-dashed border-slate-400  font-smoochSans text-sm uppercase tracking-widest text-slate-700"
                         key={key}
                       >
-                        <div key={key}>
+                        <div
+                          className="mb-2 flex justify-center border-b-[1px] border-dashed border-slate-700 p-3 font-semibold"
+                          key={key}
+                        >
                           <NavLink
                             to={`${key}`}
                             className={({ isActive }) =>
                               isActive
-                                ? 'text leading-0 z-50 font-smoochSans font-semibold capitalize tracking-widest text-slate-900 underline underline-offset-4 hover:text-slate-900'
-                                : 'text leading-0 z-50 font-smoochSans font-semibold tracking-widest text-slate-500 hover:text-slate-900'
+                                ? 'z-50 flex text-slate-900 underline underline-offset-4'
+                                : 'z-50 flex  text-slate-700 underline-offset-4 hover:text-slate-900 hover:underline'
                             }
                             onClick={toggleIsMenuOpen}
                           >
                             {key}
                           </NavLink>
                         </div>
-                        {value.map((subTitle) => (
-                          <div className="mx-2" key={subTitle}>
-                            <NavLink
-                              to={`${key}/${subTitle}`}
-                              className={({ isActive }) =>
-                                isActive
-                                  ? 'leading-0 z-50 p-1 font-smoochSans text-sm capitalize tracking-widest text-slate-900 underline underline-offset-4 hover:text-slate-900'
-                                  : 'leading-0 z-50 p-2 font-smoochSans text-sm tracking-widest text-slate-500 hover:text-slate-900'
-                              }
-                              onClick={toggleIsMenuOpen}
-                            >
-                              {subTitle}
-                            </NavLink>
-                          </div>
-                        ))}
+                        <div className="mb-8 flex flex-col gap-3 p-2 px-6 capitalize">
+                          {value.map((subTitle) => (
+                            <div key={subTitle}>
+                              <NavLink
+                                to={`${key}/${subTitle}`}
+                                className={({ isActive }) =>
+                                  isActive
+                                    ? 'z-50 flex text-slate-900 underline underline-offset-4'
+                                    : 'z-50 flex  text-slate-700 underline-offset-4 hover:text-slate-900 hover:underline'
+                                }
+                                onClick={toggleIsMenuOpen}
+                              >
+                                {subTitle}
+                              </NavLink>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     );
                   })}

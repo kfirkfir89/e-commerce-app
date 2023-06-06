@@ -64,7 +64,7 @@ export async function getPreviewCategoriesAndDocuments(collectionKey: string) {
       docKey,
       'items-preview'
     );
-    const q = query(collectionRef, limit(4));
+    const q = query(collectionRef, limit(8));
 
     const querySnapshot = await getDocs(q);
 

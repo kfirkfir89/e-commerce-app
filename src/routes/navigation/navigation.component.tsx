@@ -123,7 +123,7 @@ const Navigation = () => {
                 <div className="flex-none">
                   {userCategories !== undefined && (
                     // side menu for small screens
-                    <div className="z-40 flex flex-col items-center justify-center pt-2 lg:hidden ">
+                    <div className="z-40 flex flex-col items-center justify-center pt-2 md:hidden ">
                       <SideMenu
                         onChangeToggle={toggleIsMenuOpen}
                         categories={userCategories}
@@ -141,7 +141,7 @@ const Navigation = () => {
                     </div>
                   </Link>
                 </div>
-                <div className="mt-2 hidden w-full px-6 lg:flex">
+                <div className="mt-2 hidden w-full px-6 md:flex">
                   <Search />
                 </div>
               </div>
@@ -175,7 +175,7 @@ const Navigation = () => {
           </div>
 
           {/* categories navbar */}
-          <div className="relative hidden w-full flex-col items-center justify-center bg-white lg:flex">
+          <div className="relative hidden w-full flex-col items-center justify-center bg-white md:flex">
             <div className="container pt-2">
               <div className="flex justify-center">
                 {userCollectionKeys &&

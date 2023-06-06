@@ -56,6 +56,11 @@
     height: 24px;
   }
   
+  .gradient-circle {
+    background: rgb(139,92,246);
+    background: linear-gradient(90deg, rgba(139,92,246,1) 1%, rgba(239,68,68,1) 1%, rgba(42,253,105,1) 27%, rgba(14,165,233,1) 78%, rgba(253,224,71,1) 99%, rgba(245,158,11,1) 99%);
+  }
+
   .gradient-bg-nav {
     background: rgb(229,231,235);
     background: linear-gradient(0deg, rgba(229,231,235,1) 28%, rgba(243,244,246,1) 35%, rgba(255,255,255,1) 45%);
