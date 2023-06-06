@@ -46,7 +46,7 @@ const Breadcrumbs = () => {
               </div>
             </div>
           </div>
-          <div className="divider m-1 mb-3"></div>
+          <div className="divider m-0"></div>
         </>
       )}
     </>

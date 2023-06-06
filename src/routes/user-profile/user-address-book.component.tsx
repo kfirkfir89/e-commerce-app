@@ -49,7 +49,15 @@ const UserAddressBook = () => {
   // set user addresses
   useEffect(() => {
     if (currentUserSelector) {
-      setUserAddressBook(currentUserSelector.addresses);
+      const sortedAddresses = [...currentUserSelector.addresses];
+
+      sortedAddresses.sort((a, b) => {
+        if (a.aid === currentUserSelector.defualtAddressId) return -1;
+        if (b.aid === currentUserSelector.defualtAddressId) return 1;
+        return 0;
+      });
+
+      setUserAddressBook(sortedAddresses);
     }
   }, [currentUserSelector]);
 
@@ -119,8 +127,8 @@ const UserAddressBook = () => {
               id="my-modal-4"
               className="modal-toggle"
             />
-            <label htmlFor="my-modal-4" className="modal cursor-pointer">
-              <label className="modal-box relative" htmlFor="">
+            <label htmlFor="my-modal-4" className="modal cursor-pointer ">
+              <label className="modal-box relative bg-white" htmlFor="">
                 <h3 className="mb-4 text-lg font-bold tracking-wider">
                   Add New Address
                 </h3>

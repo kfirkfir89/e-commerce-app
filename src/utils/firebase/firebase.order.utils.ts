@@ -3,6 +3,7 @@ import {
   collection,
   doc,
   getDocs,
+  orderBy,
   query,
   setDoc,
   updateDoc,
@@ -43,5 +44,9 @@ export const getUserOrders = async (orderIds: string[]) => {
   const result: NewOrderDetails[] = itemsQuerySnapshot.docs.map(
     (doc) => doc.data() as NewOrderDetails
   );
-  return result;
+
+  const sortingResults = result.sort(
+    (a, b) => b.createDate.toMillis() - a.createDate.toMillis()
+  );
+  return sortingResults;
 };

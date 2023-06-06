@@ -23,7 +23,7 @@ const Authentication = () => {
   return (
     <div className="flex flex-col items-center justify-center px-2 text-slate-700 sm:mt-40 ">
       {isNewUser ? (
-        <div className="flex w-full flex-col items-center justify-center">
+        <div className="flex h-full w-full flex-col items-center justify-center bg-white">
           <SignUpForm />
           <div>
             <span>Already have an account?&ensp;</span>
@@ -36,7 +36,7 @@ const Authentication = () => {
           </div>
         </div>
       ) : (
-        <div className="flex w-full flex-col items-center justify-center">
+        <div className="flex h-full w-full flex-col items-center justify-center bg-white">
           <SignInForm />
           <div className="mt-4">
             <span>Don&apos;t have an account?&ensp;</span>
@@ -64,7 +64,7 @@ const Authentication = () => {
               className="modal-toggle"
             />
             <label htmlFor="my-modal-4" className="modal cursor-pointer">
-              <label className="modal-box relative" htmlFor="">
+              <label className="modal-box relative bg-white" htmlFor="">
                 <h3 className="text-lg font-bold tracking-wider">
                   Forgot password?
                 </h3>

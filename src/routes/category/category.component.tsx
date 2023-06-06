@@ -290,7 +290,7 @@ const Category = () => {
   };
 
   return (
-    <div className="bg-white">
+    <div className=" h-full w-full bg-white">
       {/* banner */}
       <div className="mb-4 flex justify-center ">
         <div className="container">
@@ -350,7 +350,7 @@ const Category = () => {
                 onChangeColor={onSortChangeColorHandler}
                 valueOption={sortOption}
               />
-              <div className="absolute bottom-24 flex w-full justify-center p-5">
+              <div className="flex w-full justify-center p-5">
                 <button
                   onClick={filterToggleHandler}
                   className="btn w-full rounded-none shadow-sm"

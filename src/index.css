@@ -28,7 +28,7 @@
   }
   
   html, body, #root{
-    @apply h-full w-full bg-white ;
+    @apply h-full w-full bg-white scrollbarStyle scrollbarStyle-hidden;
     color-scheme: only light;
   }
 

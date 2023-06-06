@@ -42,7 +42,10 @@ const UserOrders = () => {
               className="modal-toggle"
             />
             <label htmlFor="my-modal-4" className="modal cursor-pointer">
-              <label className="modal-box relative max-w-4xl p-4" htmlFor="">
+              <label
+                className="modal-box relative max-w-4xl bg-white p-4"
+                htmlFor=""
+              >
                 {isViewOrder && (
                   <>
                     <h3 className="m-4 text-lg font-bold tracking-wider">

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { ReactComponent as MenuIcon } from '../../assets/menu_FILL0.svg';
 import { ReactComponent as CloseIcon } from '../../assets/close_FILL0.svg';
 import Search from '../../components/search/search.component';
@@ -11,16 +11,25 @@ type SideMenuProps = {
 
 const SideMenu = ({ categories, onChangeToggle }: SideMenuProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+
   const toggleIsMenuOpen = () => {
     onChangeToggle(isMenuOpen);
     setIsMenuOpen(!isMenuOpen);
   };
 
+  useEffect(() => {
+    if (isMenuOpen) {
+      toggleIsMenuOpen();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location]);
+
   return (
     <div className="top-0 z-[100] w-full flex-none">
       <div className="flex bg-transparent">
         <div className="z-[100]">
-          <label className="swap swap-rotate btn-circle border-none bg-transparent">
+          <label className="swap-rotate swap btn-circle border-none bg-transparent">
             <input
               type="checkbox"
               checked={isMenuOpen}
@@ -41,7 +50,7 @@ const SideMenu = ({ categories, onChangeToggle }: SideMenuProps) => {
           {isMenuOpen && (
             <div className="fixed left-0 top-[70px] z-50 flex h-screen w-full flex-col bg-white">
               <div className="flex w-full justify-center bg-gray-200 p-2">
-                <Search />
+                <Search onChangeToggle={() => toggleIsMenuOpen()} />
               </div>
 
               <div className="flex overflow-x-auto border-b-[1px] border-dashed border-slate-400">

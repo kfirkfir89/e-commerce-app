@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { ReactComponent as SearchIcon } from '../../assets/manage_search.svg';
@@ -7,7 +7,12 @@ import { getItemsSearch } from '../../utils/firebase/firebase.category.utils';
 import { featchSearchPreview } from '../../store/categories/category.action';
 import { selectCategoriesSearchPreview } from '../../store/categories/category.selector';
 
-const Search = () => {
+type SearchProps = {
+  // eslint-disable-next-line react/require-default-props
+  onChangeToggle?: () => void;
+};
+
+const Search: FC<SearchProps> = ({ onChangeToggle }) => {
   const [searchItems, setSearchItems] = useState<ItemPreview[]>([]);
   const [inputField, setInputField] = useState<string>('');
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -19,7 +24,6 @@ const Search = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const ulRef = useRef<HTMLUListElement>(null);
   const navigate = useNavigate();
-
   // fetch all the items for search
   useEffect(() => {
     const fetchItemsSearch = async () => {
@@ -132,6 +136,9 @@ const Search = () => {
     return option === searchItems[highlightedIndex].productName;
   }
   const onClickButtonHandler = () => {
+    if (onChangeToggle) {
+      onChangeToggle();
+    }
     navigate('/search-results', { state: searchItems });
   };
 

@@ -23,10 +23,16 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
+  collection,
+  orderBy,
+  where,
+  query,
+  getDocs,
 } from 'firebase/firestore';
 
 import { UserDetailsFormFields } from '../../routes/user-profile/user-details.component';
 import { db } from './firebase.utils';
+import { ItemPreview } from '../../components/add-firebase/add-item.component';
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -171,6 +177,18 @@ export const signInAuthUserWithEmailAndPassword = async (
   if (!email || !password) return;
 
   return await signInWithEmailAndPassword(auth, email, password);
+};
+
+// user favortie update depend on if exsist or not ..if exsist remove if not add..
+export const getUserFavorite = async (favoriteIds: string[]) => {
+  const collectionRef = collection(db, 'all-items-preview');
+
+  const itemsQuery = query(collectionRef, where('id', 'in', favoriteIds));
+  const itemsQuerySnapshot = await getDocs(itemsQuery);
+  const result: ItemPreview[] = itemsQuerySnapshot.docs.map(
+    (doc) => doc.data() as ItemPreview
+  );
+  return result;
 };
 
 // user favortie update depend on if exsist or not ..if exsist remove if not add..
