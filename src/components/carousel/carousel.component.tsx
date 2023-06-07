@@ -1,68 +1,109 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-import React, { useState, useEffect } from 'react';
-import { ReactComponent as ArrowBack } from '../../assets/arrow_back.svg';
-import { ReactComponent as ArrowForward } from '../../assets/arrow_forward.svg';
+import { useState, useEffect, FC } from 'react';
 
-export const images = [
-  {
-    title: 'image-one',
-    subtitle: 'This is a slider',
-    img: 'https://i.ibb.co/R70vBrQ/men.png',
-  },
-  {
-    title: 'image-Two',
-    subtitle: 'This is a slider',
-    img: 'https://i.ibb.co/GCCdy8t/womens.png',
-  },
-  {
-    title: 'image-Three',
-    subtitle: 'This is a slider',
-    img: 'https://i.ibb.co/0jqHpnp/sneakers.png',
-  },
-];
+export type CarouselProps = {
+  images: string[] | File[];
+};
 
-const Carousel = () => {
+const Carousel: FC<CarouselProps> = (props) => {
+  const { images } = props;
   const [currentImg, setCurrentImage] = useState(0);
+  const [currentImg2, setCurrentImage2] = useState(1);
   const [prevCurrentImg, setPrevCurrentImage] = useState(0);
+  const [prevCurrentImg2, setPrevCurrentImage2] = useState(1);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      currentImg < images.length - 1
-        ? setCurrentImage(currentImg + 1)
-        : setCurrentImage(0);
+      if (currentImg < images.length - 1) {
+        setCurrentImage(currentImg + 1);
+        setCurrentImage2(currentImg2 + 1);
+      } else {
+        setCurrentImage(0);
+        setCurrentImage2(1);
+      }
     }, 3000);
 
     setPrevCurrentImage(currentImg);
+    setPrevCurrentImage2(currentImg2);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentImg]);
+  }, [currentImg, images]);
 
   return (
-    <div
-      className="container relative flex h-[350px] w-full items-center justify-center  overflow-hidden"
-      style={{ backgroundImage: `url(${images[prevCurrentImg].img})` }}
-    >
-      <div className="flex h-full w-full flex-col">
-        {images.map((img, index) => (
-          <div
-            key={img.title}
-            className={`absolute  bottom-0 h-full w-full transform transition-all duration-1000 ease-out ${
-              index === currentImg && 'translate-y-full'
-            } ${index < currentImg && 'z-10'}`}
-          >
-            <img
-              alt={img.title}
-              src={images[index].img}
-              className="w-full"
-              // style={{ backgroundImage: `url(${images[currentImg].img})` }}
-            />
-            {index}
-          </div>
-        ))}
-        {/* bg-gradient */}
-        <div className="absolute h-full w-full bg-black bg-gradient-to-r opacity-10"></div>
+    <div className="flex w-full max-w-lg items-center justify-center">
+      <div
+        className="container relative flex h-[350px] w-1/2 items-center justify-center  overflow-hidden"
+        style={{ backgroundImage: `url(${images[prevCurrentImg]})` }}
+      >
+        <div className="flex h-full w-full flex-col">
+          {images.length > 0 &&
+            images.map(
+              (img, index) =>
+                index % 2 === 0 && (
+                  <div
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={`Image${index}`}
+                    className={`absolute bottom-0 flex h-full w-full transform transition-all duration-1000 ease-out ${
+                      index === currentImg && 'translate-y-full'
+                    } ${index < currentImg && 'z-10'}`}
+                  >
+                    {typeof img !== 'string' ? (
+                      <img
+                        alt={`${index}`}
+                        src={URL.createObjectURL(img)}
+                        className="h-full w-full"
+                      />
+                    ) : (
+                      <img
+                        alt={`${index}`}
+                        src={img}
+                        className="h-full w-full"
+                        // style={{ backgroundImage: `url(${img})` }}
+                      />
+                    )}
+                  </div>
+                )
+            )}
+          {/* bg-gradient */}
+          <div className="absolute h-full w-full bg-black bg-gradient-to-r opacity-10"></div>
+        </div>
+      </div>
+
+      <div
+        className="container relative flex h-[350px] w-1/2 items-center justify-center  overflow-hidden"
+        style={{ backgroundImage: `url(${images[prevCurrentImg2]})` }}
+      >
+        <div className="flex h-full w-full flex-col">
+          {images.length > 0 &&
+            images.map(
+              (img, index) =>
+                index % 2 === 1 && (
+                  <div
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={`Image${index}`}
+                    className={`absolute bottom-0 flex h-full w-full transform transition-all duration-1000 ease-out ${
+                      index === currentImg2 && 'translate-y-full'
+                    } ${index < currentImg2 && 'z-10'}`}
+                  >
+                    {typeof img !== 'string' ? (
+                      <img
+                        alt={`${index}`}
+                        src={URL.createObjectURL(img)}
+                        className="h-full w-full"
+                      />
+                    ) : (
+                      <img
+                        alt={`${index}`}
+                        src={img}
+                        className="h-full w-full"
+                        // style={{ backgroundImage: `url(${img})` }}
+                      />
+                    )}
+                  </div>
+                )
+            )}
+          {/* bg-gradient */}
+          <div className="absolute h-full w-full bg-black bg-gradient-to-r opacity-10"></div>
+        </div>
       </div>
     </div>
   );

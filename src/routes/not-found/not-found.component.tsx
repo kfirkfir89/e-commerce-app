@@ -1,6 +1,13 @@
-import { Link } from 'react-router-dom';
+/* eslint-disable no-nested-ternary */
+import { FirebaseError } from 'firebase/app';
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 const NotFound = () => {
+  const [errorMessage, setErrorMessage] = useState('');
+  const location = useLocation();
+  const error: string | Error = location.state;
+  console.log('error:', error);
   return (
     <div>
       <section className="flex h-full items-center p-16">
@@ -9,6 +16,9 @@ const NotFound = () => {
             <h2 className="mb-8 text-9xl font-extrabold">
               <span className="sr-only">Error</span>
               404
+            </h2>
+            <h2 className="mb-8 font-extrabold">
+              {typeof error === 'string' ? error : error.message}
             </h2>
             <p className="text-2xl font-semibold md:text-3xl">
               Sorry, we couldn&apos;t find this page.

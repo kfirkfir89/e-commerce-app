@@ -4,6 +4,7 @@ import {
   memo,
   useCallback,
   useEffect,
+  useMemo,
   useReducer,
   useRef,
   useState,
@@ -124,33 +125,101 @@ export const AddItemReducer = (
   return state;
 };
 
-// select options
-export const optionsShoes: SelectOption[] = [
-  { label: '36', value: '36' },
-  { label: '37', value: '37' },
-  { label: '38', value: '38' },
-  { label: '39', value: '39' },
-  { label: '40', value: '40' },
-  { label: '41', value: '41' },
-  { label: '42', value: '42' },
-  { label: '43', value: '43' },
+export const optionsShirts: SelectOption[] = [
+  { label: '2-3 Years', value: '2-3' },
+  { label: '3-4 Years', value: '3-4' },
+  { label: '4-5 Years', value: '4-5' },
+  { label: '5-6 Years', value: '5-6' },
+  { label: '6-7 Years', value: '6-7' },
+  { label: '7-8 Years', value: '7-8' },
+  { label: '8-9 Years', value: '8-9' },
+  { label: '9-10 Years', value: '9-10' },
+  { label: '10-11 Years', value: '10-11' },
+  { label: '11-12 Years', value: '11-12' },
+  { label: '12-13 Years', value: '12-13' },
+  { label: '13-14 Years', value: '13-14' },
+  { label: '14-15 Years', value: '14-15' },
+  { label: '15-16 Years', value: '15-16' },
+  { label: 'XS', value: 'XS' },
+  { label: 'S', value: 'S' },
+  { label: 'M', value: 'M' },
+  { label: 'L', value: 'L' },
+  { label: 'XL', value: 'XL' },
+  { label: 'XXL', value: 'XXL' },
+  { label: 'XXXL', value: 'XXXL' },
 ];
-export const optionsClothes: SelectOption[] = [
-  { label: 'y-6', value: 'y-6' },
-  { label: 'y-7', value: 'y-7' },
-  { label: 'y-8', value: 'y-8' },
-  { label: 'y-9', value: 'y-9' },
-  { label: 'y-10', value: 'y-10' },
-  { label: 'y-11', value: 'y-11' },
-  { label: 'y-12', value: 'y-12' },
+export const optionsPants: SelectOption[] = [
+  { label: '2-3 Years', value: '2-3' },
+  { label: '3-4 Years', value: '3-4' },
+  { label: '4-5 Years', value: '4-5' },
+  { label: '5-6 Years', value: '5-6' },
+  { label: '6-7 Years', value: '6-7' },
+  { label: '7-8 Years', value: '7-8' },
+  { label: '8-9 Years', value: '8-9' },
+  { label: '9-10 Years', value: '9-10' },
+  { label: '10-11 Years', value: '10-11' },
+  { label: '11-12 Years', value: '11-12' },
+  { label: '12-13 Years', value: '12-13' },
+  { label: '13-14 Years', value: '13-14' },
+  { label: '14-15 Years', value: '14-15' },
+  { label: '15-16 Years', value: '15-16' },
+  { label: '28"', value: '28' },
+  { label: '29"', value: '29' },
+  { label: '30"', value: '30' },
+  { label: '31"', value: '31' },
+  { label: '32"', value: '32' },
+  { label: '33"', value: '33' },
+  { label: '34"', value: '34' },
+  { label: '35"', value: '35' },
+  { label: '36"', value: '36' },
+  { label: '37"', value: '37' },
+  { label: '38"', value: '38' },
+  { label: '39"', value: '39' },
+  { label: '40"', value: '40' },
+];
+export const optionsShoes: SelectOption[] = [
+  { label: 'EU 16 / UK 0.5 / US 1', value: '16' },
+  { label: 'EU 17 / UK 1 / US 2', value: '17' },
+  { label: 'EU 18 / UK 2 / US 3', value: '18' },
+  { label: 'EU 19 / UK 3 / US 4', value: '19' },
+  { label: 'EU 20 / UK 4 / US 5', value: '20' },
+  { label: 'EU 21 / UK 4.5 / US 5.5', value: '21' },
+  { label: 'EU 22 / UK 5 / US 6', value: '22' },
+  { label: 'EU 23 / UK 6 / US 7', value: '23' },
+  { label: 'EU 24 / UK 7 / US 8', value: '24' },
+  { label: 'EU 25 / UK 8 / US 9', value: '25' },
+  { label: 'EU 26 / UK 8.5 / US 9.5', value: '26' },
+  { label: 'EU 27 / UK 9 / US 10', value: '27' },
+  { label: 'EU 28 / UK 10 / US 11', value: '28' },
+  { label: 'EU 29 / UK 10.5 / US 11.5', value: '29' },
+  { label: 'EU 30 / UK 11 / US 12', value: '30' },
+  { label: 'EU 31 / UK 12 / US 13', value: '31' },
+  { label: 'EU 32 / UK 13 / US 1', value: '32' },
+  { label: 'EU 33 / UK 1 / US 2', value: '33' },
+  { label: 'EU 34 / UK 2 / US 3', value: '34' },
+  { label: 'EU 35 / UK 2.5 / US 3.5', value: '35' },
+  { label: 'EU 36 / UK 3 / US 4', value: '36' },
+  { label: 'EU 37 / UK 4 / US 5', value: '37' },
+  { label: 'EU 38 / UK 5 / US 6', value: '38' },
+  { label: 'EU 39 / UK 5.5 / US 6.5', value: '39' },
+  { label: 'EU 40 / UK 6 / US 7', value: '40' },
+  { label: 'EU 41 / UK 7 / US 8', value: '41' },
+  { label: 'EU 42 / UK 8 / US 9', value: '42' },
+  { label: 'EU 43 / UK 9 / US 10', value: '43' },
+  { label: 'EU 44 / UK 9.5 / US 10.5', value: '44' },
+  { label: 'EU 45 / UK 10 / US 11', value: '45' },
+  { label: 'EU 46 / UK 11 / US 12', value: '46' },
+  { label: 'EU 47 / UK 12 / US 13', value: '47' },
+  { label: 'EU 48 / UK 13 / US 14', value: '48' },
 ];
 export const optionsGlobal: SelectOption[] = [
-  { label: 'xs', value: 'XS' },
-  { label: 's', value: 'S' },
-  { label: 'm', value: 'M' },
-  { label: 'l', value: 'L' },
-  { label: 'xl', value: 'XL' },
+  { label: 'XS', value: 'XS' },
+  { label: 'S', value: 'S' },
+  { label: 'M', value: 'M' },
+  { label: 'L', value: 'L' },
+  { label: 'XL', value: 'XL' },
   { label: 'XXL', value: 'XXL' },
+  { label: 'XXXL', value: 'XXXL' },
 ];
 export const optionsColors: SelectColorOption[] = [
   { label: 'slate', value: 'bg-slate-50' },
@@ -238,6 +307,10 @@ type AddItemProps = {
   onAddItem: (newItem: NewItemValues) => void;
 };
 
+type SelectOptionsMapping = {
+  [key: string]: SelectOption[] | SelectColorOption[];
+};
+
 const defualtItemValues: NewItemValues = {
   id: '',
   // eslint-disable-next-line newline-per-chained-call
@@ -278,6 +351,17 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
   const productNameRef = useRef<HTMLInputElement>(null);
   const priceRef = useRef<HTMLInputElement>(null);
   const detailsRef = useRef<HTMLTextAreaElement>(null);
+
+  const selectOptionsMapping: SelectOptionsMapping = useMemo(() => {
+    return {
+      shirts: [...optionsShirts],
+      pants: [...optionsPants],
+      shoes: [...optionsShoes],
+      global: [...optionsGlobal],
+      colors: [...optionsColors],
+    };
+  }, []);
+
   // image upload functions
   const UploadAsync = useCallback(
     async (imgFileList: ImageColorsFiles) => {
@@ -360,16 +444,8 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
 
   // listen to selectTypeOption and sent the new option to select
   useEffect(() => {
-    if (isSelectTypeOption === 'global') {
-      setSelectedTypeOption([...optionsGlobal]);
-    }
-    if (isSelectTypeOption === 'clothes') {
-      setSelectedTypeOption([...optionsClothes]);
-    }
-    if (isSelectTypeOption === 'shoes') {
-      setSelectedTypeOption([...optionsShoes]);
-    }
-  }, [isSelectTypeOption]);
+    setSelectedTypeOption(selectOptionsMapping[isSelectTypeOption] || []);
+  }, [isSelectTypeOption, selectOptionsMapping]);
 
   // mounted is used to prevent this useEffect run on initial load
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -544,49 +620,24 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
                 <span className="label-text">Size types options</span>
               </label>
               <div className="btn-group flex justify-center">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsSelectTypeOption('global');
-                  }}
-                  type="button"
-                  name="global"
-                  className={`btn-accent btn-sm btn border-0 text-gray-600 shadow-md ${
-                    isSelectTypeOption === 'global'
-                      ? 'bg-accent'
-                      : 'bg-gray-300'
-                  }`}
-                >
-                  global
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsSelectTypeOption('clothes');
-                  }}
-                  type="button"
-                  name="clothes"
-                  className={`btn-accent btn-sm btn border-0 text-gray-600 shadow-md ${
-                    isSelectTypeOption === 'clothes'
-                      ? 'bg-accent'
-                      : 'bg-gray-300'
-                  }`}
-                >
-                  clothes
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsSelectTypeOption('shoes');
-                  }}
-                  type="button"
-                  name="shoes"
-                  className={`btn-accent btn-sm btn border-0 text-gray-600 shadow-md ${
-                    isSelectTypeOption === 'shoes' ? 'bg-accent' : 'bg-gray-300'
-                  }`}
-                >
-                  shoes
-                </button>
+                {Object.keys(selectOptionsMapping).map((option) => (
+                  <button
+                    key={option}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsSelectTypeOption(option);
+                    }}
+                    type="button"
+                    name={option}
+                    className={`btn-accent btn-sm btn border-0 text-gray-600 shadow-md ${
+                      isSelectTypeOption === option
+                        ? 'bg-accent'
+                        : 'bg-gray-300'
+                    }`}
+                  >
+                    {option}
+                  </button>
+                ))}
               </div>
             </div>
             <div className="w-full max-w-xs">

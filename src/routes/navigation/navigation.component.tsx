@@ -176,7 +176,7 @@ const Navigation = () => {
             </div>
 
             {/* categories navbar */}
-            <div className="relative hidden w-full flex-col items-center justify-center bg-slate-700 text-white md:flex">
+            <div className="relative hidden w-full flex-col items-center justify-center bg-gray-700 text-white md:flex">
               <div className="container">
                 <div className="flex justify-center">
                   {userCollectionKeys &&
@@ -223,7 +223,7 @@ const Navigation = () => {
               >
                 <div className="min-h-0">
                   <div className="flex justify-center">
-                    <div className="container flex justify-center bg-slate-700">
+                    <div className="container flex justify-center bg-gray-700">
                       <div className="flex h-full w-[448px] flex-col px-2 pb-5">
                         {memorizedCategories?.map((sc) => (
                           <div key={sc} className="flex">
@@ -246,7 +246,7 @@ const Navigation = () => {
                   </div>
                 </div>
                 <div
-                  className={`z-10 border-b-[1px] border-dashed border-slate-300 opacity-0 transition-all duration-1000 ease-in-out ${
+                  className={`z-10 border-b-[1px] border-dashed border-gray-100 opacity-0 transition-all duration-1000 ease-in-out ${
                     isHover ? 'opacity-100' : ''
                   }`}
                 ></div>
@@ -300,7 +300,7 @@ const Navigation = () => {
           </popUpMessageContext.Provider>
         </div>
 
-        <footer className="footer flex items-center bg-slate-700 p-4 font-smoochSans leading-7 tracking-wider text-white">
+        <footer className="footer flex items-center bg-gray-700 p-4 font-smoochSans leading-7 tracking-wider text-white">
           <div className="flex-1">
             <p>© nana-style 2023 - All right reserved</p>
           </div>

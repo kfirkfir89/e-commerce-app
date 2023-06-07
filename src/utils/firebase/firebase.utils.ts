@@ -127,6 +127,10 @@ export async function addFirebaseData<T extends AddFirebaseData>(
         0
       );
 
+      // const sortOptionsSizesAndColors = item.sizes.flatMap((size) =>
+      //   item.colors.map((color) => `${size.value}-${color.label}`)
+      // );
+
       const itemPreview: ItemPreview = {
         id: item.id,
         created: item.created,

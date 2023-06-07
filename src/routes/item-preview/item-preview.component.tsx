@@ -1,4 +1,4 @@
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getItemFromRoute } from '../../utils/firebase/firebase.category.utils';
@@ -40,39 +40,38 @@ const ItemPreview = () => {
 
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   // geting the item by itemPata(slug)
   const fetchItem = async () => {
-    try {
-      const resProduct = await getItemFromRoute(
-        shopPara,
-        subCategoryPara,
-        itemPara
-      );
-      if (resProduct !== undefined) {
-        setProduct(resProduct);
+    const resProduct = await getItemFromRoute(
+      shopPara,
+      subCategoryPara,
+      itemPara
+    );
+    if (resProduct !== undefined) {
+      setProduct(resProduct);
 
-        // check if item exsist in cart with the chossen color to get quantity
-        if (
-          cartItemsSelector.some(
-            (cartItem) =>
-              cartItem.id === resProduct.id &&
-              cartItem.color ===
-                resProduct.colorImagesUrls[selectedColorIndex].color
-          )
-        ) {
-          const item = cartItemsSelector.find(
-            (cartItem) =>
-              cartItem.id === resProduct.id &&
-              cartItem.color ===
-                resProduct.colorImagesUrls[selectedColorIndex].color
-          );
-          if (item !== undefined) {
-            setAddToCartQuantity(item.quantity);
-          }
+      // check if item exsist in cart with the chossen color to get quantity
+      if (
+        cartItemsSelector.some(
+          (cartItem) =>
+            cartItem.id === resProduct.id &&
+            cartItem.color ===
+              resProduct.colorImagesUrls[selectedColorIndex].color
+        )
+      ) {
+        const item = cartItemsSelector.find(
+          (cartItem) =>
+            cartItem.id === resProduct.id &&
+            cartItem.color ===
+              resProduct.colorImagesUrls[selectedColorIndex].color
+        );
+        if (item !== undefined) {
+          setAddToCartQuantity(item.quantity);
         }
       }
-    } catch (error) {
-      console.error('Error fetching item:', error);
+    } else {
+      return navigate('/error', { state: 'page doesnt exsist' });
     }
   };
 

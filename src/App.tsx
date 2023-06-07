@@ -50,7 +50,7 @@ const App = () => {
       <Route path="/*" element={<Navigation />}>
         <Route index element={<Home />} />
 
-        <Route path=":shopPara" element={<CategoriesPreview />} />
+        <Route path=":shopPara" element={<Category />} />
         <Route path=":shopPara/:subCategoryPara" element={<Category />} />
         <Route
           path=":shopPara/:subCategoryPara/:itemPara"
@@ -78,6 +78,7 @@ const App = () => {
           <Route path="addfirebase" element={<AdminAdd />} />
         </Route>
 
+        <Route path="error" element={<NotFound />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     )

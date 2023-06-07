@@ -1,9 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { FirebaseError } from 'firebase/app';
 import {
   getCategoryCount,
   getSubCategoryDocument,
+  getUserKeysDocs,
 } from '../../utils/firebase/firebase.category.utils';
 
 import {
@@ -47,6 +49,7 @@ const Category = () => {
   const isLoading = useSelector(selectCategoriesIsLoading);
 
   const [products, setProducts] = useState<ItemPreview[]>([]);
+  const [subCategoryKeys, setSubCategoryKeys] = useState<string[]>([]);
   const [isLoadingItems, setIsLoadingItems] = useState(false);
   const [countSortOption, setCountSortOption] = useState(0);
   const [sortOption, setSortOption] = useState<SortOption>({
@@ -60,7 +63,7 @@ const Category = () => {
   const [isFilterToggled, setIsFilterToggled] = useState(false);
 
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   // check for prevSort and current to be able to know the sort order we need to feaatch from server
   // boolean check so isTheSameSort..
   function equalSortsObjects(
@@ -87,16 +90,20 @@ const Category = () => {
     sortOption: SortOption,
     prevSortOption: SortOption
   ) {
-    const res = await getSubCategoryDocument(
-      shopPara,
-      subCategoryPara,
-      count,
-      sortOption,
-      prevSortOption
-    );
-    setCountSortOption(res.count);
-    const arr = res.sliceItems;
-    return arr;
+    try {
+      const res = await getSubCategoryDocument(
+        shopPara,
+        subCategoryPara,
+        count,
+        sortOption,
+        prevSortOption
+      );
+      setCountSortOption(res.count);
+      const arr = res.sliceItems;
+      return arr;
+    } catch (error) {
+      return navigate('/error', { state: error as Error });
+    }
   }
 
   function featchDataCategory() {
@@ -108,6 +115,8 @@ const Category = () => {
       sortOption,
       prevSortOption
     ).then((res) => {
+      if (!res || res.length === 0)
+        return navigate('/error', { state: 'page doesnt exsist' });
       dispatch(featchUpdateCategory(shopPara, subCategoryPara, res));
       const isSameSort = equalSortsObjects(sortOption, prevSortOption);
 
@@ -211,9 +220,19 @@ const Category = () => {
       }, 100);
     });
   }
-
+  // get the subcategories key in case the is all collection search(no docKey)
+  // for rendering links to sub categories
   // reset fields before check for new category
   useEffect(() => {
+    const getSubKeys = async () => {
+      try {
+        const keys = await getUserKeysDocs(shopPara);
+        setSubCategoryKeys(keys);
+      } catch (error) {
+        return navigate('/');
+        console.log('error:', error);
+      }
+    };
     setProducts([]);
     setSortOption({
       sort: { label: 'Sort', value: '' },
@@ -221,7 +240,11 @@ const Category = () => {
       sizes: [],
     });
     setPathChanged(true);
-  }, [shopPara, subCategoryPara]);
+    setSubCategoryKeys([]);
+    if (!subCategoryPara) {
+      const fetchKeys = getSubKeys();
+    }
+  }, [navigate, shopPara, subCategoryPara]);
 
   // first load if category exsist load the items
   useEffect(() => {
@@ -315,6 +338,22 @@ const Category = () => {
         }'${shopPara.charAt(shopPara.length - 1)}`}{' '}
         {subCategoryPara}
       </h2>
+      {/* render sub buttons or bunner */}
+      <div>
+        {subCategoryKeys.length > 0 && (
+          <div className="mb-4 flex flex-wrap justify-center gap-4 font-smoochSans tracking-wider text-slate-700">
+            {subCategoryKeys.map((key) => (
+              <Link
+                key={key}
+                to={key}
+                className=" btn-ghost btn-sm btn leading-8"
+              >
+                {key}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
       {/* sort option */}
       <div className="bg-gray-100">
         {/* small screen button */}

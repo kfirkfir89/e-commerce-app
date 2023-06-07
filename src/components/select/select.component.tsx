@@ -158,7 +158,7 @@ export const Select: FC<SelectProps> = ({
       <div
         className={`absolute  list-none ${
           isOpen ? 'block' : 'hidden'
-        } left-0 top-full z-[100] mt-1 w-full rounded border border-gray-400 bg-white p-1 focus:border-white`}
+        } scrollbarStyle left-0 top-full z-[100] mt-1 max-h-60 w-full overflow-y-auto rounded border border-gray-400 bg-white p-1 focus:border-white`}
       >
         <ul defaultValue="option1">
           {options.map((option, index) => (

@@ -9,6 +9,9 @@ import {
   getCountFromServer,
   Query,
   DocumentData,
+  CollectionReference,
+  QueryDocumentSnapshot,
+  OrderByDirection,
 } from 'firebase/firestore';
 
 import { PreviewCategory } from '../../store/categories/category.types';
@@ -110,7 +113,6 @@ export async function getSubCategoryDocument(
   sortOption: SortOption,
   prevSortOption: SortOption
 ): Promise<CategoryDataSlice> {
-  const collectionRef = collection(db, collectionKey, docKey, 'items-preview');
   function equalSortsObjects(
     sortOption: SortOption,
     prevSortOption: SortOption
@@ -126,6 +128,164 @@ export async function getSubCategoryDocument(
     }
     return false;
   }
+  function sortByValue(itemSortBy: ItemPreview[]) {
+    if (sortOption.sort.value === 'recommended') {
+      itemSortBy.sort((a, b) => a.created.toMillis() - b.created.toMillis());
+    }
+    if (sortOption.sort.value === 'new') {
+      itemSortBy.sort((a, b) => b.created.toMillis() - a.created.toMillis());
+    }
+    if (sortOption.sort.value === 'price-low') {
+      itemSortBy.sort((a, b) => a.price - b.price);
+    }
+    if (sortOption.sort.value === 'price-high') {
+      itemSortBy.sort((a, b) => b.price - a.price);
+    }
+    return itemSortBy;
+  }
+  function createQuery(collectionRef: CollectionReference<DocumentData>) {
+    let itemsQuery = query(collectionRef);
+    let sortField = '';
+    let sortOrder: OrderByDirection | undefined;
+
+    if (sortOption.sort.value) {
+      if (sortOption.sort.value === 'recommended') {
+        sortField = 'created';
+        sortOrder = 'asc';
+      }
+      if (sortOption.sort.value === 'new') {
+        sortField = 'created';
+        sortOrder = 'desc';
+      }
+      if (sortOption.sort.value === 'price-low') {
+        sortField = 'price';
+        sortOrder = 'asc';
+      }
+      if (sortOption.sort.value === 'price-high') {
+        sortField = 'price';
+        sortOrder = 'desc';
+      }
+    }
+
+    if (!docKey) {
+      if (!sortField && !sortOrder) {
+        itemsQuery = query(
+          collectionRef,
+          where('collectionKey', '==', collectionKey)
+        );
+        return itemsQuery;
+      }
+      itemsQuery = query(
+        collectionRef,
+        where('collectionKey', '==', collectionKey),
+        orderBy(sortField, sortOrder)
+      );
+    }
+
+    if (sortField && sortOrder) {
+      itemsQuery = query(collectionRef, orderBy(sortField, sortOrder));
+    }
+    return itemsQuery;
+  }
+  function createLimitedQuery(
+    collectionRef: CollectionReference<DocumentData>,
+    lastVisible?: QueryDocumentSnapshot<DocumentData>
+  ) {
+    let queryItems: Query<DocumentData>;
+    let sortField = '';
+    let sortOrder: OrderByDirection | undefined;
+
+    if (sortOption.sort.value) {
+      if (sortOption.sort.value === 'recommended') {
+        sortField = 'created';
+        sortOrder = 'asc';
+      }
+      if (sortOption.sort.value === 'new') {
+        sortField = 'created';
+        sortOrder = 'desc';
+      }
+      if (sortOption.sort.value === 'price-low') {
+        sortField = 'price';
+        sortOrder = 'asc';
+      }
+      if (sortOption.sort.value === 'price-high') {
+        sortField = 'price';
+        sortOrder = 'desc';
+      }
+    }
+
+    if (!lastVisible) {
+      if (!docKey) {
+        if (!sortField && !sortOrder) {
+          queryItems = query(
+            collectionRef,
+            where('collectionKey', '==', collectionKey),
+            limit(3)
+          );
+        }
+        queryItems = query(
+          collectionRef,
+          where('collectionKey', '==', collectionKey),
+          orderBy(sortField, sortOrder),
+          limit(3)
+        );
+        return queryItems;
+      }
+
+      if (!sortField && !sortOrder) {
+        queryItems = query(collectionRef, limit(3));
+        return queryItems;
+      }
+
+      queryItems = query(
+        collectionRef,
+        orderBy(sortField, sortOrder),
+        limit(3)
+      );
+
+      return queryItems;
+    }
+
+    let next: Query<DocumentData> = query(
+      collectionRef,
+      startAt(lastVisible),
+      limit(3)
+    );
+
+    if (!docKey) {
+      if (!sortField && !sortOrder) {
+        next = query(
+          collectionRef,
+          where('collectionKey', '==', collectionKey),
+          startAt(lastVisible),
+          limit(3)
+        );
+        return next;
+      }
+      next = query(
+        collectionRef,
+        where('collectionKey', '==', collectionKey),
+        orderBy(sortField, sortOrder),
+        startAt(lastVisible),
+        limit(3)
+      );
+      return next;
+    }
+
+    if (!sortField && !sortOrder) {
+      next = query(collectionRef, startAt(lastVisible), limit(3));
+      return next;
+    }
+
+    next = query(
+      collectionRef,
+      orderBy(sortField, sortOrder),
+      startAt(lastVisible),
+      limit(3)
+    );
+    return next;
+  }
+
   const isSameSort = equalSortsObjects(sortOption, prevSortOption);
   let skipItemsCounter = 0;
   if (!isSameSort) {
@@ -133,39 +293,46 @@ export async function getSubCategoryDocument(
   } else {
     skipItemsCounter = itemsCounter;
   }
+  let collectionRef: CollectionReference<DocumentData>;
+  let itemsQuery: Query<DocumentData>;
+
+  if (!docKey) {
+    collectionRef = collection(db, 'all-items-preview');
+  } else {
+    collectionRef = collection(db, collectionKey, docKey, 'items-preview');
+  }
 
   // options of sizes selected
   if (sortOption && sortOption.sizes.length > 0) {
+    // if (sortOption.colors.length > 0) {
+    //   const sortOptionColors = sortOption.colors.map((color) => color.label);
+    // }
     const sortOptionsSizes = sortOption.sizes.map((size) => size.value);
 
-    const itemsQuery = query(
-      collectionRef,
-      where('sizesSort', 'array-contains-any', sortOptionsSizes)
-    );
+    if (!docKey) {
+      itemsQuery = query(
+        collectionRef,
+        where('collectionKey', '==', collectionKey),
+        where('sizesSort', 'array-contains-any', sortOptionsSizes)
+      );
+    } else {
+      itemsQuery = query(
+        collectionRef,
+        where('sizesSort', 'array-contains-any', sortOptionsSizes)
+      );
+    }
     const itemsSnapshot = await getDocs(itemsQuery);
     const itemsSortBySizes = itemsSnapshot.docs.map(
       (doc) => doc.data() as ItemPreview
     );
     let sortCount = itemsSortBySizes.length;
 
-    if (sortOption?.sort.value) {
-      if (sortOption.sort.value === 'recommended') {
-        itemsSortBySizes.sort(
-          (a, b) => a.created.toMillis() - b.created.toMillis()
-        );
-      }
-      if (sortOption.sort.value === 'new') {
-        itemsSortBySizes.sort(
-          (a, b) => b.created.toMillis() - a.created.toMillis()
-        );
-      }
-      if (sortOption.sort.value === 'price-low') {
-        itemsSortBySizes.sort((a, b) => a.price - b.price);
-      }
-      if (sortOption.sort.value === 'price-high') {
-        itemsSortBySizes.sort((a, b) => b.price - a.price);
-      }
-    }
+    // const sortOptionsSizesAndColors = itemsSortBySizes[0].sizesSort.flatMap(
+    //   (size) =>
+    //     itemsSortBySizes[0].colors.map((color) => `${size}-${color.label}`)
+    // );
+
+    sortByValue(itemsSortBySizes);
 
     // when colors selected filter after the sizes
     if (sortOption.colors.length > 0) {
@@ -211,35 +378,27 @@ export async function getSubCategoryDocument(
   // options of colors selected
   if (sortOption && sortOption.colors.length > 0) {
     const sortOptionsColor = sortOption.colors.map((color) => color.label);
+    collectionRef = collection(db, collectionKey, docKey, 'items-preview');
 
-    const itemsQuery = query(
-      collectionRef,
-      where('colorsSort', 'array-contains-any', sortOptionsColor)
-    );
+    if (!docKey) {
+      itemsQuery = query(
+        collectionRef,
+        where('collectionKey', '==', collectionKey),
+        where('colorsSort', 'array-contains-any', sortOptionsColor)
+      );
+    } else {
+      itemsQuery = query(
+        collectionRef,
+        where('colorsSort', 'array-contains-any', sortOptionsColor)
+      );
+    }
     const itemsSnapshot = await getDocs(itemsQuery);
     const itemsSortByColors = itemsSnapshot.docs.map(
       (doc) => doc.data() as ItemPreview
     );
     const sortCount = itemsSortByColors.length;
 
-    if (sortOption?.sort.value) {
-      if (sortOption.sort.value === 'recommended') {
-        itemsSortByColors.sort(
-          (a, b) => a.created.toMillis() - b.created.toMillis()
-        );
-      }
-      if (sortOption.sort.value === 'new') {
-        itemsSortByColors.sort(
-          (a, b) => b.created.toMillis() - a.created.toMillis()
-        );
-      }
-      if (sortOption.sort.value === 'price-low') {
-        itemsSortByColors.sort((a, b) => a.price - b.price);
-      }
-      if (sortOption.sort.value === 'price-high') {
-        itemsSortByColors.sort((a, b) => b.price - a.price);
-      }
-    }
+    sortByValue(itemsSortByColors);
 
     const categoryData: CategoryDataSlice = {
       collectionMapKey: collectionKey,
@@ -256,68 +415,18 @@ export async function getSubCategoryDocument(
 
   // same sort mean load more check for main sort desc/asc
   if (isSameSort) {
-    let itemsQuery: Query<DocumentData> = query(collectionRef);
-    if (sortOption?.sort.value) {
-      if (sortOption.sort.value === 'recommended') {
-        itemsQuery = query(collectionRef, orderBy('created', 'asc'));
-      }
-      if (sortOption.sort.value === 'new') {
-        itemsQuery = query(collectionRef, orderBy('created', 'desc'));
-      }
-      if (sortOption.sort.value === 'price-low') {
-        itemsQuery = query(collectionRef, orderBy('price', 'asc'));
-      }
-      if (sortOption.sort.value === 'price-high') {
-        itemsQuery = query(collectionRef, orderBy('price', 'desc'));
-      }
-    }
-    let next: Query<DocumentData>;
+    itemsQuery = createQuery(collectionRef);
+
     const itemsSnapshot = await getDocs(itemsQuery);
     const sortCount = (await getCountFromServer(itemsQuery)).data().count;
     const lastVisible = itemsSnapshot.docs[skipItemsCounter];
 
-    next = query(
-      collection(db, collectionKey, docKey, 'items-preview'),
-      startAt(lastVisible),
-      limit(3)
+    const nextItemsQuery: Query<DocumentData> = createLimitedQuery(
+      collectionRef,
+      lastVisible
     );
 
-    if (sortOption?.sort.value) {
-      if (sortOption.sort.value === 'recommended') {
-        next = query(
-          collection(db, collectionKey, docKey, 'items-preview'),
-          orderBy('created', 'asc'),
-          startAt(lastVisible),
-          limit(3)
-        );
-      }
-      if (sortOption.sort.value === 'new') {
-        next = query(
-          collection(db, collectionKey, docKey, 'items-preview'),
-          orderBy('created', 'desc'),
-          startAt(lastVisible),
-          limit(3)
-        );
-      }
-      if (sortOption.sort.value === 'price-low') {
-        next = query(
-          collection(db, collectionKey, docKey, 'items-preview'),
-          orderBy('price', 'asc'),
-          startAt(lastVisible),
-          limit(3)
-        );
-      }
-      if (sortOption.sort.value === 'price-high') {
-        next = query(
-          collection(db, collectionKey, docKey, 'items-preview'),
-          orderBy('price', 'desc'),
-          startAt(lastVisible),
-          limit(3)
-        );
-      }
-    }
-
-    const itemQuerySnapshot = await getDocs(next);
+    const itemQuerySnapshot = await getDocs(nextItemsQuery);
 
     const sliceItemsArray: ItemPreview[] = itemQuerySnapshot.docs.map(
       (docSnapshot) => {
@@ -332,27 +441,11 @@ export async function getSubCategoryDocument(
       sliceItems: sliceItemsArray,
       count: sortCount,
     };
-
     return categoryData;
   }
 
   // in case of changing sort without sort option of colors or sizes
-  let itemsQuery: Query<DocumentData> = query(collectionRef);
-
-  if (sortOption?.sort.value) {
-    if (sortOption.sort.value === 'recommended') {
-      itemsQuery = query(collectionRef, orderBy('created', 'asc'), limit(3));
-    }
-    if (sortOption.sort.value === 'new') {
-      itemsQuery = query(collectionRef, orderBy('created', 'desc'), limit(3));
-    }
-    if (sortOption.sort.value === 'price-low') {
-      itemsQuery = query(collectionRef, orderBy('price', 'asc'), limit(3));
-    }
-    if (sortOption.sort.value === 'price-high') {
-      itemsQuery = query(collectionRef, orderBy('price', 'desc'), limit(3));
-    }
-  }
+  itemsQuery = createLimitedQuery(collectionRef);
 
   const itemsSnapshot = await getDocs(itemsQuery);
   const sortCount = (await getCountFromServer(collectionRef)).data().count;
@@ -369,7 +462,6 @@ export async function getSubCategoryDocument(
     sliceItems: sliceItemsArray,
     count: sortCount,
   };
-
   return categoryData;
 }
 

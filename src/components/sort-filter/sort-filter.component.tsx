@@ -2,16 +2,25 @@ import { SelectOption } from '../select/select.component';
 import SortSelect from '../sort-select/sort-select.component';
 import { SortOption } from '../../routes/category/category.component';
 import {
-  optionsClothes,
+  optionsGlobal,
+  optionsPants,
+  optionsShoes,
+  optionsShirts,
   optionsColors,
 } from '../add-firebase/add-item.component';
 import SortSelectColor from '../sort-select-color/sort-select-color.component';
 
-const optionsShoes: SelectOption[] = [
+const optionsSortBy: SelectOption[] = [
   { label: 'Recommended', value: 'recommended' },
   { label: "What's new", value: 'new' },
   { label: 'Price high to low', value: 'price-high' },
   { label: 'Price low to high', value: 'price-low' },
+];
+const optionsClothes: SelectOption[] = [
+  ...optionsGlobal,
+  ...optionsPants,
+  ...optionsShoes,
+  ...optionsShirts,
 ];
 
 const SortFilter = ({
@@ -42,7 +51,7 @@ const SortFilter = ({
             <div className="mx-2 w-full max-w-[16rem]">
               <SortSelect
                 firstOption={{ label: 'Sort', value: '' }}
-                options={optionsShoes}
+                options={optionsSortBy}
                 onChange={(o: SelectOption | undefined) => {
                   onChangeKey(o);
                 }}
