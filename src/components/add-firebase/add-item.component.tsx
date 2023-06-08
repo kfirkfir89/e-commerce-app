@@ -307,7 +307,7 @@ type AddItemProps = {
   onAddItem: (newItem: NewItemValues) => void;
 };
 
-type SelectOptionsMapping = {
+export type SelectOptionsMapping = {
   [key: string]: SelectOption[] | SelectColorOption[];
 };
 

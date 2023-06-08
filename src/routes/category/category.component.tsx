@@ -349,7 +349,6 @@ const Category = () => {
     setIsFilterToggled(!isFilterToggled);
   };
 
-  console.log('products:', products);
   return (
     <div className=" h-full w-full bg-white">
       {/* banner */}

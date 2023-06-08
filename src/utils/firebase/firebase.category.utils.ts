@@ -12,6 +12,8 @@ import {
   CollectionReference,
   QueryDocumentSnapshot,
   OrderByDirection,
+  doc,
+  getDoc,
 } from 'firebase/firestore';
 
 import { PreviewCategory } from '../../store/categories/category.types';
@@ -22,6 +24,7 @@ import {
 } from '../../components/add-firebase/add-item.component';
 import { SortOption } from '../../routes/category/category.component';
 import { UserCollectionKeys, db } from './firebase.utils';
+import { SelectOption } from '../../components/select/select.component';
 
 // get the user custom subcategories (doc title) by using user custom collectionKeys
 export async function getUserKeysDocs(collectionKey: string) {
@@ -516,4 +519,26 @@ export async function getAllItemPreview(): Promise<ItemPreview[]> {
     (doc) => doc.data() as ItemPreview
   );
   return allItems;
+}
+
+type SubCategoryDocData = {
+  collectionKey: string;
+  docKey: string;
+  sizeSortOption: SelectOption;
+};
+export async function getCategorySortOption(
+  collectionKey: string,
+  docKey: string
+): Promise<SubCategoryDocData> {
+  const docRef = doc(db, collectionKey, docKey);
+  const docSnapshot = await getDoc(docRef);
+  let selectOption: SubCategoryDocData = {
+    collectionKey: '',
+    docKey: '',
+    sizeSortOption: { label: '', value: '' },
+  };
+  if (docSnapshot.exists()) {
+    selectOption = docSnapshot.data() as SubCategoryDocData;
+  }
+  return selectOption;
 }
