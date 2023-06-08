@@ -1,5 +1,6 @@
 import { ChangeEvent, useState } from 'react';
 import Carousel from '../../components/carousel/carousel.component';
+import Carousel2Img from '../../components/carousel/carousel-2-img.component';
 
 const PagesPreview = () => {
   const [banerImages, setBanerImages] = useState<File[]>([]);
@@ -15,7 +16,7 @@ const PagesPreview = () => {
     }
   };
   return (
-    <div className="flex flex-col items-center justify-center gap-6 font-smoochSans text-base text-slate-700">
+    <div className="flex h-full w-full flex-col items-center gap-6 font-smoochSans text-base text-slate-700">
       <div>
         <div className="alert max-w-xs rounded-none p-2">
           <div>
@@ -45,7 +46,12 @@ const PagesPreview = () => {
         />
       </div>
 
-      <Carousel images={banerImages} />
+      <div className="max-full flex w-full flex-col sm:hidden">
+        <Carousel images={banerImages} />
+      </div>
+      <div className="max-full hidden w-full flex-col sm:flex">
+        <Carousel2Img images={banerImages} />
+      </div>
     </div>
   );
 };

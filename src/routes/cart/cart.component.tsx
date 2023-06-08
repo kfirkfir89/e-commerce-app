@@ -30,7 +30,6 @@ const Cart = () => {
             </div>
           )}
         </div>
-        <div className="flex"></div>
         <div className="leading-0 flex w-screen justify-center bg-gray-100 py-8 font-dosis text-sm uppercase tracking-wide text-slate-700">
           <div className="container max-w-2xl px-4">
             <span className="flex text-lg  font-semibold">
