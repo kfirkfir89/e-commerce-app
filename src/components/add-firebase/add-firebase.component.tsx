@@ -6,6 +6,7 @@ import {
   featchAddFirebaseDataSuccessded,
   featchAddItem,
   featchSetCollectionKey,
+  featchSetSortOption,
   featchSetTitleDocKey,
   selectAddFirebaseReducer,
 } from '../../store/add-firebase/add-firebase.reducer';
@@ -16,11 +17,14 @@ import {
   addFirebaseData,
   setUserCollectionKeys,
 } from '../../utils/firebase/firebase.utils';
+import SelectSizeOption from './select-size-option.component';
+import { SelectOption } from '../select/select.component';
 
 export type AddFirebaseData = {
   collectionKey: string;
   docKey: string;
   items: NewItemValues[];
+  sizeSortOption: SelectOption;
 };
 // ADD TO FIREBASE MAIN COMPONENT
 export const AddFirebase = () => {
@@ -31,7 +35,8 @@ export const AddFirebase = () => {
   const collectionKeyRef = useRef<HTMLInputElement>(null);
   const titleKeyRef = useRef<HTMLInputElement>(null);
 
-  const { collectionKey, docKey, isLoading } = addFirebaseReducer;
+  const { collectionKey, docKey, isLoading, sizeSortOption } =
+    addFirebaseReducer;
 
   useEffect(() => {
     if (collectionKey !== '' && docKey !== '') {
@@ -84,6 +89,7 @@ export const AddFirebase = () => {
       collectionKey: addFirebaseReducer.collectionKey,
       docKey: addFirebaseReducer.docKey,
       items: addFirebaseReducer.items,
+      sizeSortOption: addFirebaseReducer.sizeSortOption,
     };
 
     const res = addDataAsync(newData);
@@ -146,6 +152,11 @@ export const AddFirebase = () => {
                 collectionRef={collectionKeyRef}
                 docTitle={{ label: docKey, value: docKey }}
                 collectionKey={{ label: collectionKey, value: collectionKey }}
+                onChangeSelectSizeOption={(selecSizeOption) => {
+                  selecSizeOption !== undefined &&
+                    dispatch(featchSetSortOption(selecSizeOption));
+                }}
+                sizeOption={sizeSortOption}
                 onChangeKey={(collectionKey) => {
                   collectionKey !== undefined &&
                     dispatch(featchSetCollectionKey(collectionKey.value));
@@ -158,7 +169,7 @@ export const AddFirebase = () => {
             </div>
             {/* ADDITEM */}
             <div className="my-2 rounded-lg bg-gray-200 shadow-lg">
-              {collectionKey && docKey ? (
+              {collectionKey && docKey && sizeSortOption.value !== '' ? (
                 <AddItem
                   onAddItem={(newItem) => {
                     dispatch(featchAddItem(newItem));

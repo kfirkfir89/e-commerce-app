@@ -130,7 +130,7 @@ export const SortSelect: FC<SelectProps> = ({
         {multiple
           ? value.map((v) => (
               <button
-                key={v.value}
+                key={v.label}
                 onClick={(e) => {
                   e.stopPropagation();
                   selectOption(v);
@@ -151,7 +151,7 @@ export const SortSelect: FC<SelectProps> = ({
       <div
         className={`absolute  list-none ${
           isOpen ? 'block' : 'hidden'
-        } left-0 top-full z-[100] mt-1 w-full border-4 border-t-0 border-double border-gray-300 bg-gray-100 p-1`}
+        } scrollbarStyle left-0 top-full z-[100] mt-1 h-96 w-full overflow-auto border-4 border-t-0 border-double border-gray-300 bg-gray-100 p-1`}
       >
         <ul defaultValue="option1">
           {options.map((option, index) => (
@@ -163,7 +163,7 @@ export const SortSelect: FC<SelectProps> = ({
                 multiple ? setIsOpen(true) : setIsOpen(false);
               }}
               onMouseEnter={() => setHighlightedIndex(index)}
-              key={option.value}
+              key={option.label}
               className={`${isOptionSelected(option) && 'bg-gray-300'} ${
                 index === highlightedIndex &&
                 !isOptionSelected(option) &&

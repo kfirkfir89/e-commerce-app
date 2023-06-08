@@ -31,6 +31,13 @@ export const selectCategoriesSearchPreview = createSelector(
   (categoriesSlice) => categoriesSlice.searchPreview
 );
 
+export const selectSizeSortOption = createSelector(
+  // input
+  [selectCategoryReducer],
+  // output the output will run only if the input value change
+  (categoriesSlice) => categoriesSlice.sizeSortOption
+);
+
 export const selectCategoriesIsLoading = createSelector(
   [selectCategoryReducer],
   (categoriesSlice) => categoriesSlice.isLoading

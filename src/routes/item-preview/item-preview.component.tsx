@@ -71,7 +71,7 @@ const ItemPreview = () => {
         }
       }
     } else {
-      return navigate('/error', { state: 'page doesnt exsist' });
+      // return navigate('/error', { state: 'page doesnt exsist' });
     }
   };
 

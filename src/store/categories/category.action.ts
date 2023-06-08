@@ -1,4 +1,8 @@
-import { CATEGORIES_ACTION_TYPES, PreviewCategory } from './category.types';
+import {
+  CATEGORIES_ACTION_TYPES,
+  PreviewCategory,
+  SelectSortOption,
+} from './category.types';
 
 import {
   createAction,
@@ -42,6 +46,11 @@ export type FeatchUpdateCategorySucceeded = ActionWithPayload<
 export type FeatchSearchPreview = ActionWithPayload<
   CATEGORIES_ACTION_TYPES.FETCH_SEARCH_PREVIEW,
   ItemPreview[]
+>;
+
+export type FeatchSelectSortOption = ActionWithPayload<
+  CATEGORIES_ACTION_TYPES.FETCH_SELECT_SORT_OPTION,
+  SelectSortOption
 >;
 
 export type FeatchCategoriesExsist =
@@ -105,6 +114,14 @@ export const featchSearchPreview = withMatcher(
     createAction(
       CATEGORIES_ACTION_TYPES.FETCH_SEARCH_PREVIEW,
       searchPreviewItems
+    )
+);
+
+export const featchSelectSortOption = withMatcher(
+  (selectSortOption: SelectSortOption): FeatchSelectSortOption =>
+    createAction(
+      CATEGORIES_ACTION_TYPES.FETCH_SELECT_SORT_OPTION,
+      selectSortOption
     )
 );
 

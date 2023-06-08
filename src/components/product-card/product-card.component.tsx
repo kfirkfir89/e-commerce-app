@@ -53,7 +53,7 @@ const ProductCard = ({ product }: { product: ItemPreview }) => {
   return (
     <div className={`max-w-xs ${!isImageLoaded ? 'invisible' : 'visible'}`}>
       <div className="relative shadow-sm">
-        <Link to={`${product.productName}`}>
+        <Link to={`${product.slug}`}>
           <img
             onLoad={onLoad}
             key={imagesUrls[0]}

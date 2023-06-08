@@ -10,8 +10,10 @@ import {
   featchUpdateCategoriesSucceeded,
   featchCategoriesExsist,
   featchSearchPreview,
+  featchSelectSortOption,
 } from './category.action';
 import { ItemPreview } from '../../components/add-firebase/add-item.component';
+import { SelectOption } from '../../components/select/select.component';
 
 // read only is an additional property you can add so that you force it,
 // that this state object can never be modified.It can only be read.
@@ -20,6 +22,10 @@ export type CategoriesState = {
   readonly categories: Map<string, PreviewCategory[]>;
   readonly categoriesPreview: Map<string, PreviewCategory[]>;
   readonly searchPreview: ItemPreview[];
+  readonly sizeSortOption: {
+    sizesOption: SelectOption[];
+    colorsOption: SelectOption[];
+  };
   readonly isLoading: boolean;
   readonly error: Error | null;
 };
@@ -28,6 +34,7 @@ export const CATEGORIES_INITIAL_STATE: CategoriesState = {
   categories: new Map(),
   categoriesPreview: new Map(),
   searchPreview: [],
+  sizeSortOption: { sizesOption: [], colorsOption: [] },
   isLoading: false,
   error: null,
 };
@@ -98,6 +105,10 @@ export const categoriesReducer = (
     });
 
     return { ...state, isLoading: false, categoriesPreview: categoriesMap };
+  }
+
+  if (featchSelectSortOption.match(action)) {
+    return { ...state, sizeSortOption: action.payload };
   }
 
   if (featchCategoriesExsist.match(action)) {

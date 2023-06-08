@@ -7,6 +7,7 @@ import {
   withMatcher,
 } from '../../utils/reducer/reducer.utils';
 import { RootState } from '../store';
+import { SelectOption } from '../../components/select/select.component';
 
 // SELECTORS
 export const selectAddFirebaseReducer = (state: RootState): AddFireBaseState =>
@@ -21,6 +22,7 @@ export const selectAddFirebaseItems = createSelector(
 export enum ADDFIREBASE_ACTION_TYPES {
   FETCH_SET_COLLECTION_KEY = 'addFirebase/FETCH_SET_COLLECTION_KEY',
   FETCH_SET_TITLE_DOC_KEY = 'addFirebase/FETCH_SET_TITLE_DOC_KEY',
+  FETCH_SET_SORT_OPTION = 'addFirebase/FETCH_SET_SORT_OPTION',
   FETCH_SET_ITEM = 'addFirebase/FETCH_SET_ITEM',
   FETCH_DEL_ITEM = 'addFirebase/FETCH_DEL_ITEM',
   FETCH_ADD_FIREBASE_DATA = 'addFirebase/FETCH_ADD_FIREBASE_DATA',
@@ -32,6 +34,7 @@ export type AddFireBaseState = {
   readonly collectionKey: string;
   readonly docKey: string;
   readonly items: NewItemValues[];
+  readonly sizeSortOption: SelectOption;
   readonly isLoading: boolean;
   readonly error: Error | null;
 };
@@ -45,6 +48,11 @@ export type FeatchSetCollectionKey = ActionWithPayload<
 export type FeatchSetTitleDocKey = ActionWithPayload<
   ADDFIREBASE_ACTION_TYPES.FETCH_SET_TITLE_DOC_KEY,
   string
+>;
+
+export type FeatchSetSortOption = ActionWithPayload<
+  ADDFIREBASE_ACTION_TYPES.FETCH_SET_SORT_OPTION,
+  SelectOption
 >;
 
 export type FeatchAddItem = ActionWithPayload<
@@ -81,6 +89,11 @@ export const featchSetTitleDocKey = withMatcher(
     createAction(ADDFIREBASE_ACTION_TYPES.FETCH_SET_TITLE_DOC_KEY, titleDoc)
 );
 
+export const featchSetSortOption = withMatcher(
+  (sortOption: SelectOption): FeatchSetSortOption =>
+    createAction(ADDFIREBASE_ACTION_TYPES.FETCH_SET_SORT_OPTION, sortOption)
+);
+
 export const featchAddItem = withMatcher(
   (item: NewItemValues): FeatchAddItem =>
     createAction(ADDFIREBASE_ACTION_TYPES.FETCH_SET_ITEM, item)
@@ -111,6 +124,7 @@ export const ADDFIREBASE_INITIAL_STATE: AddFireBaseState = {
   collectionKey: '',
   docKey: '',
   items: [],
+  sizeSortOption: { label: '', value: '' },
   isLoading: false,
   error: null,
 };
@@ -125,6 +139,10 @@ export const addFirebaseReducer = (
 
   if (featchSetTitleDocKey.match(action)) {
     return { ...state, docKey: action.payload };
+  }
+
+  if (featchSetSortOption.match(action)) {
+    return { ...state, sizeSortOption: action.payload };
   }
 
   if (featchAddItem.match(action)) {
@@ -147,6 +165,7 @@ export const addFirebaseReducer = (
       collectionKey: '',
       docKey: '',
       items: [],
+      sizeSortOption: { label: '', value: '' },
       error: null,
       isLoading: false,
     };

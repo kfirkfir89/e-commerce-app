@@ -26,7 +26,7 @@ import UserAccount from './routes/user-profile/user-account.component';
 import Cart from './routes/cart/cart.component';
 import Favorites from './routes/favorites/favorites.component';
 import AdminAdd from './routes/admin-dashboard-nav/admin-add-products.component';
-import PagesPreview from './routes/admin-dashboard-nav/admin-pages-preview.component copy';
+import PagesPreview from './routes/admin-dashboard-nav/admin-pages-preview.component';
 
 const Home = lazy(() => import('./routes/home/home.component'));
 const Authentication = lazy(

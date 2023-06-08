@@ -507,3 +507,13 @@ export async function getCategoryCount(
 
   return snapshot.data().count;
 }
+
+export async function getAllItemPreview(): Promise<ItemPreview[]> {
+  const collectionRef = collection(db, 'all-items-preview');
+  const itemsQuery = query(collectionRef, orderBy('created', 'desc'));
+  const itemsQuerySnapshot = await getDocs(itemsQuery);
+  const allItems: ItemPreview[] = itemsQuerySnapshot.docs.map(
+    (doc) => doc.data() as ItemPreview
+  );
+  return allItems;
+}

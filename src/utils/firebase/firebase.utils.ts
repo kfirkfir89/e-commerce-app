@@ -75,7 +75,7 @@ export async function getUserCollectionKeys() {
 export async function addFirebaseData<T extends AddFirebaseData>(
   newData: T
 ): Promise<void> {
-  const { collectionKey, docKey, items } = newData;
+  const { collectionKey, docKey, items, sizeSortOption } = newData;
   const collectionRef = collection(db, 'system-data');
   const querySnapshot = await getDocs(collectionRef);
 
@@ -95,6 +95,7 @@ export async function addFirebaseData<T extends AddFirebaseData>(
       const docRef = await setDoc(doc(db, collectionKey, docKey), {
         collectionKey,
         docKey,
+        sizeSortOption,
       });
     } catch (error) {
       console.log('error:', error);

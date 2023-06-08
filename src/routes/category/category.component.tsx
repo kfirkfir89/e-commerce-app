@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { FirebaseError } from 'firebase/app';
 import {
   getCategoryCount,
   getSubCategoryDocument,
@@ -13,7 +12,10 @@ import {
   selectCategoriesIsLoading,
 } from '../../store/categories/category.selector';
 
-import { featchUpdateCategory } from '../../store/categories/category.action';
+import {
+  featchSelectSortOption,
+  featchUpdateCategory,
+} from '../../store/categories/category.action';
 
 import { ReactComponent as Close } from '../../assets/close_FILL0.svg';
 import { ReactComponent as SortIcon } from '../../assets/sort_FILL0_wght200.svg';
@@ -23,6 +25,7 @@ import { ItemPreview } from '../../components/add-firebase/add-item.component';
 import Spinner from '../../components/spinner/spinner.component';
 import SortFilter from '../../components/sort-filter/sort-filter.component';
 import ProductCard from '../../components/product-card/product-card.component';
+import { SelectSortOption } from '../../store/categories/category.types';
 
 export type CategoryRouteParams = {
   shopPara: string;
@@ -57,7 +60,6 @@ const Category = () => {
     colors: [],
     sizes: [],
   });
-
   const [prevSortOption, setPrevSortOption] = useState<SortOption>(sortOption);
   const [pathChanged, setPathChanged] = useState(false);
   const [isFilterToggled, setIsFilterToggled] = useState(false);
@@ -81,7 +83,33 @@ const Category = () => {
     }
     return false;
   }
+  // const updateSortOptions = () => {
+  //   if (!products) return;
+  //   const selectSortOption: SelectSortOption = {
+  //     sizesOption: [],
+  //     colorsOption: [],
+  //   };
 
+  //   const sizeSortFilterOptions = new Set<string>();
+  //   products.forEach((item) =>
+  //     item.sizesSort.forEach((size) => sizeSortFilterOptions.add(size))
+  //   );
+  //   const sizeOptions: SelectOption[] = optionsShirts.filter((option) =>
+  //     sizeSortFilterOptions.has(option.value)
+  //   );
+  //   selectSortOption.sizesOption = sizeOptions;
+
+  //   const colorSortFilterOptions = new Set<string>();
+  //   products.forEach((item) =>
+  //     item.colorsSort.forEach((color) => colorSortFilterOptions.add(color))
+  //   );
+  //   const colorOption: SelectOption[] = optionsColors.filter((option) =>
+  //     colorSortFilterOptions.has(option.label)
+  //   );
+  //   selectSortOption.colorsOption = colorOption;
+
+  //   dispatch(featchSelectSortOption(selectSortOption));
+  // };
   // a featch to server to get a slice
   async function loadData(
     shopPara: string,
@@ -115,8 +143,8 @@ const Category = () => {
       sortOption,
       prevSortOption
     ).then((res) => {
-      if (!res || res.length === 0)
-        return navigate('/error', { state: 'page doesnt exsist' });
+      if (!res) return;
+      // return navigate('/error', { state: 'page doesnt exsist' });
       dispatch(featchUpdateCategory(shopPara, subCategoryPara, res));
       const isSameSort = equalSortsObjects(sortOption, prevSortOption);
 
@@ -213,8 +241,10 @@ const Category = () => {
             });
           }
         }
+        setProducts(() => {
+          return [...res];
+        });
       }
-      // setPrevSortOption(sortOption);
       setTimeout(() => {
         setIsLoadingItems(false);
       }, 100);
@@ -290,8 +320,15 @@ const Category = () => {
       const initialLoad = featchDataCategory();
       setPrevSortOption(sortOption);
     }
+    const initialLoad = featchDataCategory();
+    setPrevSortOption(sortOption);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortOption]);
+
+  // useEffect(() => {
+  //   updateSortOptions();
+  // }, [products]);
 
   const loadMore = () => {
     const moreData = featchDataCategory();
@@ -312,6 +349,7 @@ const Category = () => {
     setIsFilterToggled(!isFilterToggled);
   };
 
+  console.log('products:', products);
   return (
     <div className=" h-full w-full bg-white">
       {/* banner */}

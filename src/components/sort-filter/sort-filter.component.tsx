@@ -1,26 +1,19 @@
+import { useSelector } from 'react-redux';
 import { SelectOption } from '../select/select.component';
 import SortSelect from '../sort-select/sort-select.component';
 import { SortOption } from '../../routes/category/category.component';
-import {
-  optionsGlobal,
-  optionsPants,
-  optionsShoes,
-  optionsShirts,
-  optionsColors,
-} from '../add-firebase/add-item.component';
 import SortSelectColor from '../sort-select-color/sort-select-color.component';
+import { selectSizeSortOption } from '../../store/categories/category.selector';
+import {
+  optionsColors,
+  optionsPants,
+} from '../add-firebase/add-item.component';
 
 const optionsSortBy: SelectOption[] = [
   { label: 'Recommended', value: 'recommended' },
   { label: "What's new", value: 'new' },
   { label: 'Price high to low', value: 'price-high' },
   { label: 'Price low to high', value: 'price-low' },
-];
-const optionsClothes: SelectOption[] = [
-  ...optionsGlobal,
-  ...optionsPants,
-  ...optionsShoes,
-  ...optionsShirts,
 ];
 
 const SortFilter = ({
@@ -32,6 +25,8 @@ const SortFilter = ({
   onChangeColor: (sortOption: SelectOption[]) => void;
   valueOption: SortOption;
 }) => {
+  const sizeSortOptionSelector = useSelector(selectSizeSortOption);
+
   const onChangeKey = (option: SelectOption | SelectOption[] | undefined) => {
     if (option) {
       onChange(option);
@@ -58,6 +53,7 @@ const SortFilter = ({
                 value={valueOption.sort}
               />
             </div>
+
             <div className="mx-2 w-full max-w-[16rem]">
               <SortSelectColor
                 firstOption={{ label: 'Color', value: '' }}
@@ -68,11 +64,12 @@ const SortFilter = ({
                 value={valueOption.colors}
               />
             </div>
+
             <div className="mx-2 w-full max-w-[16rem]">
               <SortSelect
                 multiple
                 firstOption={{ label: 'Size', value: '' }}
-                options={optionsClothes}
+                options={optionsPants}
                 onChange={(o: SelectOption[] | undefined) => {
                   onChangeKey(o);
                 }}

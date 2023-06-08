@@ -1,4 +1,11 @@
-import { ChangeEvent, memo, RefObject, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  memo,
+  RefObject,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   getUserCollectionKeys,
   UserCollectionKeys,
@@ -11,9 +18,18 @@ type SelectRefProps = {
   titleRef: RefObject<HTMLInputElement>;
   collectionKey: SelectOption | undefined;
   docTitle: SelectOption | undefined;
+  sizeOption: SelectOption | undefined;
+  onChangeSelectSizeOption: (option: SelectOption | undefined) => void;
   onChangeKey: (collectionKey: SelectOption | undefined) => void;
   onChangeTitle: (title: SelectOption | undefined) => void;
 };
+
+const options: SelectOption[] = [
+  { label: 'shirts', value: 'shirts' },
+  { label: 'pants', value: 'pants' },
+  { label: 'shoes', value: 'shoes' },
+  { label: 'global', value: 'global' },
+];
 
 export const SelectDbRef = ({
   collectionKey,
@@ -22,6 +38,8 @@ export const SelectDbRef = ({
   onChangeTitle,
   collectionRef,
   titleRef,
+  onChangeSelectSizeOption,
+  sizeOption,
 }: SelectRefProps) => {
   const [isNewCollection, setIsNewCollection] = useState(false);
   const [isNewDoc, setIsNewDoc] = useState(false);
@@ -78,17 +96,37 @@ export const SelectDbRef = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collectionKey]);
-
   // set new collection and docs values
   useEffect(() => {
-    if (isNewCollection) {
-      onChangeKey({ label: '', value: '' });
+    onChangeTitle({ label: '', value: '' });
+    onChangeKey({ label: '', value: '' });
+    if (titleRef.current) {
+      // eslint-disable-next-line no-param-reassign
+      titleRef.current.value = '';
     }
-    if (isNewDoc) {
+    if (collectionRef.current) {
+      // eslint-disable-next-line no-param-reassign
+      collectionRef.current.value = '';
+    }
+    if (isNewCollection) {
+      setIsNewDoc(true);
+    } else {
+      setIsNewDoc(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isNewCollection]);
+  console.log('isNewCollection:', isNewCollection, isNewDoc);
+
+  useEffect(() => {
+    if (!isNewDoc) {
+      if (titleRef.current) {
+        // eslint-disable-next-line no-param-reassign
+        titleRef.current.value = '';
+      }
       onChangeTitle({ label: '', value: '' });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isNewCollection, isNewDoc]);
+  }, [isNewDoc]);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.name === 'collectionKey') {
@@ -107,7 +145,6 @@ export const SelectDbRef = ({
       onChangeTitle(newTitle);
     }
   };
-
   return (
     <div className="flex flex-col">
       <div className="mb-2 flex justify-center pt-2 text-xl font-semibold text-gray-800">
@@ -122,6 +159,7 @@ export const SelectDbRef = ({
                 New collection
               </span>
               <input
+                checked={isNewCollection}
                 type="checkbox"
                 onClick={() => {
                   setIsNewCollection(!isNewCollection);
@@ -158,7 +196,7 @@ export const SelectDbRef = ({
             </div>
           </div>
 
-          <div className="flex flex-col p-2 sm:h-20 sm:w-80">
+          <div className="flex flex-col p-2 sm:h-fit sm:w-80">
             {/* TOGGLE BUTTON */}
             <label
               className={`flex flex-grow justify-center pb-1 ${
@@ -178,6 +216,7 @@ export const SelectDbRef = ({
                 }}
                 className="toggle-success toggle"
                 disabled={isNewCollection}
+                checked={isNewDoc}
               />
             </label>
             {/* INPUT VALUES */}
@@ -221,6 +260,18 @@ export const SelectDbRef = ({
                 />
               </div>
             </div>
+            {isNewDoc && titleRef.current?.value && (
+              <div className="mt-2 flex justify-center shadow-lg">
+                <Select
+                  firstOption={{ label: 'Pick a size type', value: '' }}
+                  options={options}
+                  onChange={(o: SelectOption | undefined) => {
+                    onChangeSelectSizeOption(o);
+                  }}
+                  value={sizeOption}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
