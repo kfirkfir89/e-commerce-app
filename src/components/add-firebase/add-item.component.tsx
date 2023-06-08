@@ -342,7 +342,6 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
 
   const { colors, sizes, imgFileList, price, productName } = addItemValues;
   // this two state hadling the types we have of select option like (global:s,m,l.. shoes:40,41,42..)
-  const [isSelectTypeOption, setIsSelectTypeOption] = useState('');
   const [selectedTypeOption, setSelectedTypeOption] = useState<SelectOption[]>(
     []
   );
@@ -444,8 +443,10 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
 
   // listen to selectTypeOption and sent the new option to select
   useEffect(() => {
-    setSelectedTypeOption(selectOptionsMapping[isSelectTypeOption] || []);
-  }, [isSelectTypeOption, selectOptionsMapping]);
+    setSelectedTypeOption(
+      selectOptionsMapping[addFirebaseReducer.sizeSortOption.value] || []
+    );
+  }, [addFirebaseReducer.sizeSortOption.value, selectOptionsMapping]);
 
   // mounted is used to prevent this useEffect run on initial load
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -619,7 +620,7 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
               <label className="label pb-1">
                 <span className="label-text">Size types options</span>
               </label>
-              <div className="btn-group flex justify-center">
+              {/* <div className="btn-group flex justify-center">
                 {Object.keys(selectOptionsMapping).map((option) => (
                   <button
                     key={option}
@@ -638,7 +639,7 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
                     {option}
                   </button>
                 ))}
-              </div>
+              </div> */}
             </div>
             <div className="w-full max-w-xs">
               <label className="label pb-1">
@@ -654,7 +655,7 @@ export const AddItem = ({ onAddItem }: AddItemProps) => {
                   }}
                   value={sizes}
                 />
-                {isSelectTypeOption === '' && (
+                {addFirebaseReducer.sizeSortOption.value === '' && (
                   <div className="absolute top-0 h-full w-full cursor-not-allowed rounded-lg bg-black opacity-20"></div>
                 )}
               </div>
