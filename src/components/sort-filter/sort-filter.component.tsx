@@ -98,7 +98,7 @@ const SortFilter = ({
               />
             </div>
 
-            {/* <div className="mx-2 w-full max-w-[16rem]">
+            <div className="mx-2 w-full max-w-[16rem]">
               <SortSelectColor
                 firstOption={{ label: 'Color', value: '' }}
                 options={optionsColors}
@@ -107,7 +107,7 @@ const SortFilter = ({
                 }}
                 value={valueOption.colors}
               />
-            </div> */}
+            </div>
             {selectedTypeOption && (
               <div className="mx-2 w-full max-w-[16rem]">
                 <SortSelect

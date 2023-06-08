@@ -329,7 +329,6 @@ const Category = () => {
   // useEffect(() => {
   //   updateSortOptions();
   // }, [products]);
-
   const loadMore = () => {
     const moreData = featchDataCategory();
   };

@@ -115,7 +115,7 @@ export const SortSelectColor: FC<SelectColorProps> = ({
         {value.map((v) =>
           v.label === 'nocolor' ? (
             <button
-              key={v.label}
+              key={v.value}
               onClick={(e) => {
                 e.stopPropagation();
                 selectOption(v);
@@ -128,7 +128,7 @@ export const SortSelectColor: FC<SelectColorProps> = ({
             </button>
           ) : (
             <button
-              key={v.label}
+              key={v.value}
               onClick={(e) => {
                 e.stopPropagation();
                 selectOption(v);
@@ -163,7 +163,7 @@ export const SortSelectColor: FC<SelectColorProps> = ({
                   setIsOpen(true);
                 }}
                 onMouseEnter={() => setHighlightedIndex(index)}
-                key={option.label}
+                key={option.value}
                 className={`${isOptionSelected(option) && ''} ${
                   index === highlightedIndex && !isOptionSelected(option) && ''
                 } flex items-center justify-center px-2 ${option.value} bg-[${
@@ -183,7 +183,7 @@ export const SortSelectColor: FC<SelectColorProps> = ({
                   setIsOpen(true);
                 }}
                 onMouseEnter={() => setHighlightedIndex(index)}
-                key={option.label}
+                key={option.value}
                 className={`${isOptionSelected(option) && ''} ${
                   index === highlightedIndex && !isOptionSelected(option) && ''
                 } flex items-center justify-center px-2 ${option.value} bg-[${
