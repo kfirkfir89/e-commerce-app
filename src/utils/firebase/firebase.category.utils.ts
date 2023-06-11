@@ -14,8 +14,12 @@ import {
   OrderByDirection,
   doc,
   getDoc,
+  DocumentSnapshot,
+  startAfter,
+  setDoc,
 } from 'firebase/firestore';
 
+import { v4 } from 'uuid';
 import { PreviewCategory } from '../../store/categories/category.types';
 
 import {
@@ -497,30 +501,73 @@ export async function getItemFromRoute(
 }
 
 export async function getCategoryCount(
-  collectionKey: string,
-  docKey: string
+  collectionKey?: string,
+  docKey?: string
 ): Promise<number> {
-  const subCollectionRef = collection(
-    db,
-    collectionKey,
-    docKey,
-    'items-preview'
-  );
-  const snapshot = await getCountFromServer(subCollectionRef);
+  if (collectionKey && docKey) {
+    const subCollectionRef = collection(
+      db,
+      collectionKey,
+      docKey,
+      'items-preview'
+    );
+    const snapshot = await getCountFromServer(subCollectionRef);
 
-  return snapshot.data().count;
+    return snapshot.data().count;
+  }
+
+  const collectionRef = collection(db, 'all-items-preview');
+  const counterSnapshot = await getCountFromServer(collectionRef);
+  const { count } = counterSnapshot.data();
+  return count;
 }
 
-export async function getAllItemPreview(): Promise<ItemPreview[]> {
+export async function getProductListItemPreview(
+  page: number
+): Promise<ItemPreview[]> {
+  console.log('page:', page);
+  let pagesItemsToSkip = 0;
   const collectionRef = collection(db, 'all-items-preview');
-  const itemsQuery = query(collectionRef, orderBy('created', 'desc'));
+  let itemsQuery: Query<DocumentData>;
+  if (page === 1) {
+    itemsQuery = query(collectionRef, orderBy('created', 'desc'), limit(2));
+    const itemsQuerySnapshot = await getDocs(itemsQuery);
+    const itemsSlice: ItemPreview[] = itemsQuerySnapshot.docs.map(
+      (doc) => doc.data() as ItemPreview
+    );
+    return itemsSlice;
+  }
+  pagesItemsToSkip = (page - 1) * 2;
+  itemsQuery = query(
+    collectionRef,
+    orderBy('created', 'desc'),
+    // startAfter(lastVisible),
+    limit(pagesItemsToSkip)
+  );
+
   const itemsQuerySnapshot = await getDocs(itemsQuery);
-  const allItems: ItemPreview[] = itemsQuerySnapshot.docs.map(
+  const itemsSlice: ItemPreview[] = itemsQuerySnapshot.docs.map(
     (doc) => doc.data() as ItemPreview
   );
-  return allItems;
+
+  const newLaslastVisibletVisible =
+    itemsQuerySnapshot.docs[itemsSlice.length - 1];
+  const finalItemsQuery = query(
+    collectionRef,
+    orderBy('created', 'desc'),
+    startAfter(newLaslastVisibletVisible),
+    limit(2)
+  );
+
+  const finalItemsQuerySnapshot = await getDocs(finalItemsQuery);
+  const finalItemsSlice: ItemPreview[] = finalItemsQuerySnapshot.docs.map(
+    (doc) => doc.data() as ItemPreview
+  );
+  return finalItemsSlice;
 }
 
+// category sort option for the filter section
+// used to show the the sort type of sizes that used in a specific category
 type SubCategoryDocData = {
   collectionKey: string;
   docKey: string;
@@ -541,4 +588,15 @@ export async function getCategorySortOption(
     selectOption = docSnapshot.data() as SubCategoryDocData;
   }
   return selectOption;
+}
+
+export async function addNewProductList(
+  productListId: string[],
+  listTitle: string
+) {
+  const docRef = doc(db, 'user-products-list', `${listTitle + v4()}`);
+  await setDoc(docRef, {
+    title: listTitle,
+    productList: productListId,
+  });
 }

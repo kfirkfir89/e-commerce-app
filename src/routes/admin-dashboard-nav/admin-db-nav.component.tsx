@@ -43,7 +43,17 @@ const AdminDBNav = () => {
                     path.pathname === '/pages-preview' ? 'bg-gray-300' : ''
                   }`}
                 >
-                  pages-preview
+                  pages preview
+                </Link>
+              </div>
+              <div className="flex justify-center">
+                <Link
+                  to="product-list"
+                  className={`btn-ghost btn-xs btn mx-2 text-gray-700 sm:btn-sm ${
+                    path.pathname === '/pages-preview' ? 'bg-gray-300' : ''
+                  }`}
+                >
+                  product list
                 </Link>
               </div>
               <div className="flex justify-center ">

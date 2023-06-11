@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SelectOption } from '../select/select.component';
 import SortSelect from '../sort-select/sort-select.component';
@@ -15,7 +15,6 @@ import {
   optionsGlobal,
   optionsShirts,
   optionsShoes,
-  SelectOptionsMapping,
 } from '../add-firebase/add-item.component';
 import { getCategorySortOption } from '../../utils/firebase/firebase.category.utils';
 
@@ -70,7 +69,7 @@ const SortFilter = ({
         options && setSelectedTypeOption(options);
       }
     });
-  }, [shopPara, subCategoryPara, typesSizeOptions]);
+  }, [shopPara, subCategoryPara]);
 
   const onChangeKey = (option: SelectOption | SelectOption[] | undefined) => {
     if (option) {
