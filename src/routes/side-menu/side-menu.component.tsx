@@ -48,7 +48,7 @@ const SideMenu = ({ categories, onChangeToggle }: SideMenuProps) => {
         </div>
         <div className="bg-white">
           {isMenuOpen && (
-            <div className="fixed left-0 top-[70px] z-50 flex h-screen w-full flex-col bg-white">
+            <div className="fixed left-0 top-[64px] z-50 flex h-screen w-full flex-col bg-white">
               <div className="flex w-full justify-center bg-gray-200 p-2">
                 <Search onChangeToggle={() => toggleIsMenuOpen()} />
               </div>

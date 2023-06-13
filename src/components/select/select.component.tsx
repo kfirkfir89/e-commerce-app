@@ -146,7 +146,7 @@ export const Select: FC<SelectProps> = ({
                 </span>
               </button>
             ))
-          : !(value?.label === 'Pick a size type') && value?.label}
+          : !value?.label.includes('Pick') && value?.label}
       </span>
       {/* close btn */}
       {/* <button onClick={(e) => { e.stopPropagation(); clearOptions(); }} type="button" className="bg-none border-none outline-none text-gray-400 text-lg focus:text-black hover:text-black">&times;</button> */}

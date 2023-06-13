@@ -40,21 +40,16 @@ export async function getUserKeysDocs(collectionKey: string) {
   querySnapshot.forEach((doc) => {
     categoryTitles.push(doc.id);
   });
-
   return categoryTitles;
 }
 // get the user custom categories (collections keys) and call getUserKeysDocs to get all subCategories
 export async function getUserCategories() {
-  const collectionRef = collection(db, 'system-data');
-  const q = query(collectionRef);
-  const querySnapshot = await getDocs(q);
+  const userCollectionKeyDocRef = doc(db, 'system-data/user-collection-keys');
+  const docSnapshot = await getDoc(userCollectionKeyDocRef);
   const data = new Map<string, string[]>();
 
-  const res = querySnapshot.docs.map((docSnapshot) => {
-    return docSnapshot.data() as UserCollectionKeys;
-  });
-
-  res[0].keys.map(async (k) => {
+  const res = docSnapshot.data() as UserCollectionKeys;
+  res.keys.map(async (k) => {
     const res2 = await getUserKeysDocs(k);
     data.set(k, res2);
   });
@@ -590,13 +585,20 @@ export async function getCategorySortOption(
   return selectOption;
 }
 
+type ProductList = {
+  id: string;
+  title: string;
+  productList: string[];
+};
 export async function addNewProductList(
   productListId: string[],
   listTitle: string
 ) {
-  const docRef = doc(db, 'user-products-list', `${listTitle + v4()}`);
-  await setDoc(docRef, {
+  const docRef = doc(db, 'user-products-list', listTitle);
+  const list: ProductList = {
+    id: `${listTitle + v4()}`,
     title: listTitle,
     productList: productListId,
-  });
+  };
+  await setDoc(docRef, list);
 }

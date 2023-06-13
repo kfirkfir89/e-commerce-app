@@ -1,6 +1,7 @@
 import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { v4 } from 'uuid';
 import {
   addNewProductList,
   getCategoryCount,
@@ -101,7 +102,6 @@ const ProductList = () => {
       setError('you must provid title and products');
     }
   };
-
   return (
     <div className="flex h-full w-full justify-center gap-2 px-2">
       <div className="container flex h-full flex-col items-center">
@@ -237,7 +237,7 @@ const ProductList = () => {
                     {listTitle}
                   </span>
                   {myProductList.map((product) => (
-                    <div key={`${product}List`} className="p-2">
+                    <div key={`${product}List${v4()}`} className="p-2">
                       <div className="flex items-center space-x-3">
                         <div className="avatar max-h-40">
                           <img

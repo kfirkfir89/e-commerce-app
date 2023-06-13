@@ -39,8 +39,7 @@ const Navigation = () => {
   const [isSideMenuToggled, setIsSideMenuToggled] = useState(false);
   const [hoverSelected, setHoverSelected] = useState('');
   const [userCategories, setUserCategories] = useState<Map<string, string[]>>();
-  const [userCollectionKeys, setUserCollectionKeys] =
-    useState<UserCollectionKeys>();
+  const [userCollectionKeys, setUserCollectionKeys] = useState<string[]>();
 
   // popup message timer
   useEffect(() => {
@@ -65,8 +64,8 @@ const Navigation = () => {
   useEffect(() => {
     const featchUserCollectionKeys = async () => {
       try {
-        const keys: UserCollectionKeys[] = await getUserCollectionKeys();
-        setUserCollectionKeys(keys[0]);
+        const keys = await getUserCollectionKeys();
+        setUserCollectionKeys(keys);
       } catch (error) {
         console.log(error);
       }
@@ -109,12 +108,15 @@ const Navigation = () => {
 
     return false;
   };
-
   return (
     <div className="flex h-full w-full flex-col">
       {/* navigation */}
       {!isAdminDashboard() && (
-        <div className="mb-[101px]">
+        <div
+          className={`${
+            location.pathname === '/admin-dashboard' ? 'mb-[101px]' : 'mb-0'
+          }`}
+        >
           <div className="navbar absolute z-[101] m-0 flex-col p-0">
             {/* main navbar */}
             <div className=" m-0 flex min-h-fit w-full justify-center bg-gray-100 p-1">
@@ -124,7 +126,7 @@ const Navigation = () => {
                   <div className="flex-none">
                     {userCategories !== undefined && (
                       // side menu for small screens
-                      <div className="z-40 flex flex-col items-center justify-center pt-2 md:hidden ">
+                      <div className="z-40 flex flex-col items-center justify-center pt-2 md:hidden">
                         <SideMenu
                           onChangeToggle={toggleIsMenuOpen}
                           categories={userCategories}
@@ -180,7 +182,7 @@ const Navigation = () => {
               <div className="container">
                 <div className="flex justify-center">
                   {userCollectionKeys &&
-                    userCollectionKeys.keys.map((key) => (
+                    userCollectionKeys.map((key) => (
                       <button
                         key={key}
                         className="relative flex flex-col  items-center justify-center"

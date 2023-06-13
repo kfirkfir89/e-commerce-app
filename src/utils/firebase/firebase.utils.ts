@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { initializeApp } from 'firebase/app';
 import {
   getFirestore,
@@ -7,15 +8,29 @@ import {
   collection,
   query,
   getDocs,
+  updateDoc,
 } from 'firebase/firestore';
-import { deleteObject, getStorage, ref } from 'firebase/storage';
+import {
+  deleteObject,
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+} from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
+import { v4 } from 'uuid';
 import { AddFirebaseData } from '../../components/add-firebase/add-firebase.component';
 import { ItemPreview } from '../../components/add-firebase/add-item.component';
 import {
   ColorStock,
   SizeStock,
 } from '../../components/add-firebase/add-item-stock.component';
+import {
+  BigBannerData,
+  SmallImageBannerData,
+  SmallImagesOptionsMapping,
+} from '../../routes/admin-dashboard-nav/admin-pages-preview.component';
+import { SelectOption } from '../../components/select/select.component';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -60,16 +75,13 @@ export async function setUserCollectionKeys(collectionKey: string) {
     await setDoc(docRef, { keys: [collectionKey] });
   }
 }
-// get user custom collection-keys for main navbar
-export async function getUserCollectionKeys() {
-  const collectionRef = collection(db, 'system-data');
-  const q = query(collectionRef);
-  const querySnapshot = await getDocs(q);
 
-  const res = querySnapshot.docs.map((docSnapshot) => {
-    return docSnapshot.data() as UserCollectionKeys;
-  });
-  return res;
+export async function getUserCollectionKeys() {
+  const userCollectionKeyDocRef = doc(db, 'system-data/user-collection-keys');
+  const docSnapshot = await getDoc(userCollectionKeyDocRef);
+
+  const res = docSnapshot.data() as UserCollectionKeys;
+  return res.keys;
 }
 // add new data (products) to server
 export async function addFirebaseData<T extends AddFirebaseData>(
@@ -175,4 +187,97 @@ export async function deleteImageUrls(urlList: string[]) {
       console.log('Failed to delete image: ', error);
     });
   });
+}
+
+export async function uploadImageUrls(
+  imgFileList: File[] | File
+): Promise<string[] | string> {
+  let urlArray: string[] = [];
+  let imgUrl = '';
+
+  if ('name' in imgFileList) {
+    const imageRef = ref(storageFB, `images/${imgFileList.name + v4()}`);
+    const snapshot = await uploadBytes(imageRef, imgFileList);
+    imgUrl = await getDownloadURL(snapshot.ref);
+  }
+
+  if (Array.isArray(imgFileList)) {
+    const promises = imgFileList.map(async (file) => {
+      const imageRef = ref(storageFB, `images/${file.name + v4()}`);
+      const snapshot = await uploadBytes(imageRef, file);
+      return await getDownloadURL(snapshot.ref);
+    });
+
+    urlArray = await Promise.all(promises);
+  }
+
+  return !imgUrl ? urlArray : imgUrl;
+}
+
+// image preview migrate no file types
+type BigBannerDataWithoutImage = Omit<BigBannerData, 'image'>;
+type SmallBannerDataWithoutImage = Omit<SmallImageBannerData, 'image'>;
+
+export type HomePagePreview = {
+  bigBaner: BigBannerDataWithoutImage;
+  mediumBaner: SmallBannerDataWithoutImage[];
+  smallBaner: SmallBannerDataWithoutImage[];
+};
+
+export async function setHomePagePreviewData(
+  bigBanerData: BigBannerData,
+  smallBanersImages: SmallImagesOptionsMapping
+) {
+  const resUrl = await uploadImageUrls(bigBanerData.image);
+  if (typeof resUrl !== 'string') {
+    bigBanerData.imageUrl = resUrl;
+    bigBanerData.image = [];
+  }
+
+  const operations = Object.values(smallBanersImages).map(
+    async (imageBannerValue) => {
+      const { image, ...otherProps } = imageBannerValue;
+      const newDataNoFile: SmallBannerDataWithoutImage = {
+        ...otherProps,
+      };
+      if (image) {
+        const resUrl = await uploadImageUrls(image);
+        if (typeof resUrl === 'string') {
+          newDataNoFile.imageUrl = resUrl;
+        }
+      }
+      return newDataNoFile;
+    }
+  );
+  const smallBanersWithoutImage: SmallBannerDataWithoutImage[] =
+    await Promise.all(operations);
+
+  smallBanersWithoutImage.sort((a, b) => {
+    const a2 = parseInt(a.name.slice(-1), 10);
+    const b2 = parseInt(b.name.slice(-1), 10);
+    return a2 - b2;
+  });
+
+  const mediumBanerSlice = smallBanersWithoutImage.slice(-2);
+  const smallBanersSlice = smallBanersWithoutImage.slice(0, -2);
+
+  const finalDataWithUrls: HomePagePreview = {
+    bigBaner: {
+      isProductList: bigBanerData.isProductList,
+      selectedOption: bigBanerData.selectedOption,
+      imageUrl: bigBanerData.imageUrl,
+    },
+    mediumBaner: mediumBanerSlice,
+    smallBaner: smallBanersSlice,
+  };
+
+  const homePagePreviewDocRef = doc(db, 'system-data/home-page-preview');
+  await setDoc(homePagePreviewDocRef, finalDataWithUrls);
+}
+
+export async function getHomePagePreviewData() {
+  const homePagePreviewDocRef = doc(db, 'system-data/home-page-preview');
+  const docSnapshot = await getDoc(homePagePreviewDocRef);
+  const res = docSnapshot.data() as HomePagePreview;
+  return res;
 }

@@ -58,8 +58,8 @@ export const SelectDbRef = ({
   useEffect(() => {
     const featchUserCollectionKeys = async () => {
       try {
-        const keys: UserCollectionKeys[] = await getUserCollectionKeys();
-        const keysOptions: SelectOption[] = keys[0].keys.map((key) => {
+        const keys = await getUserCollectionKeys();
+        const keysOptions: SelectOption[] = keys.map((key) => {
           return { label: key, value: key };
         });
         setCollectionKeysOptions(keysOptions);
@@ -115,7 +115,6 @@ export const SelectDbRef = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNewCollection]);
-  console.log('isNewCollection:', isNewCollection, isNewDoc);
 
   useEffect(() => {
     if (!isNewDoc) {

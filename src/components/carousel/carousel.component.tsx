@@ -1,4 +1,4 @@
-import { useState, useEffect, FC, ChangeEvent } from 'react';
+import { useState, useEffect, FC, ChangeEvent, useRef } from 'react';
 
 export type CarouselProps = {
   images: string[] | File[];
@@ -12,6 +12,7 @@ const Carousel: FC<CarouselProps> = (props) => {
   const [prevCurrentImg2, setPrevCurrentImage2] = useState(1);
   const [imageHeight, setImageHeight] = useState(0);
   const [imageWidth, setImageWidth] = useState(0);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -35,39 +36,48 @@ const Carousel: FC<CarouselProps> = (props) => {
     setImageWidth(e.target.offsetWidth);
   };
 
-  console.log('imageHeight:', imageHeight);
+  useEffect(() => {
+    const resize = () => {
+      if (imgRef.current) {
+        setImageHeight(imgRef.current.offsetHeight);
+        setImageWidth(imgRef.current.offsetHeight);
+      }
+    };
+    window.addEventListener('resize', resize);
+  }, []);
   return (
     <div className="flex w-full justify-center">
       <div
-        className="container relative flex w-full justify-center  overflow-hidden"
+        className="container relative flex w-full  overflow-hidden"
         style={{
           backgroundImage: `url(${images[prevCurrentImg]})`,
           height: `${imageHeight}px`,
         }}
       >
-        <div
-          className="flex h-full  flex-col"
-          style={{
-            width: `${imageWidth}px`,
-          }}
-        >
+        <div>
           {images.length > 0 &&
             images.map((img, index) => (
               <div
                 // eslint-disable-next-line react/no-array-index-key
                 key={`Image${index}`}
-                className={`absolute bottom-0 flex transform transition-all duration-1000 ease-out ${
+                className={`absolute top-0 flex transform transition-all duration-1000 ease-out ${
                   index === currentImg && 'translate-y-full'
                 } ${index < currentImg && 'z-10'}`}
               >
                 {typeof img !== 'string' ? (
                   <img
+                    ref={imgRef}
                     onLoad={imageSizeHandler}
                     alt={`${index}`}
                     src={URL.createObjectURL(img)}
                   />
                 ) : (
-                  <img alt={`${index}`} src={img} onLoad={imageSizeHandler} />
+                  <img
+                    ref={imgRef}
+                    alt={`${index}`}
+                    src={img}
+                    onLoad={imageSizeHandler}
+                  />
                 )}
               </div>
             ))}
