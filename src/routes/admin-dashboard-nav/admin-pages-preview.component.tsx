@@ -8,7 +8,6 @@ import {
   useState,
 } from 'react';
 import Carousel from '../../components/carousel/carousel.component';
-import Carousel2Img from '../../components/carousel/carousel-2-img.component';
 import Select, { SelectOption } from '../../components/select/select.component';
 import { getUserKeysDocs } from '../../utils/firebase/firebase.category.utils';
 import {
@@ -376,9 +375,10 @@ const PagesPreview = () => {
             <div className="flex w-full max-w-xl flex-col sm:hidden">
               <Carousel images={bigBanerData.image} />
             </div>
-            <div className="hidden w-full max-w-xl flex-col sm:flex">
-              <Carousel2Img images={bigBanerData.image} />
-            </div>
+            {/* <div className="hidden w-full max-w-xl flex-col sm:flex">
+              <Carousel images={bigBanerData.image} />
+              <Carousel images={bigBanerData.image} />
+            </div> */}
           </div>
           {/* small images */}
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
