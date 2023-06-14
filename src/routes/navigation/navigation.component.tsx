@@ -257,7 +257,7 @@ const Navigation = () => {
           </div>
         </div>
       )}
-      <div className="mt-2 w-full">
+      <div className="mt-[72px] w-full md:mt-28">
         <Breadcrumbs />
       </div>
       {/* message pop up */}
@@ -287,11 +287,11 @@ const Navigation = () => {
       </div>
       {/* outlet */}
       <div
-        className={`scrollbarStyle scrollbarStyle-hidden relative mt-4 flex h-full w-full flex-col overflow-auto ${
+        className={`scrollbarStyle scrollbarStyle-hidden relative mt-2 flex h-full w-full flex-col overflow-auto ${
           isSideMenuToggled ? 'hidden' : 'block'
         }`}
       >
-        <div className="flex-grow">
+        <div className="flex-grow ">
           <popUpMessageContext.Provider
             value={{
               message: popUpMessage.message,
@@ -301,7 +301,6 @@ const Navigation = () => {
             <Outlet />
           </popUpMessageContext.Provider>
         </div>
-
         <footer className="footer flex items-center bg-gray-700 p-4 font-smoochSans leading-7 tracking-wider text-white">
           <div className="flex-1">
             <p>© nana-style 2023 - All right reserved</p>

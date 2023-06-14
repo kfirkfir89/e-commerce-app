@@ -27,7 +27,8 @@ import Cart from './routes/cart/cart.component';
 import Favorites from './routes/favorites/favorites.component';
 import AdminAdd from './routes/admin-dashboard-nav/admin-add-products.component';
 import PagesPreview from './routes/admin-dashboard-nav/admin-pages-preview.component';
-import ProductList from './routes/admin-dashboard-nav/admin-product-list.component';
+import ProductListAdmin from './routes/admin-dashboard-nav/admin-product-list.component';
+import ProductList from './routes/product-list/product-list.component';
 
 const Home = lazy(() => import('./routes/home/home.component'));
 const Authentication = lazy(
@@ -67,6 +68,8 @@ const App = () => {
           <Route path="orders" element={<UserOrders />} />
         </Route>
 
+        <Route path="product-list/:listPara" element={<ProductList />} />
+
         <Route path="checkout" element={<CheckOut />} />
         <Route path="cart" element={<Cart />} />
         <Route path="favorites" element={<Favorites />} />
@@ -75,7 +78,7 @@ const App = () => {
 
         <Route path="admin-dashboard/*" element={<AdminDBNav />}>
           <Route index element={<AdminDashboard />} />
-          <Route path="product-list" element={<ProductList />} />
+          <Route path="product-list" element={<ProductListAdmin />} />
           <Route path="pages-preview" element={<PagesPreview />} />
           <Route path="addfirebase" element={<AdminAdd />} />
         </Route>

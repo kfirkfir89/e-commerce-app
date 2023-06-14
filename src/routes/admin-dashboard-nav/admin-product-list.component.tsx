@@ -15,7 +15,7 @@ import { ReactComponent as DeleteIcon } from '../../assets/delete.svg';
 import { ReactComponent as AddIcon } from '../../assets/add_FILL0.svg';
 import { ReactComponent as DoneIcon } from '../../assets/done_FILL0_.svg';
 
-const ProductList = () => {
+const ProductListAdmin = () => {
   const { setMessage } = useContext(popUpMessageContext);
   const [products, setProducts] = useState<ItemPreview[][]>([]);
   const [myProductList, setMyProductList] = useState<ItemPreview[]>([]);
@@ -310,4 +310,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default ProductListAdmin;

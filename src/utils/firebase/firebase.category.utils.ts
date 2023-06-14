@@ -215,7 +215,6 @@ export async function getSubCategoryDocument(
         sortOrder = 'desc';
       }
     }
-
     if (!lastVisible) {
       if (!docKey) {
         if (!sortField && !sortOrder) {
@@ -224,6 +223,7 @@ export async function getSubCategoryDocument(
             where('collectionKey', '==', collectionKey),
             limit(3)
           );
+          return queryItems;
         }
         queryItems = query(
           collectionRef,
@@ -297,7 +297,6 @@ export async function getSubCategoryDocument(
   }
   let collectionRef: CollectionReference<DocumentData>;
   let itemsQuery: Query<DocumentData>;
-
   if (!docKey) {
     collectionRef = collection(db, 'all-items-preview');
   } else {
@@ -380,7 +379,6 @@ export async function getSubCategoryDocument(
   // options of colors selected
   if (sortOption && sortOption.colors.length > 0) {
     const sortOptionsColor = sortOption.colors.map((color) => color.label);
-    collectionRef = collection(db, collectionKey, docKey, 'items-preview');
 
     if (!docKey) {
       itemsQuery = query(
@@ -448,8 +446,8 @@ export async function getSubCategoryDocument(
 
   // in case of changing sort without sort option of colors or sizes
   itemsQuery = createLimitedQuery(collectionRef);
-
   const itemsSnapshot = await getDocs(itemsQuery);
+
   const sortCount = (await getCountFromServer(collectionRef)).data().count;
   const sliceItemsArray: ItemPreview[] = itemsSnapshot.docs.map(
     (docSnapshot) => {
@@ -457,7 +455,6 @@ export async function getSubCategoryDocument(
       return item;
     }
   );
-
   const categoryData: CategoryDataSlice = {
     collectionMapKey: collectionKey,
     title: docKey,
@@ -520,7 +517,6 @@ export async function getCategoryCount(
 export async function getProductListItemPreview(
   page: number
 ): Promise<ItemPreview[]> {
-  console.log('page:', page);
   let pagesItemsToSkip = 0;
   const collectionRef = collection(db, 'all-items-preview');
   let itemsQuery: Query<DocumentData>;
@@ -601,4 +597,22 @@ export async function addNewProductList(
     productList: productListId,
   };
   await setDoc(docRef, list);
+}
+
+export async function getProductList(listName: string): Promise<ItemPreview[]> {
+  let list: ItemPreview[] = [];
+  const docRef = doc(db, 'user-products-list', listName);
+  const listSnapshot = await getDoc(docRef);
+  if (listSnapshot.exists()) {
+    const listData = listSnapshot.data() as ProductList;
+
+    const collectionRef = collection(db, 'all-items-preview');
+    const itemsQuery = query(
+      collectionRef,
+      where('id', 'in', listData.productList)
+    );
+    const itemsQuerySnapshot = await getDocs(itemsQuery);
+    list = itemsQuerySnapshot.docs.map((doc) => doc.data() as ItemPreview);
+  }
+  return list;
 }

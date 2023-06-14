@@ -20,7 +20,11 @@ const UserProfile = () => {
 
   // shortcut of user name for avatar
   let avatarNameShortcut = '';
-  if (currentUserSelector) {
+  if (
+    currentUserSelector &&
+    currentUserSelector.firstName &&
+    currentUserSelector.lastName
+  ) {
     avatarNameShortcut =
       currentUserSelector.firstName[0].toUpperCase() +
       currentUserSelector.lastName[0].toUpperCase();
@@ -41,12 +45,11 @@ const UserProfile = () => {
 
   return (
     <div className="flex h-full w-full flex-col items-center ">
-      <div className="container h-full max-w-6xl">
+      <div className="container flex h-full max-w-6xl flex-col">
         <h2 className="mb-6 text-center text-2xl font-semibold capitalize text-slate-700 lg:m-2 lg:mb-8">
           My Account
         </h2>
-
-        <div className="relative flex h-full w-full gap-2 px-4 md:h-22/24 ">
+        <div className="relative flex h-full w-full gap-2 px-4  ">
           {/* left/ menu side  */}
           <div className="relative flex w-1/3 flex-1 flex-col text-center font-smoochSans text-sm capitalize tracking-wider text-slate-700 md:max-w-xs md:flex-initial">
             <div className="relative mb-4 flex h-28 bg-gray-300 p-4 pb-6 shadow-sm md:mb-2">
@@ -154,9 +157,9 @@ const UserProfile = () => {
                 ? 'absolute left-0 h-full w-full md:static md:left-auto'
                 : 'hidden'
             }
-             flex-1 bg-gray-100 font-smoochSans text-sm capitalize tracking-wider text-slate-700 shadow-sm`}
+             flex-1 bg-gray-100 font-smoochSans text-sm capitalize  tracking-wider text-slate-700 shadow-sm`}
           >
-            <div className="h-full w-auto">
+            <div className="flex h-full w-auto">
               <button
                 className="absolute z-50 md:hidden"
                 onClick={openMenuHandler}

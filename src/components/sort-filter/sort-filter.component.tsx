@@ -62,13 +62,19 @@ const SortFilter = ({
         console.log('error:', error);
       }
     };
-    const fetch = fetchSortOption().then((res) => {
-      if (res) {
-        console.log('res:', res);
-        const options = typesSizeOptions.get(res.sizeSortOption.value);
-        options && setSelectedTypeOption(options);
-      }
-    });
+
+    if (!subCategoryPara) {
+      const allOptions = [...optionsPants, ...optionsGlobal, ...optionsShoes];
+      setSelectedTypeOption(allOptions);
+    } else {
+      const fetch = fetchSortOption().then((res) => {
+        if (res) {
+          console.log('res:', res);
+          const options = typesSizeOptions.get(res.sizeSortOption.value);
+          options && setSelectedTypeOption(options);
+        }
+      });
+    }
   }, [shopPara, subCategoryPara]);
 
   const onChangeKey = (option: SelectOption | SelectOption[] | undefined) => {

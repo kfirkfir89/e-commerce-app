@@ -12,10 +12,7 @@ import {
   selectCategoriesIsLoading,
 } from '../../store/categories/category.selector';
 
-import {
-  featchSelectSortOption,
-  featchUpdateCategory,
-} from '../../store/categories/category.action';
+import { featchUpdateCategory } from '../../store/categories/category.action';
 
 import { ReactComponent as Close } from '../../assets/close_FILL0.svg';
 import { ReactComponent as SortIcon } from '../../assets/sort_FILL0_wght200.svg';
@@ -25,7 +22,6 @@ import { ItemPreview } from '../../components/add-firebase/add-item.component';
 import Spinner from '../../components/spinner/spinner.component';
 import SortFilter from '../../components/sort-filter/sort-filter.component';
 import ProductCard from '../../components/product-card/product-card.component';
-import { SelectSortOption } from '../../store/categories/category.types';
 
 export type CategoryRouteParams = {
   shopPara: string;
@@ -83,33 +79,6 @@ const Category = () => {
     }
     return false;
   }
-  // const updateSortOptions = () => {
-  //   if (!products) return;
-  //   const selectSortOption: SelectSortOption = {
-  //     sizesOption: [],
-  //     colorsOption: [],
-  //   };
-
-  //   const sizeSortFilterOptions = new Set<string>();
-  //   products.forEach((item) =>
-  //     item.sizesSort.forEach((size) => sizeSortFilterOptions.add(size))
-  //   );
-  //   const sizeOptions: SelectOption[] = optionsShirts.filter((option) =>
-  //     sizeSortFilterOptions.has(option.value)
-  //   );
-  //   selectSortOption.sizesOption = sizeOptions;
-
-  //   const colorSortFilterOptions = new Set<string>();
-  //   products.forEach((item) =>
-  //     item.colorsSort.forEach((color) => colorSortFilterOptions.add(color))
-  //   );
-  //   const colorOption: SelectOption[] = optionsColors.filter((option) =>
-  //     colorSortFilterOptions.has(option.label)
-  //   );
-  //   selectSortOption.colorsOption = colorOption;
-
-  //   dispatch(featchSelectSortOption(selectSortOption));
-  // };
   // a featch to server to get a slice
   async function loadData(
     shopPara: string,
@@ -326,9 +295,6 @@ const Category = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortOption]);
 
-  // useEffect(() => {
-  //   updateSortOptions();
-  // }, [products]);
   const loadMore = () => {
     const moreData = featchDataCategory();
   };

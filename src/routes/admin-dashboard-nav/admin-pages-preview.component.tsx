@@ -375,10 +375,18 @@ const PagesPreview = () => {
             <div className="flex w-full max-w-xl flex-col sm:hidden">
               <Carousel images={bigBanerData.image} />
             </div>
-            {/* <div className="hidden w-full max-w-xl flex-col sm:flex">
-              <Carousel images={bigBanerData.image} />
-              <Carousel images={bigBanerData.image} />
-            </div> */}
+            <div className="hidden w-full max-w-xl sm:flex">
+              <Carousel
+                images={bigBanerData.image.filter(
+                  (img, index) => index % 2 === 0
+                )}
+              />
+              <Carousel
+                images={bigBanerData.image.filter(
+                  (img, index) => index % 2 === 1
+                )}
+              />
+            </div>
           </div>
           {/* small images */}
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">

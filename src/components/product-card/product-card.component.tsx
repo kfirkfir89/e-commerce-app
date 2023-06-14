@@ -53,7 +53,9 @@ const ProductCard = ({ product }: { product: ItemPreview }) => {
   return (
     <div className={`max-w-xs ${!isImageLoaded ? 'invisible' : 'visible'}`}>
       <div className="relative shadow-sm">
-        <Link to={`${product.slug}`}>
+        <Link
+          to={`/${product.collectionKey}/${product.docKey}/${product.slug}`}
+        >
           <img
             onLoad={onLoad}
             key={imagesUrls[0]}
@@ -87,7 +89,9 @@ const ProductCard = ({ product }: { product: ItemPreview }) => {
       </div>
       <div className="mt-4 flex flex-col">
         <div className="pl-1 font-dosis">
-          <Link to={`${product.productName}`}>
+          <Link
+            to={`/${product.collectionKey}/${product.docKey}/${product.slug}`}
+          >
             <h2 className="mb-1 text-sm font-semibold tracking-widest">
               {productName}
             </h2>
