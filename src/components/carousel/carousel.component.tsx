@@ -51,7 +51,7 @@ const Carousel: FC<CarouselProps> = (props) => {
         className="container relative flex w-full overflow-hidden"
         style={{
           backgroundImage: `url(${images[prevCurrentImg]})`,
-          height: `${imageHeight - imageHeight / 4}px`,
+          height: `${imageHeight - imageHeight / 3.5}px`,
         }}
       >
         <div>
@@ -60,7 +60,7 @@ const Carousel: FC<CarouselProps> = (props) => {
               <div
                 // eslint-disable-next-line react/no-array-index-key
                 key={`Image${index}`}
-                className={`absolute -top-10 flex transform transition-all duration-1000 ease-out ${
+                className={`absolute -top-8 flex transform transition-all duration-1000 ease-out ${
                   index === currentImg && 'translate-y-full'
                 } ${index < currentImg && 'z-10'}`}
               >

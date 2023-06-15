@@ -32,6 +32,38 @@
     color-scheme: only light;
   }
 
+  .marqueePEN-container {
+    height: 30px;
+    overflow: hidden;
+    line-height: 30px;
+  
+  }
+  .marqueePEN {
+    top: 0;
+    right: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    animation: marqueePEN 30s linear infinite;
+  }
+
+  .marqueePEN2 {
+    animation-delay: 15s;
+  }
+  b {
+    padding-left: 10px;
+  }
+  
+  @keyframes marqueePEN {
+    0% {
+      right: 100%;
+    }
+    100% {
+      right: -100%
+    }
+  }
+
   .scrollbarStyle::-webkit-scrollbar {
       @apply w-2;
   }
@@ -56,6 +88,11 @@
     height: 24px;
   }
   
+  .gradient-home1 {
+    background: rgb(167,243,208);
+    background: linear-gradient(180deg, rgba(167,243,208,1) 0%, rgba(153,246,228,1) 70%);
+  }
+
   .gradient-circle {
     background: rgb(139,92,246);
     background: linear-gradient(90deg, rgba(139,92,246,1) 1%, rgba(239,68,68,1) 1%, rgba(42,253,105,1) 27%, rgba(14,165,233,1) 78%, rgba(253,224,71,1) 99%, rgba(245,158,11,1) 99%);
@@ -83,7 +120,6 @@
     transition: all 700ms;
     background-size: 100% 50px;
     background-position: 50% 100%;
-    /* border-radius: 0.5rem; */
 
   }
   .link-underline:focus {
@@ -91,14 +127,12 @@
     transition: all 700ms;
     background-size: 100% 50px;
     background-position: 0 100%;
-    /* border-radius: 0.5rem; */
   }
   .link-underline:active {
     color: #334155;
     transition: all 700ms;
     background-size: 100% 50px;
     background-position: 0 100%;
-    /* border-radius: 0.5rem; */
 }
 
   @media (min-width: 1780px) {

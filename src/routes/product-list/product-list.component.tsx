@@ -16,7 +16,7 @@ const ProductList = () => {
   const location = useLocation();
   const [products, setProducts] = useState<ItemPreview[]>([]);
   const [productsRender, setProductsRender] = useState<ItemPreview[]>([]);
-  const [isLoadingItems, setIsLoadingItems] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [productListName, setProductListName] = useState('');
   const [sortOption, setSortOption] = useState<SortOption>({
     sort: { label: 'Sort', value: '' },
@@ -115,10 +115,11 @@ const ProductList = () => {
   }, [location.pathname]);
 
   useEffect(() => {
-    setIsLoadingItems(true);
     const res = sortFunction();
     res !== undefined && setProductsRender([...res]);
-    setIsLoadingItems(false);
+    setInterval(() => {
+      setIsLoading(false);
+    }, 300);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortOption]);
 
@@ -202,9 +203,9 @@ const ProductList = () => {
           />
         </div>
       </div>
-      <div className={`flex-col items-center justify-center `}>
+      <div className="flex flex-col items-center justify-center">
         <div className="container">
-          {isLoadingItems ? (
+          {isLoading ? (
             <Spinner />
           ) : (
             <div
@@ -212,21 +213,19 @@ const ProductList = () => {
                 isFilterToggled ? 'hidden' : 'flex'
               }`}
             >
-              <div className="container">
+              <div className="container flex">
                 {/* products rendering */}
                 <div className="mb-7 mt-4 flex flex-col">
                   <div className="relative mx-2 grid grid-cols-2 gap-2 gap-y-4 sm:grid-cols-3 sm:gap-4 sm:gap-y-10 lg:grid-cols-4 2xl:grid-cols-5">
-                    {isLoadingItems && (
-                      <div className="absolute z-50 h-full w-full bg-gray-400 opacity-50">
-                        <Spinner />
-                      </div>
-                    )}
-                    {productsRender &&
+                    {productsRender ? (
                       productsRender.map((product, i) => (
                         <div key={product.id}>
                           <ProductCard product={product} />
                         </div>
-                      ))}
+                      ))
+                    ) : (
+                      <Spinner />
+                    )}
                   </div>
                 </div>
               </div>

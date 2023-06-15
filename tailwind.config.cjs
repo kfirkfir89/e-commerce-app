@@ -10,35 +10,6 @@ module.exports = {
     "./node_modules/react-tailwindcss-datepicker/dist/index.esm.js",
   ],
   theme: {
-    // colors: {
-    //   transparent: 'transparent',
-    //   current: 'currentColor',
-    //   black: colors.black,
-    //   white: colors.white,
-    //   rose: colors.rose,
-    //   pink: colors.pink,
-    //   fuchsia: colors.fuchsia,
-    //   purple: colors.purple,
-    //   violet: colors.violet,
-    //   indigo: colors.indigo,
-    //   blue: colors.blue,
-    //   lightBlue: colors.lightBlue, // Only in Tailwind CSS <=v2.1
-    //   sky: colors.sky, // As of Tailwind CSS v2.2, `lightBlue` has been renamed to `sky`
-    //   cyan: colors.cyan,
-    //   teal: colors.teal,
-    //   emerald: colors.emerald,
-    //   green: colors.green,
-    //   lime: colors.lime,
-    //   yellow: colors.yellow,
-    //   amber: colors.amber,
-    //   orange: colors.orange,
-    //   red: colors.red,
-    //   slate: colors.slate,
-    //   zinc: colors.zinc,
-    //   gray: colors.gray,
-    //   neutral: colors.blueGray,
-    //   stone: colors.stone,
-    // },
     extend: {
       spacing: {
         "1/24": "4.166666%",
@@ -80,8 +51,29 @@ module.exports = {
       animation: {
         "spin-slow": "spin 2s linear infinite",
         "spin-reverse": "spin-reverse 1s linear infinite",
+        marquee: "marquee 35s linear infinite",
+        marquee2: "marquee2 35s linear infinite",
+        "marquee-rev": "marquee-rev 5s linear infinite",
+        // "marquee-rev2": "marquee-rev 5s linear infinite",
       },
       keyframes: {
+        marquee: {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-100%)" },
+        },
+        marquee2: {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(0%)" },
+        },
+        "marquee-rev": {
+          "0%": {
+            right: "100%",
+          },
+          "100%": {
+            right: "-100%",
+          },
+        },
+
         wave: {
           "0%,": { transform: "rotate(0.0deg)" },
           "10%": { transform: "rotate(14deg)" },

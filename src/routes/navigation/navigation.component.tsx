@@ -119,7 +119,7 @@ const Navigation = () => {
         >
           <div className="navbar absolute z-[101] m-0 flex-col p-0">
             {/* main navbar */}
-            <div className=" m-0 flex min-h-fit w-full justify-center bg-gray-100 p-1">
+            <div className=" m-0 flex min-h-fit w-full justify-center bg-gray-100  p-1">
               <div className="container navbar m-0 flex min-h-fit bg-transparent p-0">
                 {/* LEFT SIDE LOGO MENU */}
                 <div className="flex-1 ">
@@ -185,7 +185,7 @@ const Navigation = () => {
                     userCollectionKeys.map((key) => (
                       <button
                         key={key}
-                        className="relative flex flex-col  items-center justify-center"
+                        className="relative flex flex-col  items-center justify-center "
                         onClick={() => setIsHover(!isHover)}
                       >
                         <div className="flex justify-center">
@@ -219,13 +219,13 @@ const Navigation = () => {
                 tabIndex={0}
                 onMouseEnter={() => setIsHover(true)}
                 onMouseLeave={() => setIsHover(false)}
-                className={`grid w-full grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out ${
+                className={`grid w-full grid-rows-[0fr] overflow-hidden transition-all duration-500 ease-in-out  ${
                   isHover ? 'grid-rows-[1fr]' : ''
                 }`}
               >
                 <div className="min-h-0">
                   <div className="flex justify-center">
-                    <div className="container flex justify-center bg-gray-700">
+                    <div className="container flex justify-center bg-gray-700 ">
                       <div className="flex h-full w-[448px] flex-col px-2 pb-5">
                         {memorizedCategories?.map((sc) => (
                           <div key={sc} className="flex">
@@ -257,7 +257,7 @@ const Navigation = () => {
           </div>
         </div>
       )}
-      <div className="mt-[72px] w-full md:mt-28">
+      <div className="mt-[72px] w-full md:mt-[101px]">
         <Breadcrumbs />
       </div>
       {/* message pop up */}
@@ -287,7 +287,7 @@ const Navigation = () => {
       </div>
       {/* outlet */}
       <div
-        className={`scrollbarStyle scrollbarStyle-hidden relative mt-2 flex h-full w-full flex-col overflow-auto ${
+        className={`scrollbarStyle scrollbarStyle-hidden relative flex h-full w-full flex-col overflow-auto ${
           isSideMenuToggled ? 'hidden' : 'block'
         }`}
       >

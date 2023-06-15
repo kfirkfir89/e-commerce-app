@@ -10,7 +10,7 @@ const Breadcrumbs = () => {
     <>
       {location.pathname !== '/' && (
         <>
-          <div className="flex justify-center py-2">
+          <div className="flex justify-center py-3 pb-2">
             <div className="container">
               <div className="breadcrumbs mx-4 p-0 text-sm">
                 <ul>
@@ -31,15 +31,17 @@ const Breadcrumbs = () => {
                     .map((crumb: string) => {
                       currentLink += `/${crumb}`;
                       return (
-                        <li key={crumb}>
-                          <Link
-                            className="font-smoochSans text-xs tracking-widest text-gray-400 hover:text-slate-600"
-                            key={crumb}
-                            to={currentLink}
-                          >
-                            {crumb.replace(/%20/g, '-').toLowerCase()}
-                          </Link>
-                        </li>
+                        crumb !== 'product-list' && (
+                          <li key={crumb}>
+                            <Link
+                              className="font-smoochSans text-xs tracking-widest text-gray-400 hover:text-slate-600"
+                              key={crumb}
+                              to={currentLink}
+                            >
+                              {crumb.replace(/%20/g, '-').toLowerCase()}
+                            </Link>
+                          </li>
+                        )
                       );
                     })}
                 </ul>
