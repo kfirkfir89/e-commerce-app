@@ -14,6 +14,7 @@ import { getUserCategories } from '../../utils/firebase/firebase.category.utils'
 
 import { ReactComponent as AdminIcon } from '../../assets/manage_accounts.svg';
 import { ReactComponent as FavoriteIcon } from '../../assets/favorite_FILL0_w.svg';
+import { ReactComponent as NanaIcon } from '../../assets/nanalogo.svg';
 
 import CartDropdown from '../../components/cart-dropdown/cart-dropdown.componenet';
 import SideMenu from '../side-menu/side-menu.component';
@@ -111,7 +112,7 @@ const Navigation = () => {
   return (
     <div className="flex h-full w-full flex-col">
       {/* navigation */}
-      {!isAdminDashboard() && (
+      {!isAdminDashboard() && userCategories && (
         <div
           className={`${
             location.pathname === '/admin-dashboard' ? 'mb-[101px]' : 'mb-0'
@@ -136,10 +137,14 @@ const Navigation = () => {
                   </div>
                   <div className="z-50 sm:flex-none">
                     <Link to="/">
-                      <div className="mt-2 flex">
-                        <span className="whitespace-nowrap font-smoochSans text-lg font-bold uppercase tracking-tighter text-slate-700 sm:text-xl">
-                          nana style
+                      <div className="relative mt-2 flex">
+                        {/* <span className="whitespace-nowrap font-dosis text-4xl font-bold uppercase tracking-tighter text-slate-700 ">
+                          nana
                         </span>
+                        <span className=" textShadow absolute -bottom-[3px] left-4 z-10 whitespace-nowrap  font-pacifico text-xs font-bold uppercase tracking-tighter text-red-700 shadow-inner">
+                          style
+                        </span> */}
+                        <NanaIcon className='w-full h-10 ' />
                         {/* <img className="w-8/12 pl-2 opacity-90 sm:w-full" src="/src/assets/NANA STYLE.png" alt="gfd" /> */}
                       </div>
                     </Link>
@@ -164,7 +169,7 @@ const Navigation = () => {
                       </div>
                     )}
                     <NavLink to="favorites" className="mt-[10px] flex px-1">
-                      <FavoriteIcon className="h-8 w-9" />
+                      <FavoriteIcon className="h-8 w-9 text-re" />
                     </NavLink>
 
                     <ProfileDropdown />
@@ -287,7 +292,7 @@ const Navigation = () => {
       </div>
       {/* outlet */}
       <div
-        className={`scrollbarStyle scrollbarStyle-hidden relative flex h-full w-full flex-col overflow-auto ${
+        className={`scrollbarStyle  relative flex h-full w-full flex-col overflow-auto ${
           isSideMenuToggled ? 'hidden' : 'block'
         }`}
       >
@@ -301,7 +306,7 @@ const Navigation = () => {
             <Outlet />
           </popUpMessageContext.Provider>
         </div>
-        <footer className="footer flex items-center bg-gray-700 p-4 font-smoochSans leading-7 tracking-wider text-white">
+        <footer className="footer mt-10 flex items-center bg-gray-700 p-4 font-smoochSans leading-7 tracking-wider text-white">
           <div className="flex-1">
             <p>© nana-style 2023 - All right reserved</p>
           </div>

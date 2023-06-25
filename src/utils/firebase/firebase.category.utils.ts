@@ -33,7 +33,7 @@ import { SelectOption } from '../../components/select/select.component';
 // get the user custom subcategories (doc title) by using user custom collectionKeys
 export async function getUserKeysDocs(collectionKey: string) {
   const collectionRef = collection(db, collectionKey);
-  const q = query(collectionRef);
+  const q = query(collectionRef, orderBy('created', 'asc'));
   const querySnapshot = await getDocs(q);
   const categoryTitles: string[] = [];
 
@@ -221,7 +221,7 @@ export async function getSubCategoryDocument(
           queryItems = query(
             collectionRef,
             where('collectionKey', '==', collectionKey),
-            limit(3)
+            limit(20)
           );
           return queryItems;
         }
@@ -229,20 +229,20 @@ export async function getSubCategoryDocument(
           collectionRef,
           where('collectionKey', '==', collectionKey),
           orderBy(sortField, sortOrder),
-          limit(3)
+          limit(20)
         );
         return queryItems;
       }
 
       if (!sortField && !sortOrder) {
-        queryItems = query(collectionRef, limit(3));
+        queryItems = query(collectionRef, limit(20));
         return queryItems;
       }
 
       queryItems = query(
         collectionRef,
         orderBy(sortField, sortOrder),
-        limit(3)
+        limit(20)
       );
 
       return queryItems;
@@ -251,7 +251,7 @@ export async function getSubCategoryDocument(
     let next: Query<DocumentData> = query(
       collectionRef,
       startAt(lastVisible),
-      limit(3)
+      limit(20)
     );
 
     if (!docKey) {
@@ -260,7 +260,7 @@ export async function getSubCategoryDocument(
           collectionRef,
           where('collectionKey', '==', collectionKey),
           startAt(lastVisible),
-          limit(3)
+          limit(20)
         );
         return next;
       }
@@ -269,13 +269,13 @@ export async function getSubCategoryDocument(
         where('collectionKey', '==', collectionKey),
         orderBy(sortField, sortOrder),
         startAt(lastVisible),
-        limit(3)
+        limit(20)
       );
       return next;
     }
 
     if (!sortField && !sortOrder) {
-      next = query(collectionRef, startAt(lastVisible), limit(3));
+      next = query(collectionRef, startAt(lastVisible), limit(20));
       return next;
     }
 
@@ -283,7 +283,7 @@ export async function getSubCategoryDocument(
       collectionRef,
       orderBy(sortField, sortOrder),
       startAt(lastVisible),
-      limit(3)
+      limit(20)
     );
     return next;
   }
@@ -351,7 +351,7 @@ export async function getSubCategoryDocument(
       sortCount = filteredByColors.length;
       const slice = filteredByColors.slice(
         skipItemsCounter,
-        skipItemsCounter + 3
+        skipItemsCounter + 20
       );
 
       const categoryData: CategoryDataSlice = {
@@ -365,7 +365,7 @@ export async function getSubCategoryDocument(
 
     const slice = itemsSortBySizes.slice(
       skipItemsCounter,
-      skipItemsCounter + 3
+      skipItemsCounter + 20
     );
     const categoryData: CategoryDataSlice = {
       collectionMapKey: collectionKey,
@@ -405,7 +405,7 @@ export async function getSubCategoryDocument(
       title: docKey,
       sliceItems: itemsSortByColors.slice(
         skipItemsCounter,
-        skipItemsCounter + 3
+        skipItemsCounter + 20
       ),
       count: sortCount,
     };

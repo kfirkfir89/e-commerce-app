@@ -139,6 +139,8 @@ const Search: FC<SearchProps> = ({ onChangeToggle }) => {
     if (onChangeToggle) {
       onChangeToggle();
     }
+
+    setInputField('');
     navigate('/search-results', { state: searchItems });
   };
 
@@ -150,6 +152,7 @@ const Search: FC<SearchProps> = ({ onChangeToggle }) => {
         </div>
         <input
           type="text"
+          value={inputField}
           onChange={(e) => {
             setInputField(e.target.value);
           }}
@@ -180,7 +183,7 @@ const Search: FC<SearchProps> = ({ onChangeToggle }) => {
           <ul
             ref={ulRef}
             tabIndex={0}
-            className="flex flex-col bg-gray-100 p-2 px-4 font-smoochSans capitalize tracking-wider outline-none focus-within:border-[1px] focus-within:border-slate-400 "
+            className="flex max-h-96 flex-col bg-gray-100 p-2 px-4 font-smoochSans capitalize tracking-wider outline-none focus-within:border-[1px] focus-within:border-slate-400"
           >
             {inputField.length > 0 &&
               searchItems.map((item, index) => (
@@ -190,6 +193,7 @@ const Search: FC<SearchProps> = ({ onChangeToggle }) => {
                   onClick={(e) => {
                     e.stopPropagation();
                     selectOption(option);
+                    setInputField('');
                     setIsOpen(false);
                   }}
                   onMouseEnter={() => setHighlightedIndex(index)}

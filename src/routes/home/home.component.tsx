@@ -181,7 +181,7 @@ const Home = () => {
             </div>
           </div>
           {/* small banner images */}
-          <div className=" container grid h-full w-full max-w-7xl grid-cols-2  gap-8 p-2 px-4 pt-8 font-smoochSans text-xs font-semibold uppercase tracking-widest text-slate-700 sm:grid-cols-4 sm:p-6 sm:px-10">
+          <div className=" container mb-6 grid h-full w-full max-w-7xl grid-cols-2  gap-8 p-2 px-4 pt-8 font-smoochSans text-xs font-semibold uppercase tracking-widest text-slate-700 sm:grid-cols-4 sm:p-6 sm:px-10">
             {previewData.smallBaner.map(
               (smallImage) =>
                 smallImage.imageUrl && (
@@ -199,7 +199,7 @@ const Home = () => {
                       src={smallImage.imageUrl}
                       alt={smallImage.radioName}
                     />
-                    <span className="px-4 text-center text-lg font-semibold uppercase">
+                    <span className="px-4 text-center  font-semibold uppercase sm:text-lg">
                       {smallImage.selectedOption.label}
                     </span>
                   </NavLink>

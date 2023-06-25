@@ -9,6 +9,7 @@ import {
   query,
   getDocs,
   updateDoc,
+  Timestamp,
 } from 'firebase/firestore';
 import {
   deleteObject,
@@ -83,6 +84,13 @@ export async function getUserCollectionKeys() {
   const res = docSnapshot.data() as UserCollectionKeys;
   return res.keys;
 }
+
+export type SubCollectionData = {
+  created: Timestamp;
+  collectionKey: string;
+  docKey: string;
+  sizeSortOption: SelectOption;
+};
 // add new data (products) to server
 export async function addFirebaseData<T extends AddFirebaseData>(
   newData: T
@@ -104,11 +112,13 @@ export async function addFirebaseData<T extends AddFirebaseData>(
 
   if (!docSnapshot.exists()) {
     try {
-      const docRef = await setDoc(doc(db, collectionKey, docKey), {
+      const data: SubCollectionData = {
+        created: Timestamp.fromDate(new Date()),
         collectionKey,
         docKey,
         sizeSortOption,
-      });
+      };
+      const docRef = await setDoc(doc(db, collectionKey, docKey), data);
     } catch (error) {
       console.log('error:', error);
     }
@@ -272,7 +282,16 @@ export async function setHomePagePreviewData(
   };
 
   const homePagePreviewDocRef = doc(db, 'system-data/home-page-preview');
+  const docSnapshot = await getDoc(homePagePreviewDocRef);
+  const oldPreview = docSnapshot.data() as HomePagePreview;
+  const imgUrlToDelete = [
+    ...oldPreview.bigBaner.imageUrl,
+    ...oldPreview.mediumBaner.map((img) => img.imageUrl),
+    ...oldPreview.smallBaner.map((img) => img.imageUrl),
+  ];
+
   await setDoc(homePagePreviewDocRef, finalDataWithUrls);
+  const deleteOldImages = await deleteImageUrls(imgUrlToDelete);
 }
 
 export async function getHomePagePreviewData() {
@@ -280,4 +299,19 @@ export async function getHomePagePreviewData() {
   const docSnapshot = await getDoc(homePagePreviewDocRef);
   const res = docSnapshot.data() as HomePagePreview;
   return res;
+}
+
+export async function getSortOptionSizeType(
+  collectionKey: string,
+  docKey: string
+) {
+  const homePagePreviewDocRef = doc(db, collectionKey, docKey);
+  const docSnapshot = await getDoc(homePagePreviewDocRef);
+  const res = docSnapshot.data() as {
+    collectionKey: string;
+    docKey: string;
+    sizeSortOption: { label: string; value: string };
+  };
+  const option: SelectOption = res.sizeSortOption;
+  return option;
 }

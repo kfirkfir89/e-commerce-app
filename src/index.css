@@ -31,6 +31,10 @@
     @apply h-full w-full bg-white scrollbarStyle scrollbarStyle-hidden;
     color-scheme: only light;
   }
+  .textShadow {
+    text-shadow: 0px 0px 9px #ffffff, 0px 0px 15px #ff4c4c, 0px 0px 5px #9c3b3b;
+  }
+
 
   .marqueePEN-container {
     height: 30px;

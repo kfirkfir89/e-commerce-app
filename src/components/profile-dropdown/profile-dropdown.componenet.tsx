@@ -37,6 +37,7 @@ const ProfileDropdown = () => {
   }, [isHover]);
 
   const onClickIconHandler = () => {
+    setIsIconHover(false);
     if (currentUserSelector && !userIsLoadingSelector) {
       return navigate('/my-account');
     }

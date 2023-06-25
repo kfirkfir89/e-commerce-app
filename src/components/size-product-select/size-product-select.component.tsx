@@ -131,7 +131,7 @@ export const SizeProductSelect: FC<SelectProps> = ({
           isOpen ? 'block' : 'hidden'
         } left-0 top-full mt-1 w-full bg-gray-100`}
       >
-        <ul defaultValue="option1">
+        <ul defaultValue="option1" className="max-h-96 overflow-auto">
           {options.map((option, index) => {
             return isColorOutOfStock(productColor.label, option.label) ? (
               <li

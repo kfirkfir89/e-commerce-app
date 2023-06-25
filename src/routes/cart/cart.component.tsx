@@ -11,7 +11,7 @@ const Cart = () => {
   const cartTotalSelector = useSelector(selectCartTotal);
 
   return (
-    <div className="flex h-full w-full flex-col items-center ">
+    <div className="flex h-full w-full flex-col items-center">
       <h2 className="mb-6 text-center text-2xl font-semibold capitalize text-slate-700 lg:m-2 lg:mb-8">
         My Bag
       </h2>
@@ -41,7 +41,7 @@ const Cart = () => {
             </p>
           </div>
         </div>
-        <div className="container mt-4 max-w-2xl">
+        <div className="container mt-4 max-w-xs">
           <button
             className="btn w-full rounded-none p-0 shadow-sm"
             disabled={cartItemsSelector.length === 0}

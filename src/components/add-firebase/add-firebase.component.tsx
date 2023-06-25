@@ -17,7 +17,6 @@ import {
   addFirebaseData,
   setUserCollectionKeys,
 } from '../../utils/firebase/firebase.utils';
-import SelectSizeOption from './select-size-option.component';
 import { SelectOption } from '../select/select.component';
 
 export type AddFirebaseData = {

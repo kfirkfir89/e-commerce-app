@@ -10,7 +10,7 @@ const Breadcrumbs = () => {
     <>
       {location.pathname !== '/' && (
         <>
-          <div className="flex justify-center py-3 pb-2">
+          <div className="flex justify-center sm:py-3 sm:pb-2 ">
             <div className="container">
               <div className="breadcrumbs mx-4 p-0 text-sm">
                 <ul>

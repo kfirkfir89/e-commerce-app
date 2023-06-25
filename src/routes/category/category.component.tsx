@@ -348,7 +348,7 @@ const Category = () => {
               <Link
                 key={key}
                 to={key}
-                className=" btn-ghost btn-sm btn leading-8"
+                className=" btn-ghost btn-sm btn text-xs leading-8"
               >
                 {key}
               </Link>

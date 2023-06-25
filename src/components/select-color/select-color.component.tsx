@@ -156,7 +156,7 @@ export const SelectColor: FC<SelectColorProps> = ({
       >
         <div className="flex flex-wrap gap-x-4 gap-y-3">
           {options.map((option, index) =>
-            option.label === 'nocolor' ? (
+            option.value === 'nocolor' ? (
               <div
                 role="presentation"
                 onClick={(e) => {
@@ -165,7 +165,7 @@ export const SelectColor: FC<SelectColorProps> = ({
                   setIsOpen(true);
                 }}
                 onMouseEnter={() => setHighlightedIndex(index)}
-                key={option.label}
+                key={option.value}
                 className={`${isOptionSelected(option) && ''} ${
                   index === highlightedIndex && !isOptionSelected(option) && ''
                 } flex items-center justify-center px-2 ${option.value} bg-[${
@@ -185,7 +185,7 @@ export const SelectColor: FC<SelectColorProps> = ({
                   setIsOpen(true);
                 }}
                 onMouseEnter={() => setHighlightedIndex(index)}
-                key={option.label}
+                key={option.value}
                 className={`${isOptionSelected(option) && ''} ${
                   index === highlightedIndex && !isOptionSelected(option) && ''
                 } flex items-center justify-center px-2 ${option.value} bg-[${

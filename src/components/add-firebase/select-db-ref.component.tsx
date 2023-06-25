@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react';
 import {
+  getSortOptionSizeType,
   getUserCollectionKeys,
   UserCollectionKeys,
 } from '../../utils/firebase/firebase.utils';
@@ -144,6 +145,23 @@ export const SelectDbRef = ({
       onChangeTitle(newTitle);
     }
   };
+
+  const changeSelectSizeOptionExsistHandler = () => {
+    const getSizeType = async (collectionKey: string, docTitle: string) => {
+      try {
+        const subCategoryOptions = await getSortOptionSizeType(
+          collectionKey,
+          docTitle
+        );
+        onChangeSelectSizeOption(subCategoryOptions);
+      } catch (error) {
+        console.log('error:', error);
+      }
+    };
+    if (collectionKey?.label && docTitle?.label) {
+      const sizesOption = getSizeType(collectionKey.label, docTitle.label);
+    }
+  };
   return (
     <div className="flex flex-col">
       <div className="mb-2 flex justify-center pt-2 text-xl font-semibold text-gray-800">
@@ -160,9 +178,7 @@ export const SelectDbRef = ({
               <input
                 checked={isNewCollection}
                 type="checkbox"
-                onClick={() => {
-                  setIsNewCollection(!isNewCollection);
-                }}
+                onChange={() => setIsNewCollection(!isNewCollection)}
                 className="toggle-success toggle"
               />
             </label>
@@ -210,12 +226,10 @@ export const SelectDbRef = ({
               </span>
               <input
                 type="checkbox"
-                onClick={() => {
-                  setIsNewDoc(!isNewDoc);
-                }}
                 className="toggle-success toggle"
                 disabled={isNewCollection}
                 checked={isNewDoc}
+                onChange={() => setIsNewDoc(!isNewDoc)}
               />
             </label>
             {/* INPUT VALUES */}
@@ -234,6 +248,7 @@ export const SelectDbRef = ({
                   options={docKeysOptions}
                   onChange={(o: SelectOption | undefined) => {
                     onChangeTitle(o);
+                    changeSelectSizeOptionExsistHandler();
                   }}
                   value={docTitle}
                 />
