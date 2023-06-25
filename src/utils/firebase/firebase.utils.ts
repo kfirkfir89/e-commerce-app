@@ -238,6 +238,7 @@ export async function setHomePagePreviewData(
   bigBanerData: BigBannerData,
   smallBanersImages: SmallImagesOptionsMapping
 ) {
+  console.log('bigBanerData:', bigBanerData, smallBanersImages);
   const resUrl = await uploadImageUrls(bigBanerData.image);
   if (typeof resUrl !== 'string') {
     bigBanerData.imageUrl = resUrl;
@@ -280,18 +281,20 @@ export async function setHomePagePreviewData(
     mediumBaner: mediumBanerSlice,
     smallBaner: smallBanersSlice,
   };
-
+  console.log('finalDataWithUrls:', finalDataWithUrls);
   const homePagePreviewDocRef = doc(db, 'system-data/home-page-preview');
   const docSnapshot = await getDoc(homePagePreviewDocRef);
-  const oldPreview = docSnapshot.data() as HomePagePreview;
-  const imgUrlToDelete = [
-    ...oldPreview.bigBaner.imageUrl,
-    ...oldPreview.mediumBaner.map((img) => img.imageUrl),
-    ...oldPreview.smallBaner.map((img) => img.imageUrl),
-  ];
+  if (docSnapshot.exists()) {
+    const oldPreview = docSnapshot.data() as HomePagePreview;
+    const imgUrlToDelete = [
+      ...oldPreview.bigBaner.imageUrl,
+      ...oldPreview.mediumBaner.map((img) => img.imageUrl),
+      ...oldPreview.smallBaner.map((img) => img.imageUrl),
+    ];
+    const deleteOldImages = await deleteImageUrls(imgUrlToDelete);
+  }
 
   await setDoc(homePagePreviewDocRef, finalDataWithUrls);
-  const deleteOldImages = await deleteImageUrls(imgUrlToDelete);
 }
 
 export async function getHomePagePreviewData() {

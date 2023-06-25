@@ -199,7 +199,7 @@ const Home = () => {
                       src={smallImage.imageUrl}
                       alt={smallImage.radioName}
                     />
-                    <span className="px-4 text-center  font-semibold uppercase sm:text-lg">
+                    <span className="px-4 text-center font-normal uppercase sm:text-base">
                       {smallImage.selectedOption.label}
                     </span>
                   </NavLink>

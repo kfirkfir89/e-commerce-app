@@ -277,6 +277,7 @@ const PagesPreview = () => {
       bigBanerData: BigBannerData,
       smallBanersImages: SmallImagesOptionsMapping
     ) => {
+      console.log('bigBanerData:', bigBanerData, smallBanersImages);
       try {
         const upload = setHomePagePreviewData(bigBanerData, smallBanersImages);
       } catch (error) {
