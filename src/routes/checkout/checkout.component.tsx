@@ -99,7 +99,6 @@ const CheckOut = () => {
       console.log('error:', error);
     }
   };
-  console.log('finalTotal:', finalTotal);
   const ifValidPaymentData = (
     stripePromiseState: Stripe | null | undefined,
     deliveryAddress: UserAddress | undefined
@@ -174,12 +173,14 @@ const CheckOut = () => {
       let total = 0;
       if (isExpressDelivery) {
         total = cartTotalSelector + 15.99;
-        const res = getClientSecret(total);
-        setFinalTotal(total);
+        const amount = Math.ceil(total);
+        const res = getClientSecret(amount);
+        setFinalTotal(amount);
       } else {
         total = cartTotalSelector;
-        const res = getClientSecret(total);
-        setFinalTotal(total);
+        const amount = Math.ceil(total);
+        const res = getClientSecret(amount);
+        setFinalTotal(amount);
       }
     }
     setIsUserPaying(true);
