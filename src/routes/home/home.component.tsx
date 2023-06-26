@@ -94,7 +94,7 @@ const Home = () => {
       </div>
 
       {/* banner */}
-      <div className="gradient-home1 mb-4 flex w-screen justify-center font-dosis tracking-wider text-slate-700">
+      <div className="gradient-home1 mb-4 flex w-[98vw] justify-center font-dosis tracking-wider text-slate-700">
         <div className="flex w-full justify-center  p-8 pt-14">
           <div className="flex flex-col items-center justify-between sm:gap-3">
             <div className="flex">

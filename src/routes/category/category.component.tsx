@@ -316,22 +316,23 @@ const Category = () => {
 
   return (
     <div className=" h-full w-full bg-white">
-      {/* banner */}
-      <div className="mb-4 flex justify-center ">
-        <div className="container">
-          <div className="mx-2 flex justify-center bg-emerald-200 p-6">
-            <div className="flex flex-col items-center justify-between sm:gap-5">
-              <h2 className="text-center text-2xl font-bold tracking-tighter sm:text-5xl">
-                Up to 25% Off
-              </h2>
-              <div className="space-x-2 py-2 text-center lg:py-0">
-                <span className="text-sm">Plus free shipping! Use code:</span>
-                <span className="text-sm font-bold sm:text-base">NANA17</span>
+      {subCategoryKeys.length === 0 && (
+        <div className="mb-4 flex justify-center ">
+          <div className="container">
+            <div className="mx-2 flex justify-center bg-emerald-200 p-6">
+              <div className="flex flex-col items-center justify-between sm:gap-5">
+                <h2 className="text-center text-2xl font-bold tracking-tighter sm:text-5xl">
+                  Up to 25% Off
+                </h2>
+                <div className="space-x-2 py-2 text-center lg:py-0">
+                  <span className="text-sm">Plus free shipping! Use code:</span>
+                  <span className="text-sm font-bold sm:text-base">NANA17</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
       {/* title */}
       <h2 className="mb-6 text-center text-2xl font-semibold capitalize text-gray-600">
         {`${

@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { ReactComponent as NanaIcon } from '../../assets/nanalogo.svg';
 
 const AdminDBNav = () => {
@@ -9,15 +9,6 @@ const AdminDBNav = () => {
       <div className="flex justify-center bg-gray-100 md:px-2">
         <div className="container navbar m-0 flex-col bg-gray-100">
           <div className="navbar m-0 flex min-h-fit p-0 ">
-            <div className="flex-1 ">
-              <div className="z-50 flex-none ">
-                <Link to="/">
-                  <div className="relative mt-2 flex">
-                    <NanaIcon className="h-10 w-full " />
-                  </div>
-                </Link>
-              </div>
-            </div>
             <div className="z-40 flex w-full flex-wrap justify-center">
               {/* <div className="flex justify-center">
                 <Link
@@ -30,42 +21,50 @@ const AdminDBNav = () => {
                 </Link>
               </div> */}
               <div className="flex justify-center">
-                <Link
+                <NavLink
                   to="pages-preview"
-                  className={`btn-ghost btn-xs btn mx-2 text-gray-700 sm:btn-sm ${
-                    path.pathname === '/pages-preview' ? 'bg-gray-300' : ''
-                  }`}
+                  className={({ isActive }) =>
+                    isActive
+                      ? 'btn-ghost btn-xs btn mx-2 bg-gray-300 text-gray-700 sm:btn-sm'
+                      : 'btn-ghost btn-xs btn mx-2 text-gray-700 sm:btn-sm'
+                  }
                 >
                   pages preview
-                </Link>
+                </NavLink>
               </div>
               <div className="flex justify-center">
-                <Link
+                <NavLink
                   to="product-list"
-                  className={`btn-ghost btn-xs btn mx-2 text-gray-700 sm:btn-sm ${
-                    path.pathname === '/pages-preview' ? 'bg-gray-300' : ''
-                  }`}
+                  className={({ isActive }) =>
+                    isActive
+                      ? 'btn-ghost btn-xs btn mx-2 bg-gray-300 text-gray-700 sm:btn-sm'
+                      : 'btn-ghost btn-xs btn mx-2 text-gray-700 sm:btn-sm'
+                  }
                 >
                   product list
-                </Link>
+                </NavLink>
               </div>
               <div className="flex justify-center ">
-                <Link
+                <NavLink
                   to="addfirebase"
-                  className={`btn-ghost btn-xs btn mx-2 text-gray-700 sm:btn-sm ${
-                    path.pathname === '/admin-dashboard/addfirebase'
-                      ? 'bg-gray-300'
-                      : ''
-                  }`}
+                  className={({ isActive }) =>
+                    isActive
+                      ? 'btn-ghost btn-xs btn mx-2 bg-gray-300 text-gray-700 sm:btn-sm'
+                      : 'btn-ghost btn-xs btn mx-2 text-gray-700 sm:btn-sm'
+                  }
                 >
                   Add Products
-                </Link>
+                </NavLink>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <Outlet />
+      <div className="scrollbarStyle flex h-full w-full flex-col px-4">
+        <div className="flex-grow ">
+          <Outlet />
+        </div>
+      </div>
     </>
   );
 };

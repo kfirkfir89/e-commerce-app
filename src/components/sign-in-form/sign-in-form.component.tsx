@@ -39,6 +39,10 @@ const SignInForm = () => {
     dispatch(googleSignInStart());
   };
 
+  const signInAdminDemo = async () => {
+    dispatch(emailSignInStart('kfiravra89@gmail.com', 'kfiravra89!'));
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     dispatch(emailSignInStart(email, password));
@@ -150,6 +154,18 @@ const SignInForm = () => {
             <GoogleIcon className="w-8" />
             <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
               Google
+            </span>
+          </div>
+        </button>
+      </div>
+      <div className="mb-4 px-2 md:px-4">
+        <button
+          onClick={signInAdminDemo}
+          className="btn w-full rounded-none border-dashed bg-gray-100 text-slate-700 shadow-sm hover:text-white"
+        >
+          <div className="flex w-full items-center justify-center gap-x-2 ">
+            <span className="leading-0 flex pt-1 font-smoochSans text-xs font-semibold uppercase tracking-widest">
+              Admin demo
             </span>
           </div>
         </button>

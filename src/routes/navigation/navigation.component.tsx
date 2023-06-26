@@ -134,7 +134,7 @@ const Navigation = () => {
                   </div>
                   <div className="z-50 sm:flex-none">
                     <Link to="/">
-                      <div className="relative mt-2 flex">
+                      <div className="relative mt-2 flex pl-2">
                         <NanaIcon className="h-10 w-full " />
                       </div>
                     </Link>
@@ -152,7 +152,7 @@ const Navigation = () => {
                       <div className="flex">
                         <NavLink
                           onClick={() => setIsSideMenuToggled(false)}
-                          to="/admin-dashboard"
+                          to="/admin-dashboard/addfirebase"
                         >
                           <AdminIcon className="mt-[1px] w-[38px] sm:w-10" />
                         </NavLink>
@@ -254,7 +254,7 @@ const Navigation = () => {
       )}
       <div
         className={`${
-          isAdminDashboard() ? '' : 'mt-[72px] md:mt-[101px]'
+          isAdminDashboard() ? 'mt-4' : 'mt-[72px] md:mt-[101px]'
         } w-full`}
       >
         <Breadcrumbs />
