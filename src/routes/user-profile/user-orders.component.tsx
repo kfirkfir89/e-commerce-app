@@ -68,6 +68,14 @@ const UserOrders = () => {
                           </div>
                           <div className="grid grid-cols-3  gap-4 whitespace-nowrap px-3 text-xs sm:text-sm">
                             <div className="col-span-1 flex flex-col place-items-end gap-2 font-semibold">
+                              <span>order status:</span>
+                            </div>
+                            <div className="col-span-2 flex w-full flex-col gap-y-1 whitespace-normal font-smoochSans tracking-widest">
+                              <span>{isViewOrder.orderStatus}</span>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-3  gap-4 whitespace-nowrap px-3 text-xs sm:text-sm">
+                            <div className="col-span-1 flex flex-col place-items-end gap-2 font-semibold">
                               <span>address:</span>
                             </div>
                             <div className="col-span-2 flex w-full flex-col gap-y-1 whitespace-normal font-smoochSans tracking-widest">
@@ -194,6 +202,16 @@ const UserOrders = () => {
                         <div className="col-span-2 flex w-full flex-col gap-y-1 whitespace-normal font-smoochSans tracking-widest">
                           <span>
                             <span>{order.orderId}</span>
+                          </span>
+                        </div>
+                      </div>
+                      <div className="grid w-full grid-cols-3 gap-4 whitespace-nowrap px-3 text-xs sm:text-sm">
+                        <div className="col-span-1 flex flex-col place-items-end gap-2 font-semibold sm:place-items-start">
+                          <span>Order status:</span>
+                        </div>
+                        <div className="col-span-2 flex w-full flex-col gap-y-1 whitespace-normal font-smoochSans tracking-widest">
+                          <span>
+                            <span>{order.orderStatus}</span>
                           </span>
                         </div>
                       </div>

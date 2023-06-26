@@ -145,7 +145,7 @@ export const createUserDocumentFromAuth = async (
 export const sendPasswordResetEmailFireBase = async (email: string) => {
   try {
     const actionCodeSettings = {
-      url: 'http://localhost:5173/',
+      url: 'https://nanastyle-e.com/',
       handleCodeInApp: true,
     };
     await sendPasswordResetEmail(auth, email, actionCodeSettings);

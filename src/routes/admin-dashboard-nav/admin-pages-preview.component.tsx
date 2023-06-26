@@ -215,6 +215,7 @@ const PagesPreview = () => {
   const [error, setError] = useState('');
   const [categoriesKeys, setCategoriesKeys] = useState<SelectOption[]>([]);
   const [productListKeys, setProductListKeys] = useState<SelectOption[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const contextProviderValues = useMemo(
     () => ({
