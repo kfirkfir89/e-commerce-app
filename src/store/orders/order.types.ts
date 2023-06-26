@@ -1,7 +1,11 @@
 import { PaymentIntent } from '@stripe/stripe-js';
-import { UserData } from '../../utils/firebase/firebase.utils';
+import { Timestamp } from 'firebase/firestore';
 
-import { CartItemQuantity } from '../cart/cart.types';
+import { CartItemPreview } from '../cart/cart.types';
+import {
+  UserAddress,
+  UserData,
+} from '../../utils/firebase/firebase.user.utils';
 
 export enum ORDER_ACTION_TYPES {
   FETCH_ORDER_START = 'order/FETCH_ORDER_START',
@@ -11,10 +15,13 @@ export enum ORDER_ACTION_TYPES {
 }
 
 export type NewOrderDetails = {
-  orderId: number
-  createAt: Date;
-  user: UserData | null;
-  orderItems: CartItemQuantity[];
-  paymentIntent: PaymentIntent | undefined;
+  orderId: string;
+  createDate: Timestamp;
+  user: UserData;
+  orderItems: CartItemPreview[];
+  paymentIntent: PaymentIntent;
+  deliveryAddress: UserAddress;
+  isExpressDelivery: boolean;
+  orderStatus: string;
+  trackingNumber: string;
 };
-

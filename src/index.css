@@ -1,5 +1,4 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Dosis&family=Nunito+Sans:wght@200&family=Open+Sans:wght@300;400;500&family=Pacifico&family=Sono:wght@800&family=Titan+One&family=Titillium+Web:wght@200&family=Ubuntu:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dosis&family=Nunito+Sans:wght@200&family=Open+Sans:wght@300;400;500&family=Pacifico&family=Smooch+Sans:wght@200&family=Sono:wght@800&family=Titan+One&family=Titillium+Web:wght@200&family=Ubuntu:wght@300&display=swap');
 
 
 @tailwind base;
@@ -11,7 +10,8 @@
     font-family: 'Pacifico', cursive;
     font-family: 'Titan One', cursive;
     font-family: 'Dosis', sans-serif;
-
+    font-family: 'Dosis', sans-serif;
+    font-family: 'Smooch Sans', sans-serif;
   }
 }
 
@@ -23,30 +23,155 @@
 }
 
 @layer utilities {
+  :root, html, body, {
+    color-scheme: only light;
+  }
+  
+  html, body, #root{
+    @apply h-full w-full bg-white scrollbarStyle scrollbarStyle-hidden;
+    color-scheme: only light;
+  }
+  .textShadow {
+    text-shadow: 0px 0px 9px #ffffff, 0px 0px 15px #ff4c4c, 0px 0px 5px #9c3b3b;
+  }
+
+
+  .marqueePEN-container {
+    height: 30px;
+    overflow: hidden;
+    line-height: 30px;
+  
+  }
+  .marqueePEN {
+    top: 0;
+    right: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    animation: marqueePEN 30s linear infinite;
+  }
+
+  .marqueePEN2 {
+    animation-delay: 15s;
+  }
+  b {
+    padding-left: 10px;
+  }
+  
+  @keyframes marqueePEN {
+    0% {
+      right: 100%;
+    }
+    100% {
+      right: -100%
+    }
+  }
+
+  .scrollbarStyle::-webkit-scrollbar {
+      @apply w-2;
+  }
+  .scrollbarStyle-hidden::-webkit-scrollbar {
+      @apply w-2 hidden;
+
+  }
+  .scrollbarStyle::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+  .scrollbarStyle::-webkit-scrollbar-thumb {
+    @apply bg-white rounded-sm;
+    @apply border-solid border-2 border-gray-300 rounded-lg;
+  }
+
+  
+  
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 30%;
+    width: 24px;
+    height: 24px;
+  }
+  
+  .gradient-home1 {
+    background: rgb(167,243,208);
+    background: linear-gradient(180deg, rgba(167,243,208,1) 0%, rgba(153,246,228,1) 70%);
+  }
+
+  .gradient-circle {
+    background: rgb(139,92,246);
+    background: linear-gradient(90deg, rgba(139,92,246,1) 1%, rgba(239,68,68,1) 1%, rgba(42,253,105,1) 27%, rgba(14,165,233,1) 78%, rgba(253,224,71,1) 99%, rgba(245,158,11,1) 99%);
+  }
+
+  .gradient-bg-nav {
+    background: rgb(229,231,235);
+    background: linear-gradient(0deg, rgba(229,231,235,1) 28%, rgba(243,244,246,1) 35%, rgba(255,255,255,1) 45%);
+  }
+  
   .link-underline {
     background-image: linear-gradient(transparent, transparent), linear-gradient(#000000, #000000);
-    background-size: 0 2px;
+    background-size: 0 1px;
     background-position: 50% 100%;
     background-repeat: no-repeat;
     transition: background-size .5s ease-in;
   }
 
   .link-underline-black {
-      background-image: linear-gradient(transparent, transparent), linear-gradient(#334155FF, #334155FF)
+      background-image: linear-gradient(transparent, transparent), linear-gradient(#f3f4f6, #f3f4f6)
   }
 
   .link-underline:hover {
-      background-size: 100% 2px;
-      background-position: 0 100%
+    color: #334155;
+    transition: all 700ms;
+    background-size: 100% 50px;
+    background-position: 50% 100%;
+
   }
   .link-underline:focus {
-      background-size: 100% 2px;
-      background-position: 0 100%
+    color: #334155;
+    transition: all 700ms;
+    background-size: 100% 50px;
+    background-position: 0 100%;
   }
+  .link-underline:active {
+    color: #334155;
+    transition: all 700ms;
+    background-size: 100% 50px;
+    background-position: 0 100%;
+}
 
   @media (min-width: 1780px) {
     .container2 {
       max-width: 1780px;
     }
+  }
+
+  @media (prefers-color-scheme: light) {
+    body {
+      background-color: #FFF;
+      background: #FFF;
+      color: #333;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body {
+      background-color: #FFF;
+      background: #FFF;
+      color: #333;
+    }
+  }
+  
+  #inputColor {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+  }
+
+  #inputColor::-webkit-color-swatch {
+    @apply shadow-lg border-dashed border-slate-500 rounded-lg
+    
+  }
+  #inputColor::-moz-color-swatch {
+    @apply shadow-lg border-dashed border-slate-500 rounded-lg
   }
 }

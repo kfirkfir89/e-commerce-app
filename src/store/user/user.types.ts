@@ -1,6 +1,3 @@
-import { DateRangeType, DateType } from 'react-tailwindcss-datepicker/dist/types/index';
-
-
 export enum USER_ACTION_TYPES {
   SET_CURRENT_USER = 'user/SET_CURRENT_USER',
   CHECK_USER_SESSION = 'user/CHECK_USER_SESSION',
@@ -10,19 +7,16 @@ export enum USER_ACTION_TYPES {
   SIGN_IN_FAILED = 'user/SIGN_IN_FAILED',
   SIGN_UP_START = 'user/SIGN_UP_START',
   SIGN_UP_SUCCESS = 'user/SIGN_UP_SUCCESS',
+  UPDATE_USER_FAVORITE_PRODUCT = 'user/UPDATE_USER_FAVORITE_PRODUCT',
+  UPDATE_USER_ORDERS = 'user/UPDATE_USER_ORDERS',
+  UPDATE_USER_DATA_START = 'user/UPDATE_USER_DATA_START',
+  UPDATE_USER_ADDRESS_START = 'user/UPDATE_USER_ADDRESS_START',
+  UPDATE_USER_DATA_SUCCESS = 'user/UPDATE_USER_DATA_SUCCESS',
+  UPDATE_USER_DEFUALT_ADDRESS_START = 'user/UPDATE_USER_DEFUALT_ADDRESS_START',
+  REMOVE_USER_ADDRESS_START = 'user/REMOVE_USER_ADDRESS_START',
+  UPDATE_USER_DATA_FAILED = 'user/UPDATE_USER_DATA_FAILED',
   SIGN_UP_FAILED = 'user/SIGN_UP_FAILED',
   SIGN_OUT_START = 'user/SIGN_OUT_START',
   SIGN_OUT_SUCCESS = 'user/SIGN_OUT_SUCCESS',
   SIGN_OUT_FAILED = 'user/SIGN_OUT_FAILED',
 }
-
-export type FormFields = {
-  firstName: string,
-  lastName: string,
-  dateOfBirth: DateType | DateRangeType,
-  displayName?: string,
-  email: string,
-  password: string,
-  confirmPassword: string,
-  sendNotification: boolean,
-};

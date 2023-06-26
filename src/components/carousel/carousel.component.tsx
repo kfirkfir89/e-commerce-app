@@ -1,110 +1,89 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-import React, { useState, useEffect } from 'react';
-import { ReactComponent as ArrowBack } from '../../assets/arrow_back.svg';
-import { ReactComponent as ArrowForward } from '../../assets/arrow_forward.svg';
+import { useState, useEffect, FC, ChangeEvent, useRef } from 'react';
 
+export type CarouselProps = {
+  images: string[] | File[];
+};
 
-export const images = [
-  {
-    title: 'image-one',
-    subtitle: 'This is a slider',
-    img: 'https://i.ibb.co/R70vBrQ/men.png',
-  },
-  {
-    title: 'image-Two',
-    subtitle: 'This is a slider',
-    img: 'https://i.ibb.co/GCCdy8t/womens.png',
-  },
-  {
-    title: 'image-Three',
-    subtitle: 'This is a slider',
-    img: 'https://i.ibb.co/0jqHpnp/sneakers.png',
-  },
-];
-
-const Carousel = () => {
+const Carousel: FC<CarouselProps> = (props) => {
+  const { images } = props;
   const [currentImg, setCurrentImage] = useState(0);
+  const [currentImg2, setCurrentImage2] = useState(1);
+  const [prevCurrentImg, setPrevCurrentImage] = useState(0);
+  const [prevCurrentImg2, setPrevCurrentImage2] = useState(1);
+  const [imageHeight, setImageHeight] = useState(0);
+  const [imageWidth, setImageWidth] = useState(0);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      currentImg < images.length - 1
-        ? setCurrentImage(currentImg + 1)
-        : setCurrentImage(0);
-    }, 5000);
+      if (currentImg < images.length - 1) {
+        setCurrentImage(currentImg + 1);
+        setCurrentImage2(currentImg2 + 1);
+      } else {
+        setCurrentImage(0);
+        setCurrentImage2(1);
+      }
+    }, 3000);
 
+    setPrevCurrentImage(currentImg);
+    setPrevCurrentImage2(currentImg2);
     return () => clearTimeout(timer);
-  }, [currentImg]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentImg, images]);
 
+  const imageSizeHandler = (e: ChangeEvent<HTMLImageElement>) => {
+    setImageHeight(e.target.offsetHeight);
+    setImageWidth(e.target.offsetWidth);
+  };
+
+  useEffect(() => {
+    const resize = () => {
+      if (imgRef.current) {
+        setImageHeight(imgRef.current.offsetHeight);
+        setImageWidth(imgRef.current.offsetHeight);
+      }
+    };
+    window.addEventListener('resize', resize);
+  }, []);
   return (
-    <section className="container flex items-center justify-center h-[350px] w-screen ">
-      <div className="w-full h-full">
-        <div
-          style={{ backgroundImage: `url(${images[currentImg].img})` }}
-          className="relative h-full w-full bg-cover bg-center bg-no-repeat transition-all ease-in-out duration-1000 overflow-hidden"
-        >
-          {/* bg-gradient */}
-          <div className="w-full h-full absolute top-0 left-0 bg-gradient-to-r from-black/30"></div>
-
-          {/* title-subtitle */}
-          {/* <div className="text-white opacity-60 flex flex-col gap-3 mb-3 absolute bottom-0 left-1/2 -translate-x-1/2 -translate-y-1/2 ">
-            <span className="">{images[currentImg].title}</span>
-            <span className="">{images[currentImg].subtitle}</span>
-          </div> */}
-
-          {/* circles */}
-          {/* <div className="flex absolute bottom-0 left-1/2 -translate-x-1/2 -translate-y-1/2 ">
-            <div
-              onClick={() => setCurrentImage(0)}
-              className={`w-3 h-3 rounded-full bg-white transition-all ease-in-out duration-1000 mr-3 cursor-pointer  ${
-                currentImg === 0 ? 'opacity-80' : 'opacity-30'
-              }`}
-            >
-            </div>
-
-            <div
-              onClick={() => setCurrentImage(1)}
-              className={`w-3 h-3 rounded-full bg-white transition-all ease-in-out duration-1000 mr-3 cursor-pointer  ${
-                currentImg === 1 ? 'opacity-80' : 'opacity-30'
-              }`}
-            >
-            </div>
-
-            <div
-              onClick={() => setCurrentImage(2)}
-              className={`w-3 h-3 rounded-full bg-white transition-all ease-in-out duration-1000 mr-3 cursor-pointer  ${
-                currentImg === 2 ? 'opacity-80' : 'opacity-30'
-              }`}
-            >
-            </div>
-          </div> */}
-
-          {/* button-group */}
-          {/* <button
-            onClick={() => (currentImg > 0
-              ? setCurrentImage(currentImg - 1)
-              : setCurrentImage(2))}
-            className="absolute text-white left-7 top-1/2"
-          >
-            <span className="w-6 h-6 opacity-30 hover:opacity-80 transition-all ease-in-out duration-300">
-              <ArrowBack />
-            </span>
-          </button>
-
-          <button
-            onClick={() => (currentImg < images.length - 1
-              ? setCurrentImage(currentImg + 1)
-              : setCurrentImage(0))}
-            className="absolute text-white right-7  top-1/2"
-          >
-            <span className="w-6 h-6 opacity-30 hover:opacity-80 transition-all ease-in-out duration-300">
-              <ArrowForward />
-            </span>
-          </button> */}
+    <div className="flex w-full justify-center">
+      <div
+        className="container relative flex w-full overflow-hidden"
+        style={{
+          backgroundImage: `url(${images[prevCurrentImg]})`,
+          height: `${imageHeight - imageHeight / 3.5}px`,
+        }}
+      >
+        <div>
+          {images.length > 0 &&
+            images.map((img, index) => (
+              <div
+                // eslint-disable-next-line react/no-array-index-key
+                key={`Image${index}`}
+                className={`absolute -top-8 flex transform transition-all duration-1000 ease-out ${
+                  index === currentImg && 'translate-y-full'
+                } ${index < currentImg && 'z-10'}`}
+              >
+                {typeof img !== 'string' ? (
+                  <img
+                    ref={imgRef}
+                    onLoad={imageSizeHandler}
+                    alt={`${index}`}
+                    src={URL.createObjectURL(img)}
+                  />
+                ) : (
+                  <img
+                    ref={imgRef}
+                    alt={`${index}`}
+                    src={img}
+                    onLoad={imageSizeHandler}
+                  />
+                )}
+              </div>
+            ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

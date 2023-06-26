@@ -1,30 +1,37 @@
+/* eslint-disable no-param-reassign */
 import { initializeApp } from 'firebase/app';
 import {
-  getAuth, 
-  signInWithRedirect, 
-  signInWithPopup, 
-  GoogleAuthProvider, 
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  User,
-  NextOrObserver,
-} from 'firebase/auth';
-import {
-  getFirestore, 
-  doc, 
-  getDoc, 
-  setDoc, 
-  collection, 
-  writeBatch,
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
   query,
   getDocs,
-  QueryDocumentSnapshot,
+  updateDoc,
+  Timestamp,
 } from 'firebase/firestore';
-
-import { Category } from '../../store/categories/category.types';    
-import { NewOrderDetails } from '../../store/orders/order.types';
+import {
+  deleteObject,
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+} from 'firebase/storage';
+import { getFunctions } from 'firebase/functions';
+import { v4 } from 'uuid';
+import { AddFirebaseData } from '../../components/add-firebase/add-firebase.component';
+import { ItemPreview } from '../../components/add-firebase/add-item.component';
+import {
+  ColorStock,
+  SizeStock,
+} from '../../components/add-firebase/add-item-stock.component';
+import {
+  BigBannerData,
+  SmallImageBannerData,
+  SmallImagesOptionsMapping,
+} from '../../routes/admin-dashboard-nav/admin-pages-preview.component';
+import { SelectOption } from '../../components/select/select.component';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -38,167 +45,276 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
-
-const googleProvider = new GoogleAuthProvider();
-
-googleProvider.setCustomParameters({
-  prompt: 'select_account',
-});
-
-export const auth = getAuth();
-export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
-export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider);
+export const functions = getFunctions();
+export const storageFB = getStorage(firebaseApp);
 
 export const db = getFirestore();
 
-
-// COLLECTION AND DOC CREATION FUNCUNALITY
-export type ObjectToAdd = {
-  title: string;
+export type UserCollectionKeys = {
+  keys: string[];
 };
 
-export const addCollectionAndDocuments = async<T extends ObjectToAdd> (
-  collectionKey: string,
-  objectToAdd: T[],
-): Promise<void> => {
-  const collectionRef = collection(db, collectionKey);
-  const batch = writeBatch(db);
+// set user custom collection-keys (categories) if not exsist
+export async function setUserCollectionKeys(collectionKey: string) {
+  const collectionRef = collection(db, 'system-data');
+  const docRef = doc(collectionRef, 'user-collection-keys');
+  const docSnapshot = await getDoc(docRef);
 
-  objectToAdd.forEach((object) => {
-    const docRef = doc(collectionRef, object.title.toLowerCase());
-    batch.set(docRef, object);
-  });
+  if (docSnapshot.exists()) {
+    const keysData = docSnapshot.data() as UserCollectionKeys;
+    const isExsist = keysData.keys.some((key) => key === collectionKey);
 
-  await batch.commit();
-  console.log('done');
-};
-
-export const getCategoriesAndDocuments = async (): Promise<Category[]> => {
-  const collectionRef = collection(db, 'categories');
-  const q = query(collectionRef);
-  
-  const querySnapshot = await getDocs(q);
-
-  return querySnapshot.docs.map(
-    (docSnapshot) => docSnapshot.data() as Category,
-  );
-};
-
-
-/* 
-db structure
-{
-  hats: {
-    title: 'Hats',
-    items: [
-      {},
-      {}
-    ]
-  },
-  sneakers: {
-    title: 'Sneakers',
-    items: [
-      {},
-      {}
-    ]
+    if (!isExsist) {
+      const updatedKeys = {
+        ...keysData,
+        keys: [...keysData.keys, collectionKey],
+      };
+      await setDoc(docRef, updatedKeys);
+    }
+  } else {
+    // If the document doesn't exist, create it with the specified data.
+    await setDoc(docRef, { keys: [collectionKey] });
   }
 }
- */
 
-// USER AUTH FUNCTIONLITY
+export async function getUserCollectionKeys() {
+  const userCollectionKeyDocRef = doc(db, 'system-data/user-collection-keys');
+  const docSnapshot = await getDoc(userCollectionKeyDocRef);
 
-export type UserData = {
-  createdAt: Date;
-  displayName: string;
-  email: string;
+  const res = docSnapshot.data() as UserCollectionKeys;
+  return res.keys;
+}
+
+export type SubCollectionData = {
+  created: Timestamp;
+  collectionKey: string;
+  docKey: string;
+  sizeSortOption: SelectOption;
 };
+// add new data (products) to server
+export async function addFirebaseData<T extends AddFirebaseData>(
+  newData: T
+): Promise<void> {
+  const { collectionKey, docKey, items, sizeSortOption } = newData;
+  const collectionRef = collection(db, 'system-data');
+  const querySnapshot = await getDocs(collectionRef);
 
-export type Address = {
-  firstName: string;
-  lastName: string;
-  mobile: number;
-  country: string;
-  address: string;
-  city: string;
-  state?: string;
-  postcode: number;
-};
-
-export type AddittionalInformation = {
-  firstName: string;
-  lastName: string;
-  displayName?: string;
-  dateOfBirth: Date | null;
-  sendNotification: boolean;
-  userAddresses?: Address[];
-  userOrders?: number[];
-};
-
-export const createUserDocumentFromAuth = async (
-  userAuth: User,
-  addittionalInformation = {} as AddittionalInformation,
-): Promise<void | QueryDocumentSnapshot<UserData>> => {
-  if (!userAuth) return;
-  
-  const userDocRef = doc(db, 'users', userAuth.uid);
-  const userSnapshot = await getDoc(userDocRef);
-  
-  // if user data does not exists
-  // create/set the document with the data from userAuth in my collection
-  if (!userSnapshot.exists()) {
-    const { displayName, email } = userAuth;
-    const createAt = new Date();
-
+  if (querySnapshot.empty) {
     try {
-      await setDoc(userDocRef, {
-        displayName,
-        email,
-        createAt,
-        ...addittionalInformation,
-      });
+      const res = await setUserCollectionKeys(collectionKey);
     } catch (error) {
-      console.log('error creating the user', error);
+      console.log('error:', error);
     }
   }
-  // if user data exists
-  // return userDocRef
-  return userSnapshot as QueryDocumentSnapshot<UserData>;
-};
 
-export const createAuthUserWithEmailAndPassword = async (email: string, password: string) => {
-  if (!email || !password) return;
+  const docRef = doc(db, collectionKey, docKey);
+  const docSnapshot = await getDoc(docRef);
 
-  return await createUserWithEmailAndPassword(auth, email, password);
-};
+  if (!docSnapshot.exists()) {
+    try {
+      const data: SubCollectionData = {
+        created: Timestamp.fromDate(new Date()),
+        collectionKey,
+        docKey,
+        sizeSortOption,
+      };
+      const docRef = await setDoc(doc(db, collectionKey, docKey), data);
+    } catch (error) {
+      console.log('error:', error);
+    }
+  }
 
-export const signInAuthUserWithEmailAndPassword = async (email: string, password: string) => {
-  if (!email || !password) return;
-
-  return await signInWithEmailAndPassword(auth, email, password);
-};
-
-export const signOutUser = async () => signOut(auth);
-
-export const onAuthStateChangedListener = (callback: NextOrObserver<User>) => onAuthStateChanged(auth, callback);
-
-export const getCurrentUser = (): Promise<User | null> => {
-  return new Promise((resolve, reject) => {
-    const unsubscribe = onAuthStateChanged(
-      auth,
-      (userAuth) => {
-        unsubscribe();
-        resolve(userAuth);
-      },
-      reject,
-    );
+  // create each item with full data
+  items.forEach(async (item) => {
+    try {
+      const docRef = await setDoc(
+        doc(db, collectionKey, docKey, 'items', item.id.toString()),
+        item
+      );
+    } catch (error) {
+      console.log('error:', error);
+    }
   });
+
+  // careate a preview for each item
+  items.forEach(async (item) => {
+    try {
+      const totalStockInit = item.stock.reduce(
+        (total: number, sizeStock: SizeStock) => {
+          sizeStock.colors.forEach((colorStock: ColorStock) => {
+            // eslint-disable-next-line no-param-reassign
+            total += colorStock.count;
+          });
+          return total;
+        },
+        0
+      );
+
+      // const sortOptionsSizesAndColors = item.sizes.flatMap((size) =>
+      //   item.colors.map((color) => `${size.value}-${color.label}`)
+      // );
+
+      const itemPreview: ItemPreview = {
+        id: item.id,
+        created: item.created,
+        collectionKey,
+        docKey,
+        productName: item.productName,
+        slug: item.slug,
+        price: item.price,
+        colors: item.colors,
+        colorsSort: item.colors.map((color) => color.label),
+        sizesSort: item.sizes.map((size) => size.value),
+        stock: item.stock,
+        initTotalStock: totalStockInit,
+        totalStock: totalStockInit,
+        discaount: item.discaount,
+        imagesUrls: [
+          item.colorImagesUrls[0].itemUrlList[0],
+          item.colorImagesUrls[0].itemUrlList[1],
+        ],
+      };
+
+      const docRef = await setDoc(
+        doc(db, `${collectionKey}/${docKey}/items-preview`, itemPreview.id),
+        itemPreview
+      );
+      const docRefAll = await setDoc(
+        doc(db, 'all-items-preview', itemPreview.id.toString()),
+        itemPreview
+      );
+    } catch (error) {
+      console.log('error:', error);
+    }
+  });
+}
+
+// delete images in addFirebase component
+export async function deleteImageUrls(urlList: string[]) {
+  urlList.forEach((url) => {
+    const imageRef = ref(storageFB, url);
+    deleteObject(imageRef).catch((error) => {
+      console.log('Failed to delete image: ', error);
+    });
+  });
+}
+
+export async function uploadImageUrls(
+  imgFileList: File[] | File
+): Promise<string[] | string> {
+  let urlArray: string[] = [];
+  let imgUrl = '';
+
+  if ('name' in imgFileList) {
+    const imageRef = ref(storageFB, `images/${imgFileList.name + v4()}`);
+    const snapshot = await uploadBytes(imageRef, imgFileList);
+    imgUrl = await getDownloadURL(snapshot.ref);
+  }
+
+  if (Array.isArray(imgFileList)) {
+    const promises = imgFileList.map(async (file) => {
+      const imageRef = ref(storageFB, `images/${file.name + v4()}`);
+      const snapshot = await uploadBytes(imageRef, file);
+      return await getDownloadURL(snapshot.ref);
+    });
+
+    urlArray = await Promise.all(promises);
+  }
+
+  return !imgUrl ? urlArray : imgUrl;
+}
+
+// image preview migrate no file types
+type BigBannerDataWithoutImage = Omit<BigBannerData, 'image'>;
+type SmallBannerDataWithoutImage = Omit<SmallImageBannerData, 'image'>;
+
+export type HomePagePreview = {
+  bigBaner: BigBannerDataWithoutImage;
+  mediumBaner: SmallBannerDataWithoutImage[];
+  smallBaner: SmallBannerDataWithoutImage[];
 };
 
+export async function setHomePagePreviewData(
+  bigBanerData: BigBannerData,
+  smallBanersImages: SmallImagesOptionsMapping
+) {
+  console.log('bigBanerData:', bigBanerData, smallBanersImages);
+  const resUrl = await uploadImageUrls(bigBanerData.image);
+  if (typeof resUrl !== 'string') {
+    bigBanerData.imageUrl = resUrl;
+    bigBanerData.image = [];
+  }
 
-// NEED TO TYPE THIS ORDER CREATING
-export const createNewOrderDocument = async (newOrderDetails: NewOrderDetails) => {
-  if (!newOrderDetails) return;
-  
-  await setDoc(doc(db, 'orders', newOrderDetails.orderId.toString()), newOrderDetails);
-  console.log('done');
-};
+  const operations = Object.values(smallBanersImages).map(
+    async (imageBannerValue) => {
+      const { image, ...otherProps } = imageBannerValue;
+      const newDataNoFile: SmallBannerDataWithoutImage = {
+        ...otherProps,
+      };
+      if (image) {
+        const resUrl = await uploadImageUrls(image);
+        if (typeof resUrl === 'string') {
+          newDataNoFile.imageUrl = resUrl;
+        }
+      }
+      return newDataNoFile;
+    }
+  );
+  const smallBanersWithoutImage: SmallBannerDataWithoutImage[] =
+    await Promise.all(operations);
+
+  smallBanersWithoutImage.sort((a, b) => {
+    const a2 = parseInt(a.name.slice(-1), 10);
+    const b2 = parseInt(b.name.slice(-1), 10);
+    return a2 - b2;
+  });
+
+  const mediumBanerSlice = smallBanersWithoutImage.slice(-2);
+  const smallBanersSlice = smallBanersWithoutImage.slice(0, -2);
+
+  const finalDataWithUrls: HomePagePreview = {
+    bigBaner: {
+      isProductList: bigBanerData.isProductList,
+      selectedOption: bigBanerData.selectedOption,
+      imageUrl: bigBanerData.imageUrl,
+    },
+    mediumBaner: mediumBanerSlice,
+    smallBaner: smallBanersSlice,
+  };
+  console.log('finalDataWithUrls:', finalDataWithUrls);
+  const homePagePreviewDocRef = doc(db, 'system-data/home-page-preview');
+  const docSnapshot = await getDoc(homePagePreviewDocRef);
+  if (docSnapshot.exists()) {
+    const oldPreview = docSnapshot.data() as HomePagePreview;
+    const imgUrlToDelete = [
+      ...oldPreview.bigBaner.imageUrl,
+      ...oldPreview.mediumBaner.map((img) => img.imageUrl),
+      ...oldPreview.smallBaner.map((img) => img.imageUrl),
+    ];
+    const deleteOldImages = await deleteImageUrls(imgUrlToDelete);
+  }
+
+  await setDoc(homePagePreviewDocRef, finalDataWithUrls);
+}
+
+export async function getHomePagePreviewData() {
+  const homePagePreviewDocRef = doc(db, 'system-data/home-page-preview');
+  const docSnapshot = await getDoc(homePagePreviewDocRef);
+  const res = docSnapshot.data() as HomePagePreview;
+  return res;
+}
+
+export async function getSortOptionSizeType(
+  collectionKey: string,
+  docKey: string
+) {
+  const homePagePreviewDocRef = doc(db, collectionKey, docKey);
+  const docSnapshot = await getDoc(homePagePreviewDocRef);
+  const res = docSnapshot.data() as {
+    collectionKey: string;
+    docKey: string;
+    sizeSortOption: { label: string; value: string };
+  };
+  const option: SelectOption = res.sizeSortOption;
+  return option;
+}

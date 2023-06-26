@@ -5,7 +5,8 @@ export const BackgroundImage = styled.div`
   height: 100%;
   background-size: cover;
   background-position: center;
-  background-image: ${({ imageUrl }: { imageUrl: string }) => `url(${imageUrl})`};
+  background-image: ${({ imageUrl }: { imageUrl: string }) =>
+    `url(${imageUrl})`};
 `;
 
 export const Body = styled.div`
@@ -21,11 +22,11 @@ export const Body = styled.div`
   position: absolute;
 
   h2 {
-      font-weight: bold;
-      margin: 0 6px 0;
-      font-size: 22px;
-      color: #4a4a4a;
-      text-transform:uppercase;
+    font-weight: bold;
+    margin: 0 6px 0;
+    font-size: 22px;
+    color: #4a4a4a;
+    text-transform: uppercase;
   }
   p {
     font-weight: lighter;

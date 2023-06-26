@@ -1,7 +1,10 @@
 import { AnyAction } from 'redux';
 
 import {
-  createOrderStart, orderSuccesded, orderFailed, resetOrderState, 
+  createOrderStart,
+  orderSuccesded,
+  orderFailed,
+  resetOrderState,
 } from './order.action';
 import { NewOrderDetails } from './order.types';
 
@@ -17,7 +20,10 @@ export const ORDERS_INITIAL_STATE: OrderState = {
   error: null,
 };
 
-export const orderReducer = (state = ORDERS_INITIAL_STATE, action: AnyAction) => {
+export const orderReducer = (
+  state = ORDERS_INITIAL_STATE,
+  action: AnyAction
+) => {
   if (createOrderStart.match(action)) {
     return { ...state, isLoading: true };
   }
@@ -25,11 +31,11 @@ export const orderReducer = (state = ORDERS_INITIAL_STATE, action: AnyAction) =>
   if (orderSuccesded.match(action)) {
     return { ...state, isLoading: false, orderDetails: action.payload };
   }
-  
+
   if (orderFailed.match(action)) {
     return { ...state, isLoading: false, error: action.payload };
   }
-  
+
   if (resetOrderState.match(action)) {
     return { ...state, isLoading: false, orderDetails: null };
   }
