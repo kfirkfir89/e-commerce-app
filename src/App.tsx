@@ -77,10 +77,11 @@ const App = () => {
         <Route path="search-results" element={<SearchResults />} />
 
         <Route path="admin-dashboard/*" element={<AdminDBNav />}>
-          <Route index element={<AdminDashboard />} />
+          {/* <Route index element={<AdminDashboard />} /> */}
           <Route path="product-list" element={<ProductListAdmin />} />
           <Route path="pages-preview" element={<PagesPreview />} />
-          <Route path="addfirebase" element={<AdminAdd />} />
+          {/* path="addfirebase" */}
+          <Route index element={<AdminAdd />} />
         </Route>
 
         <Route path="error" element={<NotFound />} />

@@ -6,10 +6,7 @@ import { createContext, memo, useEffect, useMemo, useState } from 'react';
 
 import { selectCurrentUser } from '../../store/user/user.selector';
 
-import {
-  UserCollectionKeys,
-  getUserCollectionKeys,
-} from '../../utils/firebase/firebase.utils';
+import { getUserCollectionKeys } from '../../utils/firebase/firebase.utils';
 import { getUserCategories } from '../../utils/firebase/firebase.category.utils';
 
 import { ReactComponent as AdminIcon } from '../../assets/manage_accounts.svg';
@@ -138,14 +135,7 @@ const Navigation = () => {
                   <div className="z-50 sm:flex-none">
                     <Link to="/">
                       <div className="relative mt-2 flex">
-                        {/* <span className="whitespace-nowrap font-dosis text-4xl font-bold uppercase tracking-tighter text-slate-700 ">
-                          nana
-                        </span>
-                        <span className=" textShadow absolute -bottom-[3px] left-4 z-10 whitespace-nowrap  font-pacifico text-xs font-bold uppercase tracking-tighter text-red-700 shadow-inner">
-                          style
-                        </span> */}
-                        <NanaIcon className='w-full h-10 ' />
-                        {/* <img className="w-8/12 pl-2 opacity-90 sm:w-full" src="/src/assets/NANA STYLE.png" alt="gfd" /> */}
+                        <NanaIcon className="h-10 w-full " />
                       </div>
                     </Link>
                   </div>
@@ -169,7 +159,7 @@ const Navigation = () => {
                       </div>
                     )}
                     <NavLink to="favorites" className="mt-[10px] flex px-1">
-                      <FavoriteIcon className="h-8 w-9 text-re" />
+                      <FavoriteIcon className="text-re h-8 w-9" />
                     </NavLink>
 
                     <ProfileDropdown />
@@ -262,7 +252,11 @@ const Navigation = () => {
           </div>
         </div>
       )}
-      <div className="mt-[72px] w-full md:mt-[101px]">
+      <div
+        className={`${
+          isAdminDashboard() ? '' : 'mt-[72px] md:mt-[101px]'
+        } w-full`}
+      >
         <Breadcrumbs />
       </div>
       {/* message pop up */}
