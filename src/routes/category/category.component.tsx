@@ -392,7 +392,7 @@ const Category = () => {
         </div>
         {/* small screen version */}
         <div
-          className={`absolute inset-0 z-[100] h-screen w-full bg-white ${
+          className={`absolute inset-0 z-[102] h-screen w-full bg-white ${
             isFilterToggled ? 'block' : 'hidden'
           }`}
         >
