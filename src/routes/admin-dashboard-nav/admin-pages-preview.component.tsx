@@ -241,6 +241,7 @@ const PagesPreview = () => {
     const getProductLists = async () => {
       try {
         const keys = await getUserKeysDocs('user-products-list');
+        console.log('keys:', keys);
         const keysOptions: SelectOption[] = [];
         keys.forEach((key) => keysOptions.push({ label: key, value: key }));
         setProductListKeys(keysOptions);
