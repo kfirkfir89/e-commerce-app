@@ -33,13 +33,19 @@ import { SelectOption } from '../../components/select/select.component';
 // get the user custom subcategories (doc title) by using user custom collectionKeys
 export async function getUserKeysDocs(collectionKey: string) {
   const collectionRef = collection(db, collectionKey);
-  const q = query(collectionRef, orderBy('created', 'asc'));
-  const querySnapshot = await getDocs(q);
+  let queryRef: Query<DocumentData>;
+  if (collectionKey === 'user-products-list') {
+    queryRef = query(collectionRef);
+  } else {
+    queryRef = query(collectionRef, orderBy('created', 'asc'));
+  }
+  const querySnapshot = await getDocs(queryRef);
   const categoryTitles: string[] = [];
 
   querySnapshot.forEach((doc) => {
     categoryTitles.push(doc.id);
   });
+
   return categoryTitles;
 }
 // get the user custom categories (collections keys) and call getUserKeysDocs to get all subCategories
@@ -521,14 +527,14 @@ export async function getProductListItemPreview(
   const collectionRef = collection(db, 'all-items-preview');
   let itemsQuery: Query<DocumentData>;
   if (page === 1) {
-    itemsQuery = query(collectionRef, orderBy('created', 'desc'), limit(2));
+    itemsQuery = query(collectionRef, orderBy('created', 'desc'), limit(30));
     const itemsQuerySnapshot = await getDocs(itemsQuery);
     const itemsSlice: ItemPreview[] = itemsQuerySnapshot.docs.map(
       (doc) => doc.data() as ItemPreview
     );
     return itemsSlice;
   }
-  pagesItemsToSkip = (page - 1) * 2;
+  pagesItemsToSkip = (page - 1) * 30;
   itemsQuery = query(
     collectionRef,
     orderBy('created', 'desc'),
@@ -547,7 +553,7 @@ export async function getProductListItemPreview(
     collectionRef,
     orderBy('created', 'desc'),
     startAfter(newLaslastVisibletVisible),
-    limit(2)
+    limit(30)
   );
 
   const finalItemsQuerySnapshot = await getDocs(finalItemsQuery);

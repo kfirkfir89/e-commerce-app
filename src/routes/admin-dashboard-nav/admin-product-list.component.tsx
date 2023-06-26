@@ -45,7 +45,7 @@ const ProductListAdmin = () => {
     const fetchCategoryCount = async () => {
       try {
         const count = await getCategoryCount();
-        const pageCount = Math.ceil(count / 2);
+        const pageCount = Math.ceil(count / 30);
         setPagesNumber(pageCount);
       } catch (error) {
         console.log('error:', error);
@@ -142,7 +142,7 @@ const ProductListAdmin = () => {
           <>
             <div className="grid h-full w-full grid-cols-1 flex-col  gap-4 sm:flex-row lg:grid-cols-3">
               <div className="scrollbarStyle col-span-2 flex h-full w-full flex-col overflow-x-auto font-smoochSans text-sm tracking-wider text-slate-700 sm:h-fit sm:flex-1">
-                <table className="table w-full">
+                <table className="table  w-full">
                   {/* head */}
                   <thead className="p-4">
                     <tr className="w-full ">
@@ -287,7 +287,7 @@ const ProductListAdmin = () => {
               </div>
             </div>
             {/* pages buttons */}
-            <div className="join mb-28 flex justify-center">
+            <div className="join mb-28 flex w-full flex-wrap justify-center">
               {[...Array(pagesNumber)].map((_, i) => {
                 const pageNumber = i + 1;
                 return (
