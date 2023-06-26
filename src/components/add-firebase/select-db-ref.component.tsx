@@ -179,7 +179,7 @@ export const SelectDbRef = ({
                 checked={isNewCollection}
                 type="checkbox"
                 onChange={() => setIsNewCollection(!isNewCollection)}
-                className="toggle-success toggle"
+                className="toggle-success toggle bg-white"
               />
             </label>
             {/* INPUT VALUES */}
@@ -204,7 +204,7 @@ export const SelectDbRef = ({
                 type="text"
                 name="collectionKey"
                 placeholder="new collection key"
-                className={`input-bordered input w-full max-w-xs rounded-lg shadow-md ${
+                className={`input-bordered input w-full max-w-xs rounded-lg bg-white shadow-md ${
                   isNewCollection ? 'block' : 'hidden'
                 }`}
               />
@@ -226,7 +226,7 @@ export const SelectDbRef = ({
               </span>
               <input
                 type="checkbox"
-                className="toggle-success toggle"
+                className="toggle-success toggle bg-white"
                 disabled={isNewCollection}
                 checked={isNewDoc}
                 onChange={() => setIsNewDoc(!isNewDoc)}
@@ -268,7 +268,7 @@ export const SelectDbRef = ({
                   type="text"
                   name="title"
                   placeholder="new doc key"
-                  className={`input-bordered input w-full max-w-xs rounded-lg shadow-md ${
+                  className={`input-bordered input w-full max-w-xs rounded-lg bg-white shadow-md ${
                     isNewCollection || isNewDoc ? 'block' : 'hidden'
                   }`}
                 />

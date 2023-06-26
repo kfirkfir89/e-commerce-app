@@ -192,7 +192,7 @@ const SignUpForm = () => {
           <span className="label-text">SEND ME NOTIFICATION</span>
           <input
             type="checkbox"
-            className="checkbox-success checkbox text-slate-300"
+            className="checkbox-success checkbox text-slate-300 "
             name="sendNotification"
             onChange={handleCheckBox}
           />

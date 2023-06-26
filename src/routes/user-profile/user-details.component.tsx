@@ -118,7 +118,7 @@ const UserDetails = () => {
 
   return (
     <div className="flex w-full flex-col items-center justify-center">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-xs sm:max-w-md ">
         <form className="flex flex-col gap-y-6 py-4" onSubmit={handleSubmit}>
           <FormInput
             type="text"
@@ -166,7 +166,7 @@ const UserDetails = () => {
             <span className="label-text">SEND ME NOTIFICATION</span>
             <input
               type="checkbox"
-              className="checkbox-success checkbox text-slate-300"
+              className="checkbox-success checkbox text-slate-300 "
               name="sendNotification"
               checked={
                 formFields.sendNotification

@@ -148,7 +148,7 @@ const SmallImageBanner = ({
               <input
                 type="radio"
                 name={`${radioName}`}
-                className="radio checked:bg-slate-700"
+                className="radio checked:bg-slate-700 "
                 onChange={() =>
                   setImageData((prev) => ({ ...prev, isProductList: false }))
                 }
@@ -185,7 +185,7 @@ const SmallImageBanner = ({
         <input
           onChange={imageUploadHandler}
           type="file"
-          className="file-input-bordered file-input w-full max-w-xs rounded-none shadow-lg"
+          className="file-input-bordered file-input w-full max-w-xs rounded-none bg-white shadow-lg"
         />
       </div>
 
@@ -370,7 +370,7 @@ const PagesPreview = () => {
               <input
                 onChange={imageUploadHandler}
                 type="file"
-                className="file-input-bordered file-input w-full max-w-xs rounded-none shadow-lg"
+                className="file-input-bordered file-input w-full max-w-xs rounded-none bg-white shadow-lg"
                 multiple
               />
             </div>

@@ -77,6 +77,7 @@ const ProductCard = ({ product }: { product: ItemPreview }) => {
               ref={favoriteInputRef}
               type="checkbox"
               onChange={userFavortieHandler}
+              className="bg-white"
             />
             <div className="swap-on">
               <FavoriteIconFill className="h-9 w-9 text-slate-600" />

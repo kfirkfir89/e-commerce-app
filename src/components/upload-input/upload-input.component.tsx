@@ -221,7 +221,7 @@ const UploadInput: FC<ImageProps> = ({
           ref={inputRef}
           type="file"
           onChange={onChangeHandler}
-          className="file-input-bordered file-input w-full max-w-xs"
+          className="file-input-bordered file-input w-full max-w-xs bg-white"
           accept=".jpg, .jpeg, .jpe, .png, .gif, .bmp, .webp, .svg, .svgz"
         />
         {/* button when rendering indise the component */}

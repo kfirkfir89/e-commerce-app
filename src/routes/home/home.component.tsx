@@ -23,7 +23,7 @@ const Home = () => {
         setPreviewData(previewData);
         setInterval(() => {
           setIsLoading(false);
-        }, 100);
+        }, 300);
       } catch (error) {
         console.log('error:', error);
       }
@@ -45,74 +45,76 @@ const Home = () => {
 
   return (
     <div className="flex w-full flex-col items-center">
-      <div className="relative flex w-full gap-4 overflow-x-hidden p-1 pb-2 text-yellow-800">
-        <div className="flex animate-marquee gap-4 whitespace-nowrap ">
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-        </div>
-
-        <div className="absolute top-0 flex animate-marquee2 gap-4 whitespace-nowrap">
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-          <span>30% off $80 + free shipping</span>
-          <span>🌞🕶️🌞</span>
-        </div>
-      </div>
-
-      {/* banner */}
-      <div className="gradient-home1 mb-4 flex w-[98vw] justify-center font-dosis tracking-wider text-slate-700">
-        <div className="flex w-full justify-center  p-8 pt-14">
-          <div className="flex flex-col items-center justify-between sm:gap-3">
-            <div className="flex">
-              <h2 className="flex text-center font-smoochSans text-3xl font-semibold tracking-normal sm:text-5xl">
-                SUMMER TIME
-              </h2>
-              <div className=" rotate-12 px-1 pt-1 text-xl sm:text-3xl">⛱️</div>
-            </div>
-            <div className="flex space-x-2 py-2 text-center lg:py-0">
-              <span className="text-sm leading-9">
-                30% off $80 + free shipping
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
       {!isLoading && previewData !== undefined ? (
         <>
+          <div className="relative flex w-full gap-4 overflow-x-hidden p-1 pb-2 text-yellow-800">
+            <div className="flex animate-marquee gap-4 whitespace-nowrap ">
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+            </div>
+
+            <div className="absolute top-0 flex animate-marquee2 gap-4 whitespace-nowrap">
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+              <span>30% off $80 + free shipping</span>
+              <span>🌞🕶️🌞</span>
+            </div>
+          </div>
+
+          {/* banner */}
+          <div className="gradient-home1 mb-4 flex w-[98vw] justify-center font-dosis tracking-wider text-slate-700">
+            <div className="flex w-full justify-center  p-8 pt-14">
+              <div className="flex flex-col items-center justify-between sm:gap-3">
+                <div className="flex">
+                  <h2 className="flex text-center font-smoochSans text-3xl font-semibold tracking-normal sm:text-5xl">
+                    SUMMER TIME
+                  </h2>
+                  <div className=" rotate-12 px-1 pt-1 text-xl sm:text-3xl">
+                    ⛱️
+                  </div>
+                </div>
+                <div className="flex space-x-2 py-2 text-center lg:py-0">
+                  <span className="text-sm leading-9">
+                    30% off $80 + free shipping
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
           {/* big banner images */}
           <div className="flex h-full w-full flex-col items-center">
             <div className="container flex h-full w-full flex-col items-center sm:p-6">

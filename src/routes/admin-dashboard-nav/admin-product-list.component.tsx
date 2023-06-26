@@ -134,7 +134,7 @@ const ProductListAdmin = () => {
             type="text"
             name="title"
             placeholder="Product List Name"
-            className="input-bordered input w-full max-w-xs rounded-lg shadow-md"
+            className="input-bordered input w-full max-w-xs rounded-lg bg-white shadow-md"
             value={listTitle}
           />
         </div>
