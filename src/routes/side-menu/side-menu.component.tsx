@@ -100,40 +100,88 @@ const SideMenu = ({ categories, onChangeToggle }: SideMenuProps) => {
               </div>
 
               {/* banner */}
-              <div className="m-4 flex justify-center ">
-                <div className="container">
-                  <div className="mx-2 flex justify-center bg-emerald-200 p-6">
-                    <div className="flex flex-col items-center justify-between sm:gap-5">
-                      <h2 className="text-center text-2xl font-bold tracking-tighter sm:text-5xl">
-                        Up to 25% Off
-                      </h2>
-                      <div className="space-x-2 py-2 text-center lg:py-0">
-                        <span className="text-sm">
-                          Plus free shipping! Use code:
-                        </span>
-                        <span className="text-sm font-bold sm:text-base">
-                          NANA17
-                        </span>
-                      </div>
+              <div className="flex w-full justify-center bg-[#F4EDDD] font-dosis tracking-wider text-slate-700">
+                <div className="flex w-full justify-center p-8">
+                  <div className="flex w-full flex-col items-center justify-between sm:gap-5">
+                    <h2 className="text-center font-smoochSans text-2xl font-semibold tracking-normal sm:text-5xl">
+                      Up to 17% Off
+                    </h2>
+                    <div className="space-x-2 py-2 text-center lg:py-0">
+                      <span className="text-sm">
+                        Plus free shipping! Use code:
+                      </span>
+                      <span className="text-sm font-bold sm:text-base">
+                        NANA17
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="m-4 flex justify-center ">
-                <div className="container">
-                  <div className="mx-2 flex justify-center bg-emerald-200 p-6">
-                    <div className="flex flex-col items-center justify-between sm:gap-5">
-                      <h2 className="text-center text-2xl font-bold tracking-tighter sm:text-5xl">
-                        Up to 25% Off
+
+              {/* banner */}
+              <div className="relative flex w-full gap-4 overflow-x-hidden p-1 pb-2 text-yellow-800">
+                <div className="flex animate-marquee gap-4 whitespace-nowrap ">
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                </div>
+
+                <div className="absolute top-0 flex animate-marquee2 gap-4 whitespace-nowrap">
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                  <span>30% off $80 + free shipping</span>
+                  <span>🌞🕶️🌞</span>
+                </div>
+              </div>
+
+              <div className="gradient-home1 mb-4 flex w-full justify-center font-dosis tracking-wider text-slate-700">
+                <div className="flex w-full justify-center  p-8 pt-14">
+                  <div className="flex flex-col items-center justify-between sm:gap-3">
+                    <div className="flex">
+                      <h2 className="flex text-center font-smoochSans text-3xl font-semibold tracking-normal sm:text-5xl">
+                        SUMMER TIME
                       </h2>
-                      <div className="space-x-2 py-2 text-center lg:py-0">
-                        <span className="text-sm">
-                          Plus free shipping! Use code:
-                        </span>
-                        <span className="text-sm font-bold sm:text-base">
-                          NANA17
-                        </span>
+                      <div className=" rotate-12 px-1 pt-1 text-xl sm:text-3xl">
+                        ⛱️
                       </div>
+                    </div>
+                    <div className="flex space-x-2 py-2 text-center lg:py-0">
+                      <span className="text-sm leading-9">
+                        30% off $80 + free shipping
+                      </span>
                     </div>
                   </div>
                 </div>

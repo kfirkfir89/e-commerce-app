@@ -319,14 +319,33 @@ const Category = () => {
       {subCategoryKeys.length === 0 && (
         <div className="mb-4 flex justify-center ">
           <div className="container">
-            <div className="mx-2 flex justify-center bg-emerald-200 p-6">
-              <div className="flex flex-col items-center justify-between sm:gap-5">
-                <h2 className="text-center text-2xl font-bold tracking-tighter sm:text-5xl">
-                  Up to 25% Off
-                </h2>
-                <div className="space-x-2 py-2 text-center lg:py-0">
-                  <span className="text-sm">Plus free shipping! Use code:</span>
-                  <span className="text-sm font-bold sm:text-base">NANA17</span>
+            <div className="h-18 mx-2 flex py-2">
+              <div className="flex  w-full flex-col items-center justify-between bg-emerald-200 ">
+                <div className="flex">
+                  <h2 className="flex text-center font-smoochSans text-lg font-semibold tracking-normal">
+                    SUMMER TIME
+                  </h2>
+                  <div className=" rotate-12 px-1 pt-1 text-sm">⛱️</div>
+                </div>
+                <div className="flex space-x-2 text-center lg:py-0">
+                  <span className="pb-1 text-sm leading-4">
+                    30% off $80 + free shipping
+                  </span>
+                </div>
+              </div>
+              <div className="flex w-full  justify-center bg-[#F4EDDD] font-dosis tracking-wider text-slate-700">
+                <div className="flex w-full justify-center ">
+                  <div className="flex w-full flex-col items-center justify-between ">
+                    <h2 className="text-center font-smoochSans text-lg font-semibold tracking-normal ">
+                      Up to 17% Off
+                    </h2>
+                    <div className="space-x-2  text-center ">
+                      <span className="text-sm">
+                        Plus free shipping! Use code:
+                      </span>
+                      <span className="text-sm font-bold ">NANA17</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
