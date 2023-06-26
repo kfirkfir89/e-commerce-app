@@ -179,7 +179,7 @@ export const SelectDbRef = ({
                 checked={isNewCollection}
                 type="checkbox"
                 onChange={() => setIsNewCollection(!isNewCollection)}
-                className="toggle-success toggle bg-white"
+                className="toggle-success toggle"
               />
             </label>
             {/* INPUT VALUES */}
@@ -226,7 +226,7 @@ export const SelectDbRef = ({
               </span>
               <input
                 type="checkbox"
-                className="toggle-success toggle bg-white"
+                className="toggle-success toggle"
                 disabled={isNewCollection}
                 checked={isNewDoc}
                 onChange={() => setIsNewDoc(!isNewDoc)}
