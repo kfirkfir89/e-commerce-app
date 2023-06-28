@@ -323,7 +323,7 @@ const PagesPreview = () => {
                     <input
                       type="radio"
                       name="radio-0"
-                      className="radio checked:bg-slate-700"
+                      className="radio checked:bg-slate-700 "
                       onChange={() =>
                         setBigBanerData((prev) => ({
                           ...prev,

@@ -46,19 +46,19 @@ const SideMenu = ({ categories, onChangeToggle }: SideMenuProps) => {
             />
           </label>
         </div>
-        <div className="bg-white">
+        <div className=" bg-white">
           {isMenuOpen && (
-            <div className="fixed left-0 top-[64px] z-50 flex h-screen w-full flex-col bg-white">
+            <div className="fixed left-0 top-[64px] z-50 flex h-screen w-full flex-col overflow-auto bg-white">
               <div className="flex w-full justify-center bg-gray-200 p-2">
                 <Search onChangeToggle={() => toggleIsMenuOpen()} />
               </div>
 
-              <div className="scrollbarStyle flex overflow-x-auto border-b-[1px] border-dashed border-slate-400">
+              <div className="scrollbarStyle flex h-fit overflow-x-auto border-b-[1px] border-dashed border-slate-400">
                 {categories !== undefined &&
                   Array.from(categories.entries()).map(([key, value]) => {
                     return (
                       <div
-                        className="leading-0 flex w-full min-w-[144px] flex-col border-r-[1px] border-dashed border-slate-400  font-smoochSans text-sm uppercase tracking-widest text-slate-700"
+                        className="leading-0 flex h-full w-full min-w-[144px] flex-col border-r-[1px] border-dashed border-slate-400  font-smoochSans text-sm uppercase tracking-widest text-slate-700"
                         key={key}
                       >
                         <div
@@ -77,7 +77,7 @@ const SideMenu = ({ categories, onChangeToggle }: SideMenuProps) => {
                             {key}
                           </NavLink>
                         </div>
-                        <div className="mb-8 flex flex-col gap-3 p-2 px-6 capitalize">
+                        <div className="mb-8 flex flex-col gap-3 p-2 px-6 capitalize ">
                           {value.map((subTitle) => (
                             <div key={subTitle}>
                               <NavLink
@@ -100,7 +100,7 @@ const SideMenu = ({ categories, onChangeToggle }: SideMenuProps) => {
               </div>
 
               {/* banner */}
-              <div className="flex w-full justify-center bg-[#F4EDDD] font-dosis tracking-wider text-slate-700">
+              {/* <div className="flex w-full justify-center bg-[#F4EDDD] font-dosis tracking-wider text-slate-700">
                 <div className="flex w-full justify-center p-8">
                   <div className="flex w-full flex-col items-center justify-between sm:gap-5">
                     <h2 className="text-center font-smoochSans text-2xl font-semibold tracking-normal sm:text-5xl">
@@ -116,7 +116,7 @@ const SideMenu = ({ categories, onChangeToggle }: SideMenuProps) => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* banner */}
               <div className="relative flex w-full gap-4 overflow-x-hidden p-1 pb-2 text-yellow-800">

@@ -166,7 +166,7 @@ const Home = () => {
                           ? `/product-list/${previewData.bigBaner.selectedOption.value}`
                           : previewData.bigBaner.selectedOption.value
                       }
-                      className="btn absolute bottom-20  flex rounded-none border-none border-slate-700 bg-white px-24 py-6 text-slate-700 shadow-sm hover:border-dashed hover:bg-white"
+                      className="btn absolute bottom-20  flex rounded-none border-none border-slate-700 bg-white px-14 py-6 text-slate-700 shadow-sm hover:border-dashed hover:bg-white"
                     >
                       <div className="flex h-full w-full items-center justify-center ">
                         <span className="leading-0 flex pt-1 font-smoochSans text-base font-semibold uppercase tracking-widest text-slate-700">
