@@ -91,7 +91,23 @@
     width: 24px;
     height: 24px;
   }
-  
+  .toggle{
+    --tglbg: white;
+  }
+  .radio:checked,
+  .radio[aria-checked=true] {
+  --tw-bg-opacity: 1;
+  background-color: white;
+  animation: radiomark var(--animation-input, 0.2s) ease-in-out;
+  box-shadow: 0 0 0 4px #f1f5f9 inset;
+  }
+  .textarea{
+    background-color: white;
+  }
+
+  .alert {
+    background-color: #f1f5f9;
+  }
   .gradient-home1 {
     background: rgb(167,243,208);
     background: linear-gradient(180deg, rgba(167,243,208,1) 0%, rgba(153,246,228,1) 70%);

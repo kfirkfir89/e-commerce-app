@@ -163,23 +163,23 @@ export const SelectDbRef = ({
     }
   };
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col ">
       <div className="mb-2 flex justify-center pt-2 text-xl font-semibold text-gray-800">
         Data Referance
       </div>
       <div className="flex flex-col items-center justify-center rounded-lg bg-gray-100 pb-2">
-        <div className="grid grid-cols-1 sm:grid-cols-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 ">
           <div className="flex w-72 flex-col p-2 sm:h-24 sm:w-80">
             {/* TOGGLE BUTTON */}
             <label className="flex justify-center pb-1 ">
-              <span className="label-text whitespace-nowrap pr-2 font-semibold">
+              <span className="label-text  whitespace-nowrap pr-2 font-semibold">
                 New collection
               </span>
               <input
                 checked={isNewCollection}
                 type="checkbox"
                 onChange={() => setIsNewCollection(!isNewCollection)}
-                className="toggle-success toggle"
+                className=" toggle-success toggle"
               />
             </label>
             {/* INPUT VALUES */}
